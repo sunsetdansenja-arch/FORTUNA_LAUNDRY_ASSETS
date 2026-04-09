@@ -11,7 +11,7 @@
     <!-- Google Fonts: Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     
-    <!-- Konfigurasi Tema Tailwind -->
+    <!-- Konfigurasi Tema Tailwind (Warna Ramah Mata) -->
     <script>
         tailwind.config = {
             theme: {
@@ -19,10 +19,14 @@
                     fontFamily: { sans: ['Poppins', 'sans-serif'] },
                     colors: {
                         pastel: { 
-                            bg: '#F8FAFC', 
-                            primary: '#4FD1C5', 
-                            primary_light: '#E6FFFA', 
-                            text: '#334155' 
+                            bg: '#F4F7F6',          // Warm off-white / keabu-abuan lembut
+                            primary: '#5D8A82',     // Muted Sage Green (Sangat nyaman di mata)
+                            primary_light: '#EDF2F1', // Sage sangat pudar untuk background card
+                            text: '#4A5568',        // Abu-abu gelap (bukan hitam pekat)
+                            plus: '#6E9C7A',        // Hijau lembut untuk pemasukan
+                            plus_bg: '#EBF2ED',     
+                            minus: '#D9827C',       // Merah bata/coral pudar untuk pengeluaran
+                            minus_bg: '#FDF2F1'
                         }
                     }
                 }
@@ -30,24 +34,45 @@
         }
     </script>
 
-    <!-- CSS Kustom untuk Animasi Bottom Sheet & Menyembunyikan Scrollbar -->
     <style>
-        body { background-color: #F8FAFC; color: #334155; padding-bottom: 90px; }
+        body { background-color: #F4F7F6; color: #4A5568; padding-bottom: 90px; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        /* Animasi Bottom Sheet */
         .bottom-sheet { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform: translateY(100%); }
         .bottom-sheet.open { transform: translateY(0); }
         .overlay { transition: opacity 0.3s; opacity: 0; pointer-events: none; }
         .overlay.open { opacity: 1; pointer-events: auto; }
+        /* Animasi Login Portal */
+        #login-portal { transition: opacity 0.5s ease-out, visibility 0.5s; }
     </style>
 </head>
 <body class="antialiased">
 
+    <!-- ================= PORTAL LOGIN ================= -->
+    <div id="login-portal" class="fixed inset-0 bg-pastel-bg z-50 flex flex-col items-center justify-center p-6">
+        <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 w-full max-w-sm text-center transform transition-transform duration-700 translate-y-0" id="login-card">
+            <!-- Logo Ikon -->
+            <div class="w-20 h-20 bg-pastel-primary_light rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner">
+                <i class="fas fa-tshirt text-3xl text-pastel-primary"></i>
+            </div>
+            
+            <h1 class="text-2xl font-semibold text-slate-700 mb-1">Fortuna Laundry</h1>
+            <p class="text-xs text-slate-400 mb-8">Sistem Operasional & Kasir</p>
+            
+            <!-- Tombol Login Dummy -->
+            <button onclick="doLogin()" class="w-full bg-pastel-primary text-white font-medium py-3.5 rounded-xl shadow-md shadow-slate-200 active:scale-95 transition-transform flex justify-center items-center">
+                <span>Masuk Aplikasi</span>
+                <i class="fas fa-arrow-right ml-2 text-sm"></i>
+            </button>
+            
+            <p class="text-[10px] text-slate-300 mt-6">Versi 1.0.0 &bull; Akses Internal</p>
+        </div>
+    </div>
+
     <!-- Header Dinamis -->
     <header class="bg-white px-5 py-4 shadow-sm sticky top-0 z-10 rounded-b-2xl">
         <h1 class="text-xl font-semibold text-pastel-primary" id="header-title">Kasir (RCHK)</h1>
-        <p class="text-xs text-slate-400" id="header-subtitle">Pencatatan Operasional Harian</p>
+        <p class="text-xs text-slate-400" id="header-subtitle">Pencatatan Keuangan</p>
     </header>
 
     <!-- Area Konten Utama -->
@@ -59,11 +84,11 @@
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 relative">
                 <div class="flex justify-between items-start mb-1">
                     <span class="font-medium text-slate-700">Irana</span>
-                    <span class="text-sm font-semibold text-rose-400">- Rp 30.000</span>
+                    <span class="text-sm font-semibold text-pastel-minus">- Rp 30.000</span>
                 </div>
                 <div class="flex justify-between items-end mt-2">
                     <div>
-                        <span class="text-[10px] font-medium px-2 py-1 bg-rose-50 text-rose-500 rounded-md">Kredit</span>
+                        <span class="text-[10px] font-medium px-2 py-1 bg-pastel-minus_bg text-pastel-minus rounded-md">Kredit</span>
                         <p class="text-xs text-slate-400 mt-1">beli vanist</p>
                     </div>
                     <button class="text-slate-300 hover:text-pastel-primary transition-colors"><i class="fas fa-pen text-sm"></i></button>
@@ -73,11 +98,11 @@
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 relative">
                 <div class="flex justify-between items-start mb-1">
                     <span class="font-medium text-slate-700">Anin</span>
-                    <span class="text-sm font-semibold text-emerald-500">+ Rp 70.000</span>
+                    <span class="text-sm font-semibold text-pastel-plus">+ Rp 70.000</span>
                 </div>
                 <div class="flex justify-between items-end mt-2">
                     <div>
-                        <span class="text-[10px] font-medium px-2 py-1 bg-emerald-50 text-emerald-600 rounded-md">QRIS</span>
+                        <span class="text-[10px] font-medium px-2 py-1 bg-pastel-plus_bg text-pastel-plus rounded-md">QRIS</span>
                         <p class="text-xs text-slate-400 mt-1">Lunas</p>
                     </div>
                     <button class="text-slate-300 hover:text-pastel-primary transition-colors"><i class="fas fa-pen text-sm"></i></button>
@@ -94,16 +119,16 @@
                     <span class="text-xs text-slate-400">12:08 WIB</span>
                 </div>
                 <div class="grid grid-cols-3 gap-2 mt-3">
-                    <div class="bg-pastel-primary_light p-2 rounded-xl text-center border border-teal-100">
-                        <p class="text-[10px] text-slate-500">Berat</p>
+                    <div class="bg-pastel-primary_light p-2 rounded-xl text-center border border-white">
+                        <p class="text-[10px] text-slate-400">Berat</p>
                         <p class="font-semibold text-pastel-primary">6.0 Kg</p>
                     </div>
-                    <div class="bg-slate-50 p-2 rounded-xl text-center border border-slate-100">
-                        <p class="text-[10px] text-slate-500">Jumlah</p>
+                    <div class="bg-slate-50 p-2 rounded-xl text-center border border-slate-50">
+                        <p class="text-[10px] text-slate-400">Jumlah</p>
                         <p class="font-semibold text-slate-600">50 Pcs</p>
                     </div>
-                    <div class="bg-slate-50 p-2 rounded-xl text-center border border-slate-100">
-                        <p class="text-[10px] text-slate-500">Keranjang</p>
+                    <div class="bg-slate-50 p-2 rounded-xl text-center border border-slate-50">
+                        <p class="text-[10px] text-slate-400">Keranjang</p>
                         <p class="font-semibold text-slate-600">#34</p>
                     </div>
                 </div>
@@ -112,25 +137,24 @@
 
         <!-- ================= TAB 3: SORTIR (RSH) ================= -->
         <div id="tab-rsh" class="tab-content space-y-4 hidden">
-            <!-- Tampilan Kosong (Empty State) -->
             <div class="text-center py-12">
                 <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
                     <i class="fas fa-box-open text-2xl text-slate-300"></i>
                 </div>
-                <h3 class="text-slate-600 font-medium">Belum ada data</h3>
+                <h3 class="text-slate-500 font-medium">Belum ada data</h3>
                 <p class="text-xs text-slate-400 mt-1">Data sortir hari ini masih kosong.</p>
             </div>
         </div>
 
     </main>
 
-    <!-- Tombol Mengambang (Floating Action Button) -->
-    <button onclick="openModal()" class="fixed bottom-24 right-5 bg-pastel-primary text-white w-14 h-14 rounded-full shadow-lg shadow-teal-200/50 flex items-center justify-center text-xl z-20 hover:scale-105 active:scale-95 transition-transform">
+    <!-- Tombol Mengambang (FAB) -->
+    <button onclick="openModal()" class="fixed bottom-24 right-5 bg-pastel-primary text-white w-14 h-14 rounded-full shadow-lg shadow-slate-300 flex items-center justify-center text-xl z-20 hover:scale-105 active:scale-95 transition-transform">
         <i class="fas fa-plus"></i>
     </button>
 
-    <!-- Navigasi Bawah (Bottom Navigation) -->
-    <nav class="fixed bottom-0 w-full bg-white border-t border-slate-100 flex justify-around py-3 pb-safe z-10 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
+    <!-- Navigasi Bawah -->
+    <nav class="fixed bottom-0 w-full bg-white border-t border-slate-100 flex justify-around py-3 pb-safe z-10 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.02)]">
         <button onclick="switchTab('rchk', 'Kasir (RCHK)', 'Pencatatan Keuangan')" id="nav-rchk" class="nav-btn flex flex-col items-center text-pastel-primary w-1/3 transition-colors">
             <i class="fas fa-wallet text-xl mb-1"></i>
             <span class="text-[10px] font-medium">Kasir</span>
@@ -145,21 +169,16 @@
         </button>
     </nav>
 
-    <!-- Latar Belakang Gelap untuk Modal (Overlay) -->
-    <div id="overlay" class="overlay fixed inset-0 bg-slate-900/40 z-30 backdrop-blur-sm" onclick="closeModal()"></div>
+    <!-- Overlay Modal -->
+    <div id="overlay" class="overlay fixed inset-0 bg-slate-800/40 z-30 backdrop-blur-[2px]" onclick="closeModal()"></div>
 
-    <!-- Modal Form Input (Bottom Sheet) -->
+    <!-- Modal Form (Bottom Sheet) -->
     <div id="bottom-sheet" class="bottom-sheet fixed bottom-0 w-full bg-white rounded-t-3xl shadow-2xl z-40 p-6 max-h-[85vh] overflow-y-auto hide-scrollbar">
-        <!-- Garis Penarik (Handle) -->
         <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
-        
         <h2 class="text-lg font-semibold text-slate-700 mb-4" id="modal-title">Tambah Data</h2>
-        
         <form id="input-form" onsubmit="submitForm(event)">
-            <!-- Kolom Form Dinamis akan di-inject oleh JS ke dalam div ini -->
             <div id="dynamic-form-fields" class="space-y-4"></div>
-            
-            <button type="submit" id="submit-btn" class="w-full bg-pastel-primary text-white font-medium py-3.5 rounded-xl mt-6 shadow-lg shadow-teal-200/50 active:scale-95 transition-transform flex justify-center items-center">
+            <button type="submit" id="submit-btn" class="w-full bg-pastel-primary text-white font-medium py-3.5 rounded-xl mt-6 shadow-md shadow-slate-200 active:scale-95 transition-transform flex justify-center items-center">
                 Simpan Data
             </button>
         </form>
@@ -167,20 +186,31 @@
 
     <!-- ================= JAVASCRIPT LOGIC ================= -->
     <script>
-        let currentTab = 'rchk'; // Tab default saat web dibuka
+        // Logika Login Portal
+        function doLogin() {
+            const portal = document.getElementById('login-portal');
+            const card = document.getElementById('login-card');
+            
+            // Efek turun sedikit sebelum menghilang
+            card.style.transform = 'translateY(20px)';
+            portal.style.opacity = '0';
+            
+            setTimeout(() => {
+                portal.style.visibility = 'hidden';
+            }, 500); // Sembunyikan dari DOM setelah animasi selesai
+        }
 
-        // Fungsi untuk ganti tab navigasi
+        // Logika Navigasi & Tab
+        let currentTab = 'rchk';
+
         function switchTab(tabId, title, subtitle) {
             currentTab = tabId;
             document.getElementById('header-title').innerText = title;
             document.getElementById('header-subtitle').innerText = subtitle;
             
-            // Sembunyikan semua konten tab
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            // Tampilkan tab yang dipilih
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
             
-            // Ubah warna ikon di navigasi bawah
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('text-pastel-primary');
                 btn.classList.add('text-slate-400');
@@ -189,22 +219,21 @@
             document.getElementById(`nav-${tabId}`).classList.remove('text-slate-400');
         }
 
-        // Fungsi untuk membuka form (Bottom Sheet)
+        // Logika Form & Modal
         function openModal() {
             const formFields = document.getElementById('dynamic-form-fields');
             document.getElementById('modal-title').innerText = `Tambah Data ${currentTab.toUpperCase()}`;
             
-            // Render Input Form sesuai Tab yang sedang aktif
             if(currentTab === 'rchk') {
                 formFields.innerHTML = `
                     <div>
                         <label class="text-xs font-medium text-slate-500 ml-1">Nama / Keterangan</label>
-                        <input type="text" id="input-nama" required class="w-full mt-1 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary focus:bg-white transition-all" placeholder="Cth: Karen, Gaji Karyawan">
+                        <input type="text" id="input-nama" required class="w-full mt-1 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary transition-all" placeholder="Cth: Karen, Gaji Karyawan">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="text-xs font-medium text-slate-500 ml-1">Jenis Transaksi</label>
-                            <select id="input-jenis" class="w-full mt-1 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary focus:bg-white transition-all">
+                            <select id="input-jenis" class="w-full mt-1 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary transition-all">
                                 <option value="Debit">Debit (Masuk)</option>
                                 <option value="QRIS">QRIS (Masuk)</option>
                                 <option value="Kredit">Kredit (Keluar)</option>
@@ -213,27 +242,26 @@
                         </div>
                         <div>
                             <label class="text-xs font-medium text-slate-500 ml-1">Nominal (Rp)</label>
-                            <input type="number" id="input-nominal" required class="w-full mt-1 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary focus:bg-white transition-all" placeholder="0">
+                            <input type="number" id="input-nominal" required class="w-full mt-1 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary transition-all" placeholder="0">
                         </div>
                     </div>
                     <div>
                         <label class="text-xs font-medium text-slate-500 ml-1">Catatan Tambahan</label>
-                        <input type="text" id="input-ket" class="w-full mt-1 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary focus:bg-white transition-all" placeholder="Opsional...">
+                        <input type="text" id="input-ket" class="w-full mt-1 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary transition-all" placeholder="Opsional...">
                     </div>
                 `;
             } else {
-                // Form untuk RKH (Kiloan) atau RSH (Sortir)
                 let extraField = currentTab === 'rsh' ? `
                     <div class="mt-4">
                         <label class="text-xs font-medium text-slate-500 ml-1">Jenis Satuan</label>
-                        <input type="text" id="input-satuan" required class="w-full mt-1 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary focus:bg-white transition-all" placeholder="Cth: Bedcover, Selimut">
+                        <input type="text" id="input-satuan" required class="w-full mt-1 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary transition-all" placeholder="Cth: Bedcover, Selimut">
                     </div>
                 ` : '';
 
                 formFields.innerHTML = `
                     <div>
                         <label class="text-xs font-medium text-slate-500 ml-1">Nama Pelanggan</label>
-                        <input type="text" id="input-nama" required class="w-full mt-1 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary focus:bg-white transition-all" placeholder="Masukkan nama">
+                        <input type="text" id="input-nama" required class="w-full mt-1 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary transition-all" placeholder="Masukkan nama">
                     </div>
                     <div class="grid grid-cols-3 gap-3">
                         <div>
@@ -253,24 +281,19 @@
                 `;
             }
 
-            // Tampilkan animasi pop-up
             document.getElementById('overlay').classList.add('open');
             document.getElementById('bottom-sheet').classList.add('open');
         }
 
-        // Fungsi menutup form
         function closeModal() {
             document.getElementById('overlay').classList.remove('open');
             document.getElementById('bottom-sheet').classList.remove('open');
             document.getElementById('input-form').reset();
         }
 
-        // Simulasi Aksi Simpan Data (Mencetak Kartu Baru ke Layar)
         function submitForm(e) {
             e.preventDefault();
             const btn = document.getElementById('submit-btn');
-            
-            // Ubah tombol jadi loading (Simulasi proses n8n)
             btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Menyimpan...';
             
             setTimeout(() => {
@@ -278,23 +301,21 @@
                 const nama = document.getElementById('input-nama').value;
                 let newCard = '';
 
-                // Hapus tampilan "Belum ada data" jika ada
                 if(container.innerHTML.includes('Belum ada data')) {
                     container.innerHTML = '';
                 }
 
-                // Render Kartu Kasir Baru
                 if(currentTab === 'rchk') {
                     const jenis = document.getElementById('input-jenis').value;
                     const nominal = parseInt(document.getElementById('input-nominal').value).toLocaleString('id-ID');
                     const isMin = (jenis === 'Kredit' || jenis === 'Kasbon');
-                    const colorText = isMin ? 'text-rose-400' : 'text-emerald-500';
-                    const colorBg = isMin ? 'bg-rose-50 text-rose-500' : 'bg-emerald-50 text-emerald-600';
+                    const colorText = isMin ? 'text-pastel-minus' : 'text-pastel-plus';
+                    const colorBg = isMin ? 'bg-pastel-minus_bg text-pastel-minus' : 'bg-pastel-plus_bg text-pastel-plus';
                     const sign = isMin ? '-' : '+';
                     const ket = document.getElementById('input-ket').value || 'Tanpa keterangan';
 
                     newCard = `
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-pastel-primary relative mt-4 transform transition-all duration-500">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-pastel-primary relative mt-4 transition-all duration-500">
                         <div class="flex justify-between items-start mb-1">
                             <span class="font-medium text-slate-700">${nama}</span>
                             <span class="text-sm font-semibold ${colorText}">${sign} Rp ${nominal}</span>
@@ -307,33 +328,30 @@
                             <button class="text-slate-300 hover:text-pastel-primary"><i class="fas fa-pen text-sm"></i></button>
                         </div>
                     </div>`;
-                } 
-                // Render Kartu Kiloan/Sortir Baru
-                else {
+                } else {
                     const kg = document.getElementById('input-kg').value;
                     const pcs = document.getElementById('input-pcs').value;
                     const krj = document.getElementById('input-krj').value;
                     const waktu = new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) + ' WIB';
-                    
                     let satuanHtml = currentTab === 'rsh' ? `<p class="text-[10px] font-medium text-slate-400 mt-3 border-t border-slate-50 pt-2"><i class="fas fa-tag mr-1 text-slate-300"></i> ${document.getElementById('input-satuan').value}</p>` : '';
 
                     newCard = `
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-pastel-primary mt-4 transform transition-all duration-500">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-pastel-primary mt-4 transition-all duration-500">
                         <div class="flex justify-between items-center mb-2">
                             <span class="font-medium text-slate-700">${nama}</span>
                             <span class="text-xs text-slate-400">${waktu}</span>
                         </div>
                         <div class="grid grid-cols-3 gap-2 mt-3">
-                            <div class="bg-pastel-primary_light p-2 rounded-xl text-center border border-teal-100">
-                                <p class="text-[10px] text-slate-500">Berat</p>
+                            <div class="bg-pastel-primary_light p-2 rounded-xl text-center border border-white">
+                                <p class="text-[10px] text-slate-400">Berat</p>
                                 <p class="font-semibold text-pastel-primary">${kg} Kg</p>
                             </div>
-                            <div class="bg-slate-50 p-2 rounded-xl text-center border border-slate-100">
-                                <p class="text-[10px] text-slate-500">Jumlah</p>
+                            <div class="bg-slate-50 p-2 rounded-xl text-center border border-slate-50">
+                                <p class="text-[10px] text-slate-400">Jumlah</p>
                                 <p class="font-semibold text-slate-600">${pcs} Pcs</p>
                             </div>
-                            <div class="bg-slate-50 p-2 rounded-xl text-center border border-slate-100">
-                                <p class="text-[10px] text-slate-500">Keranjang</p>
+                            <div class="bg-slate-50 p-2 rounded-xl text-center border border-slate-50">
+                                <p class="text-[10px] text-slate-400">Keranjang</p>
                                 <p class="font-semibold text-slate-600">#${krj}</p>
                             </div>
                         </div>
@@ -341,19 +359,12 @@
                     </div>`;
                 }
 
-                // Masukkan kartu ke antarmuka (paling atas)
                 container.insertAdjacentHTML('afterbegin', newCard);
+                setTimeout(() => { container.firstElementChild.classList.remove('border-pastel-primary'); container.firstElementChild.classList.add('border-slate-100'); }, 1500);
                 
-                // Hilangkan *border highlight* hijau setelah 1 detik
-                setTimeout(() => {
-                    container.firstElementChild.classList.remove('border-pastel-primary');
-                    container.firstElementChild.classList.add('border-slate-100');
-                }, 1500);
-
-                // Kembalikan tombol ke semula dan tutup modal
                 btn.innerHTML = 'Simpan Data';
                 closeModal();
-            }, 800); // Jeda 0.8 detik
+            }, 600);
         }
     </script>
 </body>
