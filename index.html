@@ -5,15 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Fortuna Laundry App</title>
     
-    <!-- Logo Tab / Favicon -->
     <link rel="icon" href="https://raw.githubusercontent.com/sunsetdansenja-arch/beuna-agency/main/beuna%20logo%20v2.png" type="image/png">
-    
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     
-    <!-- TEMA WARNA: Putih & Biru Pastel Cerah -->
     <script>
         tailwind.config = {
             theme: {
@@ -21,14 +17,8 @@
                     fontFamily: { sans: ['Poppins', 'sans-serif'] },
                     colors: {
                         pastel: { 
-                            bg: '#F5F9FF',          // Putih kebiruan sangat lembut
-                            primary: '#5C9CE6',     // Biru pastel cerah
-                            primary_light: '#E6F0FA', // Biru sangat muda untuk background card
-                            text: '#334155',        
-                            plus: '#34D399',        // Hijau terang untuk pemasukan
-                            plus_bg: '#ECFDF5',     
-                            minus: '#F87171',       // Merah soft untuk pengeluaran
-                            minus_bg: '#FEF2F2'
+                            bg: '#F5F9FF', primary: '#5C9CE6', primary_light: '#E6F0FA', text: '#334155', 
+                            plus: '#34D399', plus_bg: '#ECFDF5', minus: '#F87171', minus_bg: '#FEF2F2'
                         }
                     }
                 }
@@ -45,6 +35,14 @@
         .overlay { transition: opacity 0.3s; opacity: 0; pointer-events: none; }
         .overlay.open { opacity: 1; pointer-events: auto; }
         #login-portal { transition: opacity 0.5s ease-out, visibility 0.5s; }
+        
+        /* Modifikasi input date/time agar tampil bersih di iOS/Android */
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="time"]::-webkit-calendar-picker-indicator {
+            background-color: transparent;
+            cursor: pointer;
+            opacity: 0.6;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -87,7 +85,7 @@
         </div>
     </main>
 
-    <!-- FLOATING ACTION BUTTON (TAMBAH DATA BARU) -->
+    <!-- FLOATING ACTION BUTTON -->
     <button onclick="openModal(false)" class="fixed bottom-24 right-5 bg-pastel-primary text-white w-14 h-14 rounded-full shadow-lg shadow-blue-300 flex items-center justify-center text-xl z-20 hover:scale-105 active:scale-95 transition-transform">
         <i class="fas fa-plus"></i>
     </button>
@@ -121,14 +119,28 @@
         </form>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT -->
     <script>
         const WEBHOOK_URL = 'https://n8n-mzbmiib3etk4.kangkung.sumopod.my.id/webhook/fortuna-webhook';
         let currentTab = 'rchk';
-        
-        // Simpan data master di memori agar bisa dipanggil saat mau Edit
         let appData = { RCHK: [], RKH: [], RSH: [] };
-        let currentEditId = null; // Menyimpan ID baris yang sedang diedit
+        let currentEditId = null; 
+
+        // Fungsi Helper untuk merapikan tanggal dari format Date() ke YYYY-MM-DD untuk input box
+        function formatDateForInput(dateObj) {
+            const y = dateObj.getFullYear();
+            const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const d = String(dateObj.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+        
+        // Fungsi merapikan format YYYY-MM-DD dari input box ke format DD/MM/YYYY untuk dikirim ke Google Sheets
+        function formatDateForSheet(dateString) {
+            if(!dateString) return '';
+            const parts = dateString.split('-');
+            if(parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            return dateString; // Fallback
+        }
 
         // --- SISTEM LOGIN ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -147,7 +159,7 @@
             refreshData();
         }
 
-        // --- FETCH DATA (READ) ---
+        // --- FETCH DATA ---
         async function loadDataFromN8N() {
             const icon = document.getElementById('refresh-icon');
             icon.classList.add('fa-spin');
@@ -161,7 +173,7 @@
                 
                 const result = await response.json();
                 if(result.status === "success") {
-                    appData = result.data; // Simpan ke global memori
+                    appData = result.data; 
                     renderAllData();
                 }
             } catch (error) {
@@ -180,9 +192,8 @@
             loadDataFromN8N();
         }
 
-        // --- RENDER HTML KARTU ---
+        // --- RENDER HTML ---
         function renderAllData() {
-            // Render RCHK (Kasir)
             const rchkHtml = [...appData.RCHK].reverse().map(item => {
                 if(!item.ID) return ''; 
                 let jenis = 'Keterangan'; let nominal = 0; let isMin = false;
@@ -212,16 +223,14 @@
             }).join('') || `<div class="text-center py-10 text-slate-400 text-sm">Belum ada data</div>`;
             document.getElementById('tab-rchk').innerHTML = rchkHtml;
 
-            // Render RKH & RSH (Kiloan & Sortir)
-            const renderLaundryCard = (item, isSortir) => {
+            const renderLaundryCard = (item) => {
                 if(!item.ID) return '';
-                let satuan = isSortir ? `<p class="text-[10px] font-medium text-slate-400 mt-3 border-t border-pastel-bg pt-2"><i class="fas fa-tag mr-1 text-pastel-primary"></i> ${item['JENIS SATUAN'] || '-'}</p>` : '';
                 return `
                 <div class="bg-white p-4 rounded-2xl shadow-sm border border-blue-50 relative">
                     <div class="flex justify-between items-center mb-2">
                         <span class="font-medium text-slate-700">${item.NAMA || '-'}</span>
                         <div class="flex items-center gap-3">
-                            <span class="text-[10px] text-slate-400 bg-pastel-bg px-2 py-1 rounded-md">${item['TANGGAL MASUK'] || '-'} ${item['JAM PENGERJAAN'] || ''}</span>
+                            <span class="text-[10px] text-slate-400 bg-pastel-bg px-2 py-1 rounded-md">${item['TANGGAL MASUK'] || '-'} | ${item['JAM PENGERJAAN'] || ''}</span>
                             <button onclick="openModal(true, '${item.ID}')" class="text-blue-200 hover:text-pastel-primary"><i class="fas fa-pen text-sm"></i></button>
                         </div>
                     </div>
@@ -239,12 +248,12 @@
                             <p class="font-semibold text-slate-600">#${item['NOMOR KERANJANG'] || '-'}</p>
                         </div>
                     </div>
-                    ${satuan}
+                    <p class="text-[10px] font-medium text-slate-400 mt-3 border-t border-pastel-bg pt-2"><i class="fas fa-tag mr-1 text-pastel-primary"></i> ${item['JENIS SATUAN'] || '-'}</p>
                 </div>`;
             };
 
-            document.getElementById('tab-rkh').innerHTML = [...appData.RKH].reverse().map(i => renderLaundryCard(i, false)).join('') || `<div class="text-center py-10 text-slate-400 text-sm">Belum ada data</div>`;
-            document.getElementById('tab-rsh').innerHTML = [...appData.RSH].reverse().map(i => renderLaundryCard(i, true)).join('') || `<div class="text-center py-10 text-slate-400 text-sm">Belum ada data</div>`;
+            document.getElementById('tab-rkh').innerHTML = [...appData.RKH].reverse().map(i => renderLaundryCard(i)).join('') || `<div class="text-center py-10 text-slate-400 text-sm">Belum ada data</div>`;
+            document.getElementById('tab-rsh').innerHTML = [...appData.RSH].reverse().map(i => renderLaundryCard(i)).join('') || `<div class="text-center py-10 text-slate-400 text-sm">Belum ada data</div>`;
         }
 
         // --- TAB SWITCHER ---
@@ -266,13 +275,11 @@
 
         // --- FORM MODAL (CREATE & EDIT LOGIC) ---
         function openModal(isEdit = false, itemId = null) {
-            currentEditId = isEdit ? itemId : null; // Set ID jika mode Edit
-            
+            currentEditId = isEdit ? itemId : null; 
             const formFields = document.getElementById('dynamic-form-fields');
             document.getElementById('modal-title').innerText = isEdit ? `Edit Data ${currentTab.toUpperCase()}` : `Tambah Data ${currentTab.toUpperCase()}`;
             document.getElementById('submit-btn').innerHTML = isEdit ? 'Update Data' : 'Simpan Data';
             
-            // Cari data lama jika mode Edit
             let oldData = {};
             if(isEdit) {
                 const sheetData = appData[currentTab.toUpperCase()];
@@ -302,15 +309,38 @@
                     <div><label class="text-xs font-medium text-slate-500 ml-1">Catatan Tambahan</label><input type="text" id="input-ket" value="${oldData.KETERANGAN || ''}" class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary text-slate-700" placeholder="-"></div>
                 `;
             } else {
-                let extraField = currentTab === 'rsh' ? `<div class="mt-4"><label class="text-xs font-medium text-slate-500 ml-1">Jenis Satuan</label><input type="text" id="input-satuan" value="${oldData['JENIS SATUAN'] || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary text-slate-700" placeholder="Cth: Bedcover"></div>` : '';
+                // Logika Tanggal/Jam Default atau Data Lama (untuk format kalender HTML harus YYYY-MM-DD dan HH:MM)
+                let tglMasukVal = formatDateForInput(new Date());
+                let tglNotaVal = formatDateForInput(new Date());
+                let jamVal = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
+                if (isEdit && oldData['TANGGAL MASUK']) {
+                    const partsMasuk = oldData['TANGGAL MASUK'].split('/');
+                    if(partsMasuk.length === 3) tglMasukVal = `${partsMasuk[2]}-${partsMasuk[1]}-${partsMasuk[0]}`;
+                }
+                if (isEdit && oldData['TANGGAL NOTA']) {
+                    const partsNota = oldData['TANGGAL NOTA'].split('/');
+                    if(partsNota.length === 3) tglNotaVal = `${partsNota[2]}-${partsNota[1]}-${partsNota[0]}`;
+                }
+                if (isEdit && oldData['JAM PENGERJAAN']) {
+                    // Pastikan formatnya HH:MM
+                    jamVal = oldData['JAM PENGERJAAN'].replace('.', ':').substring(0,5);
+                }
+
                 formFields.innerHTML = `
+                    <div class="grid grid-cols-2 gap-3 mb-2">
+                        <div><label class="text-xs font-medium text-slate-500 ml-1">Tgl Masuk</label><input type="date" id="input-tgl-masuk" value="${tglMasukVal}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-3 py-3 outline-none focus:border-pastel-primary text-slate-700 text-sm"></div>
+                        <div><label class="text-xs font-medium text-slate-500 ml-1">Jam Kerja</label><input type="time" id="input-jam" value="${jamVal}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-3 py-3 outline-none focus:border-pastel-primary text-slate-700 text-sm"></div>
+                    </div>
+                    <div><label class="text-xs font-medium text-slate-500 ml-1">Tgl Nota</label><input type="date" id="input-tgl-nota" value="${tglNotaVal}" required class="w-full mt-1 mb-2 bg-pastel-bg border border-blue-100 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary text-slate-700"></div>
+
                     <div><label class="text-xs font-medium text-slate-500 ml-1">Nama Pelanggan</label><input type="text" id="input-nama" value="${oldData.NAMA || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary text-slate-700"></div>
                     <div class="grid grid-cols-3 gap-3">
                         <div><label class="text-xs font-medium text-slate-500 ml-1">Berat (Kg)</label><input type="number" step="0.1" id="input-kg" value="${oldData.KG || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-3 py-3 outline-none focus:border-pastel-primary text-center text-slate-700"></div>
                         <div><label class="text-xs font-medium text-slate-500 ml-1">Pcs</label><input type="number" id="input-pcs" value="${oldData.PCS || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-3 py-3 outline-none focus:border-pastel-primary text-center text-slate-700"></div>
                         <div><label class="text-xs font-medium text-slate-500 ml-1">Keranjang</label><input type="text" id="input-krj" value="${oldData['NOMOR KERANJANG'] || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-3 py-3 outline-none focus:border-pastel-primary text-center text-slate-700"></div>
                     </div>
-                    ${extraField}
+                    <div class="mt-4"><label class="text-xs font-medium text-slate-500 ml-1">Jenis Satuan</label><input type="text" id="input-satuan" value="${oldData['JENIS SATUAN'] || ''}" class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary text-slate-700" placeholder="Teks bebas (Opsional)"></div>
                 `;
             }
             document.getElementById('overlay').classList.add('open');
@@ -321,17 +351,16 @@
             document.getElementById('overlay').classList.remove('open');
             document.getElementById('bottom-sheet').classList.remove('open');
             document.getElementById('input-form').reset();
-            currentEditId = null; // Bersihkan memori ID
+            currentEditId = null; 
         }
 
-        // --- SUBMIT DATA (CREATE / UPDATE) ---
+        // --- SUBMIT DATA ---
         async function submitToWebhook(e) {
             e.preventDefault();
             const btn = document.getElementById('submit-btn');
             const isEditing = currentEditId !== null;
             btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${isEditing ? 'Memperbarui...' : 'Menyimpan...'}`;
 
-            // Generate ID Baru jika Input, Gunakan ID Lama jika Edit
             const targetId = isEditing ? currentEditId : Date.now().toString();
             let payloadData = {};
             
@@ -348,29 +377,22 @@
                     "KETERANGAN": document.getElementById('input-ket').value
                 };
             } else {
-                let dateStr, timeStr;
-                if(isEditing) {
-                    // Ambil waktu asli jika sedang Edit
-                    const oldData = appData[currentTab.toUpperCase()].find(i => i.ID == currentEditId);
-                    dateStr = oldData['TANGGAL MASUK'];
-                    timeStr = oldData['JAM PENGERJAAN'];
-                } else {
-                    const now = new Date();
-                    dateStr = now.toLocaleDateString('id-ID');
-                    timeStr = now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
-                }
+                // Ambil format dari input form
+                const rawMasuk = document.getElementById('input-tgl-masuk').value;
+                const rawNota = document.getElementById('input-tgl-nota').value;
+                const rawJam = document.getElementById('input-jam').value;
 
                 payloadData = {
                     "id": targetId,
-                    "TANGGAL MASUK": dateStr,
+                    "TANGGAL MASUK": formatDateForSheet(rawMasuk), // Ubah jadi DD/MM/YYYY
                     "NAMA": document.getElementById('input-nama').value,
-                    "TANGGAL NOTA": dateStr,
-                    "JAM PENGERJAAN": timeStr,
+                    "TANGGAL NOTA": formatDateForSheet(rawNota),   // Ubah jadi DD/MM/YYYY
+                    "JAM PENGERJAAN": rawJam.replace(':', '.'),    // Ubah titik dua jadi titik sesuai format lama Anda
                     "PCS": document.getElementById('input-pcs').value,
                     "KG": document.getElementById('input-kg').value,
-                    "NOMOR KERANJANG": document.getElementById('input-krj').value
+                    "NOMOR KERANJANG": document.getElementById('input-krj').value,
+                    "JENIS SATUAN": document.getElementById('input-satuan').value || "-"
                 };
-                if(currentTab === 'rsh') payloadData["JENIS SATUAN"] = document.getElementById('input-satuan').value;
             }
 
             try {
@@ -382,7 +404,7 @@
 
                 if(response.ok) {
                     closeModal();
-                    refreshData(); // Sinkronisasi ulang untuk melihat perubahan
+                    refreshData(); 
                 } else {
                     alert("Gagal menyambung ke Database.");
                 }
