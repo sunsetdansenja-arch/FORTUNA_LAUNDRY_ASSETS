@@ -10,18 +10,26 @@
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome untuk Ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     
+    <!-- TEMA WARNA: Putih & Biru Pastel Cerah -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: { sans: ['Poppins', 'sans-serif'] },
                     colors: {
-                        pastel: { bg: '#F4F7F6', primary: '#5D8A82', primary_light: '#EDF2F1', text: '#4A5568', plus: '#6E9C7A', plus_bg: '#EBF2ED', minus: '#D9827C', minus_bg: '#FDF2F1' }
+                        pastel: { 
+                            bg: '#F5F9FF',          // Putih kebiruan sangat lembut
+                            primary: '#5C9CE6',     // Biru pastel cerah
+                            primary_light: '#E6F0FA', // Biru sangat muda untuk background card
+                            text: '#334155',        
+                            plus: '#34D399',        // Hijau terang untuk pemasukan
+                            plus_bg: '#ECFDF5',     
+                            minus: '#F87171',       // Merah soft untuk pengeluaran
+                            minus_bg: '#FEF2F2'
+                        }
                     }
                 }
             }
@@ -29,7 +37,7 @@
     </script>
 
     <style>
-        body { background-color: #F4F7F6; color: #4A5568; padding-bottom: 90px; }
+        body { background-color: #F5F9FF; color: #334155; padding-bottom: 90px; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .bottom-sheet { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform: translateY(100%); }
@@ -41,17 +49,13 @@
 </head>
 <body class="antialiased">
 
-    <!-- ================= PORTAL LOGIN ================= -->
+    <!-- PORTAL LOGIN -->
     <div id="login-portal" class="fixed inset-0 bg-pastel-bg z-50 flex flex-col items-center justify-center p-6">
-        <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 w-full max-w-sm text-center transform transition-transform duration-700 translate-y-0" id="login-card">
-            
-            <!-- Logo Beuna Agency -->
+        <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-blue-50 w-full max-w-sm text-center transform transition-transform duration-700 translate-y-0" id="login-card">
             <img src="https://raw.githubusercontent.com/sunsetdansenja-arch/beuna-agency/main/beuna%20logo%20v2.png" alt="Logo" class="w-20 h-20 mx-auto mb-5 object-contain rounded-xl shadow-sm border border-slate-50">
-            
             <h1 class="text-2xl font-semibold text-slate-700 mb-1">Fortuna Laundry</h1>
             <p class="text-xs text-slate-400 mb-8">Sistem Operasional & Kasir</p>
-            
-            <button onclick="doLogin()" class="w-full bg-pastel-primary text-white font-medium py-3.5 rounded-xl shadow-md shadow-slate-200 active:scale-95 transition-transform flex justify-center items-center">
+            <button onclick="doLogin()" class="w-full bg-pastel-primary text-white font-medium py-3.5 rounded-xl shadow-md shadow-blue-200 active:scale-95 transition-transform flex justify-center items-center">
                 <span>Masuk Aplikasi</span>
                 <i class="fas fa-arrow-right ml-2 text-sm"></i>
             </button>
@@ -59,46 +63,37 @@
         </div>
     </div>
 
-    <!-- Header -->
-    <header class="bg-white px-5 py-4 shadow-sm sticky top-0 z-10 rounded-b-2xl">
+    <!-- HEADER -->
+    <header class="bg-white px-5 py-4 shadow-sm sticky top-0 z-10 rounded-b-2xl border-b border-blue-50">
         <div class="flex justify-between items-center">
             <div>
                 <h1 class="text-xl font-semibold text-pastel-primary" id="header-title">Kasir (RCHK)</h1>
                 <p class="text-xs text-slate-400" id="header-subtitle">Pencatatan Keuangan</p>
             </div>
-            <button onclick="refreshData()" class="text-slate-400 hover:text-pastel-primary transition-colors p-2 rounded-full bg-slate-50">
+            <button onclick="refreshData()" class="text-slate-400 hover:text-pastel-primary transition-colors p-2 rounded-full bg-pastel-bg">
                 <i class="fas fa-sync-alt" id="refresh-icon"></i>
             </button>
         </div>
     </header>
 
-    <!-- Main Content Area -->
+    <!-- KONTEN UTAMA -->
     <main class="px-5 py-6">
-        
-        <!-- Tab Konten (Dikosongkan untuk diisi Data dari n8n) -->
-        <div id="tab-rchk" class="tab-content space-y-4">
-            <div class="text-center py-10 text-slate-400 text-sm"><i class="fas fa-spinner fa-spin mr-2"></i>Memuat data...</div>
-        </div>
-        <div id="tab-rkh" class="tab-content space-y-4 hidden">
-            <div class="text-center py-10 text-slate-400 text-sm"><i class="fas fa-spinner fa-spin mr-2"></i>Memuat data...</div>
-        </div>
-        <div id="tab-rsh" class="tab-content space-y-4 hidden">
-            <div class="text-center py-10 text-slate-400 text-sm"><i class="fas fa-spinner fa-spin mr-2"></i>Memuat data...</div>
-        </div>
+        <div id="tab-rchk" class="tab-content space-y-4"></div>
+        <div id="tab-rkh" class="tab-content space-y-4 hidden"></div>
+        <div id="tab-rsh" class="tab-content space-y-4 hidden"></div>
 
-        <!-- Footer CC -->
         <div class="mt-12 mb-8 text-center">
-            <p class="text-[10px] text-slate-400 font-medium tracking-wide">cc developed by beuna system</p>
+            <p class="text-[10px] text-blue-300 font-medium tracking-wide">cc developed by beuna system</p>
         </div>
     </main>
 
-    <!-- Floating Action Button -->
-    <button onclick="openModal()" class="fixed bottom-24 right-5 bg-pastel-primary text-white w-14 h-14 rounded-full shadow-lg shadow-slate-300 flex items-center justify-center text-xl z-20 hover:scale-105 active:scale-95 transition-transform">
+    <!-- FLOATING ACTION BUTTON (TAMBAH DATA BARU) -->
+    <button onclick="openModal(false)" class="fixed bottom-24 right-5 bg-pastel-primary text-white w-14 h-14 rounded-full shadow-lg shadow-blue-300 flex items-center justify-center text-xl z-20 hover:scale-105 active:scale-95 transition-transform">
         <i class="fas fa-plus"></i>
     </button>
 
-    <!-- Bottom Navigation -->
-    <nav class="fixed bottom-0 w-full bg-white border-t border-slate-100 flex justify-around py-3 pb-safe z-10 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.02)]">
+    <!-- NAVIGASI BAWAH -->
+    <nav class="fixed bottom-0 w-full bg-white border-t border-blue-50 flex justify-around py-3 pb-safe z-10 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
         <button onclick="switchTab('rchk', 'Kasir (RCHK)', 'Pencatatan Keuangan')" id="nav-rchk" class="nav-btn flex flex-col items-center text-pastel-primary w-1/3 transition-colors">
             <i class="fas fa-wallet text-xl mb-1"></i>
             <span class="text-[10px] font-medium">Kasir</span>
@@ -113,44 +108,46 @@
         </button>
     </nav>
 
-    <!-- Overlay & Modal Form -->
-    <div id="overlay" class="overlay fixed inset-0 bg-slate-800/40 z-30 backdrop-blur-[2px]" onclick="closeModal()"></div>
-    <div id="bottom-sheet" class="bottom-sheet fixed bottom-0 w-full bg-white rounded-t-3xl shadow-2xl z-40 p-6 max-h-[85vh] overflow-y-auto hide-scrollbar">
-        <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
-        <h2 class="text-lg font-semibold text-slate-700 mb-4" id="modal-title">Tambah Data</h2>
+    <!-- MODAL FORM BOTTOM SHEET -->
+    <div id="overlay" class="overlay fixed inset-0 bg-slate-900/40 z-30 backdrop-blur-sm" onclick="closeModal()"></div>
+    <div id="bottom-sheet" class="bottom-sheet fixed bottom-0 w-full bg-white rounded-t-3xl shadow-2xl z-40 p-6 max-h-[85vh] overflow-y-auto hide-scrollbar border-t border-blue-100">
+        <div class="w-12 h-1.5 bg-blue-100 rounded-full mx-auto mb-6"></div>
+        <h2 class="text-lg font-semibold text-pastel-primary mb-4" id="modal-title">Tambah Data</h2>
         <form id="input-form" onsubmit="submitToWebhook(event)">
             <div id="dynamic-form-fields" class="space-y-4"></div>
-            <button type="submit" id="submit-btn" class="w-full bg-pastel-primary text-white font-medium py-3.5 rounded-xl mt-6 shadow-md shadow-slate-200 active:scale-95 transition-transform flex justify-center items-center">
+            <button type="submit" id="submit-btn" class="w-full bg-pastel-primary text-white font-medium py-3.5 rounded-xl mt-6 shadow-md shadow-blue-200 active:scale-95 transition-transform flex justify-center items-center">
                 Simpan Data
             </button>
         </form>
     </div>
 
-    <!-- ================= JAVASCRIPT & N8N INTEGRATION ================= -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
         const WEBHOOK_URL = 'https://n8n-mzbmiib3etk4.kangkung.sumopod.my.id/webhook/fortuna-webhook';
         let currentTab = 'rchk';
+        
+        // Simpan data master di memori agar bisa dipanggil saat mau Edit
+        let appData = { RCHK: [], RKH: [], RSH: [] };
+        let currentEditId = null; // Menyimpan ID baris yang sedang diedit
 
-        // 1. Logika Persistensi Login
+        // --- SISTEM LOGIN ---
         document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('isLoggedIn') === 'true') {
-                const portal = document.getElementById('login-portal');
-                portal.style.display = 'none';
-                loadDataFromN8N(); // Langsung load data jika sudah login
+                document.getElementById('login-portal').style.display = 'none';
+                refreshData();
             }
         });
 
         function doLogin() {
             localStorage.setItem('isLoggedIn', 'true');
             const portal = document.getElementById('login-portal');
-            const card = document.getElementById('login-card');
-            card.style.transform = 'translateY(20px)';
+            document.getElementById('login-card').style.transform = 'translateY(20px)';
             portal.style.opacity = '0';
             setTimeout(() => { portal.style.display = 'none'; }, 500);
-            loadDataFromN8N(); // Load data setelah login ditekan
+            refreshData();
         }
 
-        // 2. Fungsi Ambil Data (READ) dari n8n
+        // --- FETCH DATA (READ) ---
         async function loadDataFromN8N() {
             const icon = document.getElementById('refresh-icon');
             icon.classList.add('fa-spin');
@@ -164,13 +161,12 @@
                 
                 const result = await response.json();
                 if(result.status === "success") {
-                    renderAllData(result.data);
+                    appData = result.data; // Simpan ke global memori
+                    renderAllData();
                 }
             } catch (error) {
-                console.log("Error Fetch:", error);
-                // Menangani kondisi jika CORS block atau server mati
                 document.querySelectorAll('.tab-content').forEach(el => {
-                    if(el.innerHTML.includes('Memuat')) el.innerHTML = `<div class="text-center py-10 text-rose-400 text-sm">Gagal terhubung ke server. Pastikan n8n menyala.</div>`;
+                    el.innerHTML = `<div class="text-center py-10 text-pastel-minus text-sm">Gagal terhubung ke server.</div>`;
                 });
             } finally {
                 icon.classList.remove('fa-spin');
@@ -178,15 +174,17 @@
         }
 
         function refreshData() {
-            document.getElementById(`tab-${currentTab}`).innerHTML = `<div class="text-center py-10 text-slate-400 text-sm"><i class="fas fa-spinner fa-spin mr-2"></i>Memuat pembaruan...</div>`;
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.innerHTML = `<div class="text-center py-10 text-pastel-primary text-sm"><i class="fas fa-spinner fa-spin mr-2"></i>Memuat...</div>`;
+            });
             loadDataFromN8N();
         }
 
-        // 3. Render Data ke Layar
-        function renderAllData(data) {
-            // Render RCHK
-            const rchkHtml = data.RCHK.reverse().map(item => {
-                // Tentukan jenis transaksi dari kolom yang terisi
+        // --- RENDER HTML KARTU ---
+        function renderAllData() {
+            // Render RCHK (Kasir)
+            const rchkHtml = [...appData.RCHK].reverse().map(item => {
+                if(!item.ID) return ''; 
                 let jenis = 'Keterangan'; let nominal = 0; let isMin = false;
                 if(item.DEBIT) { jenis = 'Debit'; nominal = item.DEBIT; }
                 else if(item.QRIS) { jenis = 'QRIS'; nominal = item.QRIS; }
@@ -197,11 +195,10 @@
                 const colorBg = isMin ? 'bg-pastel-minus_bg text-pastel-minus' : 'bg-pastel-plus_bg text-pastel-plus';
                 const sign = isMin ? '-' : '+';
                 
-                if(!item.NAMA) return ''; // Skip baris kosong
                 return `
-                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 relative">
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-blue-50 relative">
                     <div class="flex justify-between items-start mb-1">
-                        <span class="font-medium text-slate-700">${item.NAMA}</span>
+                        <span class="font-medium text-slate-700">${item.NAMA || '-'}</span>
                         <span class="text-sm font-semibold ${colorText}">${sign} Rp ${parseInt(nominal).toLocaleString('id-ID')}</span>
                     </div>
                     <div class="flex justify-between items-end mt-2">
@@ -209,32 +206,36 @@
                             <span class="text-[10px] font-medium px-2 py-1 ${colorBg} rounded-md">${jenis}</span>
                             <p class="text-xs text-slate-400 mt-1">${item.KETERANGAN || '-'}</p>
                         </div>
+                        <button onclick="openModal(true, '${item.ID}')" class="text-blue-200 hover:text-pastel-primary p-2 bg-pastel-bg rounded-lg transition-colors"><i class="fas fa-pen text-sm"></i></button>
                     </div>
                 </div>`;
-            }).join('') || `<div class="text-center py-10 text-slate-400 text-sm">Belum ada data Kasir</div>`;
+            }).join('') || `<div class="text-center py-10 text-slate-400 text-sm">Belum ada data</div>`;
             document.getElementById('tab-rchk').innerHTML = rchkHtml;
 
-            // Fungsi helper untuk render RKH/RSH
+            // Render RKH & RSH (Kiloan & Sortir)
             const renderLaundryCard = (item, isSortir) => {
-                if(!item.NAMA) return '';
-                let satuan = isSortir ? `<p class="text-[10px] font-medium text-slate-400 mt-3 border-t border-slate-50 pt-2"><i class="fas fa-tag mr-1 text-slate-300"></i> ${item['JENIS SATUAN'] || '-'}</p>` : '';
+                if(!item.ID) return '';
+                let satuan = isSortir ? `<p class="text-[10px] font-medium text-slate-400 mt-3 border-t border-pastel-bg pt-2"><i class="fas fa-tag mr-1 text-pastel-primary"></i> ${item['JENIS SATUAN'] || '-'}</p>` : '';
                 return `
-                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-blue-50 relative">
                     <div class="flex justify-between items-center mb-2">
-                        <span class="font-medium text-slate-700">${item.NAMA}</span>
-                        <span class="text-xs text-slate-400">${item['JAM PENGERJAAN'] || '-'} WIB</span>
+                        <span class="font-medium text-slate-700">${item.NAMA || '-'}</span>
+                        <div class="flex items-center gap-3">
+                            <span class="text-[10px] text-slate-400 bg-pastel-bg px-2 py-1 rounded-md">${item['TANGGAL MASUK'] || '-'} ${item['JAM PENGERJAAN'] || ''}</span>
+                            <button onclick="openModal(true, '${item.ID}')" class="text-blue-200 hover:text-pastel-primary"><i class="fas fa-pen text-sm"></i></button>
+                        </div>
                     </div>
                     <div class="grid grid-cols-3 gap-2 mt-3">
                         <div class="bg-pastel-primary_light p-2 rounded-xl text-center">
-                            <p class="text-[10px] text-slate-400">Berat</p>
-                            <p class="font-semibold text-pastel-primary">${item.KG || 0} Kg</p>
+                            <p class="text-[10px] text-pastel-primary font-medium">Berat</p>
+                            <p class="font-semibold text-slate-700">${item.KG || 0} Kg</p>
                         </div>
-                        <div class="bg-slate-50 p-2 rounded-xl text-center">
-                            <p class="text-[10px] text-slate-400">Pcs</p>
+                        <div class="bg-pastel-bg p-2 rounded-xl text-center">
+                            <p class="text-[10px] text-slate-500">Pcs</p>
                             <p class="font-semibold text-slate-600">${item.PCS || 0}</p>
                         </div>
-                        <div class="bg-slate-50 p-2 rounded-xl text-center">
-                            <p class="text-[10px] text-slate-400">Keranjang</p>
+                        <div class="bg-pastel-bg p-2 rounded-xl text-center">
+                            <p class="text-[10px] text-slate-500">Keranjang</p>
                             <p class="font-semibold text-slate-600">#${item['NOMOR KERANJANG'] || '-'}</p>
                         </div>
                     </div>
@@ -242,11 +243,11 @@
                 </div>`;
             };
 
-            document.getElementById('tab-rkh').innerHTML = data.RKH.reverse().map(i => renderLaundryCard(i, false)).join('') || `<div class="text-center py-10 text-slate-400 text-sm">Belum ada data Kiloan</div>`;
-            document.getElementById('tab-rsh').innerHTML = data.RSH.reverse().map(i => renderLaundryCard(i, true)).join('') || `<div class="text-center py-10 text-slate-400 text-sm">Belum ada data Sortir</div>`;
+            document.getElementById('tab-rkh').innerHTML = [...appData.RKH].reverse().map(i => renderLaundryCard(i, false)).join('') || `<div class="text-center py-10 text-slate-400 text-sm">Belum ada data</div>`;
+            document.getElementById('tab-rsh').innerHTML = [...appData.RSH].reverse().map(i => renderLaundryCard(i, true)).join('') || `<div class="text-center py-10 text-slate-400 text-sm">Belum ada data</div>`;
         }
 
-        // 4. Navigasi & Form UI
+        // --- TAB SWITCHER ---
         function switchTab(tabId, title, subtitle) {
             currentTab = tabId;
             document.getElementById('header-title').innerText = title;
@@ -263,29 +264,51 @@
             document.getElementById(`nav-${tabId}`).classList.remove('text-slate-400');
         }
 
-        function openModal() {
-            const formFields = document.getElementById('dynamic-form-fields');
-            document.getElementById('modal-title').innerText = `Tambah Data ${currentTab.toUpperCase()}`;
+        // --- FORM MODAL (CREATE & EDIT LOGIC) ---
+        function openModal(isEdit = false, itemId = null) {
+            currentEditId = isEdit ? itemId : null; // Set ID jika mode Edit
             
+            const formFields = document.getElementById('dynamic-form-fields');
+            document.getElementById('modal-title').innerText = isEdit ? `Edit Data ${currentTab.toUpperCase()}` : `Tambah Data ${currentTab.toUpperCase()}`;
+            document.getElementById('submit-btn').innerHTML = isEdit ? 'Update Data' : 'Simpan Data';
+            
+            // Cari data lama jika mode Edit
+            let oldData = {};
+            if(isEdit) {
+                const sheetData = appData[currentTab.toUpperCase()];
+                oldData = sheetData.find(item => item.ID == itemId) || {};
+            }
+
             if(currentTab === 'rchk') {
+                let oldJenis = 'Debit'; let oldNom = '';
+                if(isEdit) {
+                    if(oldData.DEBIT) { oldJenis = 'Debit'; oldNom = oldData.DEBIT; }
+                    else if(oldData.QRIS) { oldJenis = 'QRIS'; oldNom = oldData.QRIS; }
+                    else if(oldData.KREDIT) { oldJenis = 'Kredit'; oldNom = oldData.KREDIT; }
+                    else if(oldData.KASBON) { oldJenis = 'Kasbon'; oldNom = oldData.KASBON; }
+                }
+
                 formFields.innerHTML = `
-                    <div><label class="text-xs font-medium text-slate-500 ml-1">Nama / Keterangan</label><input type="text" id="input-nama" required class="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary"></div>
+                    <div><label class="text-xs font-medium text-slate-500 ml-1">Nama / Keterangan</label><input type="text" id="input-nama" value="${oldData.NAMA || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary text-slate-700"></div>
                     <div class="grid grid-cols-2 gap-4">
-                        <div><label class="text-xs font-medium text-slate-500 ml-1">Jenis Transaksi</label><select id="input-jenis" class="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary">
-                            <option value="Debit">Debit (Masuk)</option><option value="QRIS">QRIS (Masuk)</option><option value="Kredit">Kredit (Keluar)</option><option value="Kasbon">Kasbon (Piutang)</option>
+                        <div><label class="text-xs font-medium text-slate-500 ml-1">Jenis Transaksi</label><select id="input-jenis" class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary text-slate-700">
+                            <option value="Debit" ${oldJenis === 'Debit' ? 'selected' : ''}>Debit (Masuk)</option>
+                            <option value="QRIS" ${oldJenis === 'QRIS' ? 'selected' : ''}>QRIS (Masuk)</option>
+                            <option value="Kredit" ${oldJenis === 'Kredit' ? 'selected' : ''}>Kredit (Keluar)</option>
+                            <option value="Kasbon" ${oldJenis === 'Kasbon' ? 'selected' : ''}>Kasbon (Piutang)</option>
                         </select></div>
-                        <div><label class="text-xs font-medium text-slate-500 ml-1">Nominal (Rp)</label><input type="number" id="input-nominal" required class="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary" placeholder="0"></div>
+                        <div><label class="text-xs font-medium text-slate-500 ml-1">Nominal (Rp)</label><input type="number" id="input-nominal" value="${oldNom}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary text-slate-700"></div>
                     </div>
-                    <div><label class="text-xs font-medium text-slate-500 ml-1">Catatan Tambahan</label><input type="text" id="input-ket" class="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary" placeholder="-"></div>
+                    <div><label class="text-xs font-medium text-slate-500 ml-1">Catatan Tambahan</label><input type="text" id="input-ket" value="${oldData.KETERANGAN || ''}" class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary text-slate-700" placeholder="-"></div>
                 `;
             } else {
-                let extraField = currentTab === 'rsh' ? `<div class="mt-4"><label class="text-xs font-medium text-slate-500 ml-1">Jenis Satuan</label><input type="text" id="input-satuan" required class="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary" placeholder="Cth: Bedcover"></div>` : '';
+                let extraField = currentTab === 'rsh' ? `<div class="mt-4"><label class="text-xs font-medium text-slate-500 ml-1">Jenis Satuan</label><input type="text" id="input-satuan" value="${oldData['JENIS SATUAN'] || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary text-slate-700" placeholder="Cth: Bedcover"></div>` : '';
                 formFields.innerHTML = `
-                    <div><label class="text-xs font-medium text-slate-500 ml-1">Nama Pelanggan</label><input type="text" id="input-nama" required class="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary"></div>
+                    <div><label class="text-xs font-medium text-slate-500 ml-1">Nama Pelanggan</label><input type="text" id="input-nama" value="${oldData.NAMA || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary text-slate-700"></div>
                     <div class="grid grid-cols-3 gap-3">
-                        <div><label class="text-xs font-medium text-slate-500 ml-1">Berat (Kg)</label><input type="number" step="0.1" id="input-kg" required class="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 outline-none focus:border-pastel-primary text-center"></div>
-                        <div><label class="text-xs font-medium text-slate-500 ml-1">Pcs</label><input type="number" id="input-pcs" required class="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 outline-none focus:border-pastel-primary text-center"></div>
-                        <div><label class="text-xs font-medium text-slate-500 ml-1">Keranjang</label><input type="text" id="input-krj" required class="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 outline-none focus:border-pastel-primary text-center"></div>
+                        <div><label class="text-xs font-medium text-slate-500 ml-1">Berat (Kg)</label><input type="number" step="0.1" id="input-kg" value="${oldData.KG || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-3 py-3 outline-none focus:border-pastel-primary text-center text-slate-700"></div>
+                        <div><label class="text-xs font-medium text-slate-500 ml-1">Pcs</label><input type="number" id="input-pcs" value="${oldData.PCS || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-3 py-3 outline-none focus:border-pastel-primary text-center text-slate-700"></div>
+                        <div><label class="text-xs font-medium text-slate-500 ml-1">Keranjang</label><input type="text" id="input-krj" value="${oldData['NOMOR KERANJANG'] || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-3 py-3 outline-none focus:border-pastel-primary text-center text-slate-700"></div>
                     </div>
                     ${extraField}
                 `;
@@ -298,22 +321,25 @@
             document.getElementById('overlay').classList.remove('open');
             document.getElementById('bottom-sheet').classList.remove('open');
             document.getElementById('input-form').reset();
+            currentEditId = null; // Bersihkan memori ID
         }
 
-        // 5. Fungsi Kirim Data (CREATE) ke n8n
+        // --- SUBMIT DATA (CREATE / UPDATE) ---
         async function submitToWebhook(e) {
             e.preventDefault();
             const btn = document.getElementById('submit-btn');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Mengirim ke Database...';
+            const isEditing = currentEditId !== null;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${isEditing ? 'Memperbarui...' : 'Menyimpan...'}`;
 
+            // Generate ID Baru jika Input, Gunakan ID Lama jika Edit
+            const targetId = isEditing ? currentEditId : Date.now().toString();
             let payloadData = {};
             
-            // Susun Payload sesuai Kebutuhan n8n
             if (currentTab === 'rchk') {
                 const jenis = document.getElementById('input-jenis').value;
                 const nominal = document.getElementById('input-nominal').value;
                 payloadData = {
-                    "NOMOR": Date.now().toString().slice(-6), // ID acak
+                    "id": targetId,
                     "NAMA": document.getElementById('input-nama').value,
                     "KREDIT": jenis === 'Kredit' ? nominal : "",
                     "KASBON": jenis === 'Kasbon' ? nominal : "",
@@ -322,10 +348,20 @@
                     "KETERANGAN": document.getElementById('input-ket').value
                 };
             } else {
-                const now = new Date();
-                const dateStr = now.toLocaleDateString('id-ID');
-                const timeStr = now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+                let dateStr, timeStr;
+                if(isEditing) {
+                    // Ambil waktu asli jika sedang Edit
+                    const oldData = appData[currentTab.toUpperCase()].find(i => i.ID == currentEditId);
+                    dateStr = oldData['TANGGAL MASUK'];
+                    timeStr = oldData['JAM PENGERJAAN'];
+                } else {
+                    const now = new Date();
+                    dateStr = now.toLocaleDateString('id-ID');
+                    timeStr = now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+                }
+
                 payloadData = {
+                    "id": targetId,
                     "TANGGAL MASUK": dateStr,
                     "NAMA": document.getElementById('input-nama').value,
                     "TANGGAL NOTA": dateStr,
@@ -334,13 +370,10 @@
                     "KG": document.getElementById('input-kg').value,
                     "NOMOR KERANJANG": document.getElementById('input-krj').value
                 };
-                if(currentTab === 'rsh') {
-                    payloadData["JENIS SATUAN"] = document.getElementById('input-satuan').value;
-                }
+                if(currentTab === 'rsh') payloadData["JENIS SATUAN"] = document.getElementById('input-satuan').value;
             }
 
             try {
-                // Tembak Webhook N8N
                 const response = await fetch(WEBHOOK_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -349,10 +382,9 @@
 
                 if(response.ok) {
                     closeModal();
-                    // Tarik ulang data terbaru dari n8n agar sinkron
-                    refreshData(); 
+                    refreshData(); // Sinkronisasi ulang untuk melihat perubahan
                 } else {
-                    alert("Gagal menyimpan data ke database.");
+                    alert("Gagal menyambung ke Database.");
                 }
             } catch (err) {
                 alert("Terjadi kesalahan jaringan.");
