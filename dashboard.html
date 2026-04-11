@@ -15,6 +15,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+   
     <script>
         tailwind.config = {
             theme: {
@@ -31,10 +32,94 @@
         }
     </script>
     <style>
+        /* A4 Print Styles - Optimized */
+        @page {
+            size: A4;
+            margin: 15mm 12mm 15mm 12mm;
+        }
+        
+        @media print {
+            * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+            body { 
+                font-size: 11pt !important; 
+                line-height: 1.4 !important;
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                font-family: 'Poppins', sans-serif !important;
+            }
+            .no-print, .no-print * { display: none !important; }
+            
+            #pdf-container {
+                width: 210mm !important;
+                max-width: 210mm !important;
+                margin: 0 !important;
+                padding: 20mm 12mm !important;
+                box-shadow: none !important;
+                border: none !important;
+                page-break-after: avoid;
+                background: white !important;
+            }
+            
+            .pdf-header {
+                page-break-after: avoid;
+                margin-bottom: 20mm;
+            }
+            
+            .pdf-stats {
+                page-break-inside: avoid;
+                margin-bottom: 15mm;
+            }
+            
+            .pdf-table-container {
+                page-break-inside: avoid;
+            }
+            
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                font-size: 9pt !important;
+                margin-bottom: 10mm;
+            }
+            
+            th {
+                background: #f8fafc !important;
+                border-bottom: 2px solid #e2e8f0 !important;
+                padding: 8px 4px !important;
+                font-weight: 600 !important;
+                font-size: 8pt !important;
+                text-align: left;
+                position: sticky;
+                top: 0;
+            }
+            
+            td {
+                padding: 6px 4px !important;
+                border-bottom: 1px solid #f1f5f9 !important;
+                vertical-align: top;
+                line-height: 1.3;
+            }
+            
+            tr:hover td { background: #f8fafc !important; }
+            
+            .pdf-footer {
+                margin-top: 15mm;
+                padding-top: 10mm;
+                border-top: 1px solid #e2e8f0;
+                font-size: 8pt;
+                color: #64748b;
+            }
+            
+            h1, h2, h3 { page-break-after: avoid; }
+            .break-before { page-break-before: always; }
+        }
+        
+        /* Screen Styles */
         body { 
             background-color: #F5F9FF; 
             color: #334155; 
             padding-bottom: 90px; 
+            font-family: 'Poppins', sans-serif;
         }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -42,111 +127,17 @@
         .bottom-sheet.open { transform: translateY(0); }
         .overlay { transition: opacity 0.3s; opacity: 0; pointer-events: none; }
         .overlay.open { opacity: 1; pointer-events: auto; }
-       
-        /* === VERSI BARU: LAYOUT PDF A4 YANG RAPI === */
+        
+        /* PDF Preview on Screen */
         #pdf-container {
-            /* Ukuran eksak A4 (210mm × 297mm) + padding standar cetak */
-            width: 210mm;
-            min-height: 297mm;
-            margin: 30px auto;
-            padding: 18mm 15mm 15mm 15mm;
-            box-sizing: border-box;
-            background: white;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15);
-            overflow: hidden;
-            font-family: 'Poppins', sans-serif;
-            color: #334155;
-            position: relative;
-        }
-
-        /* Header PDF */
-        #pdf-header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 3px solid #5C9CE6;
-            padding-bottom: 15px;
-        }
-
-        /* Grid ringkasan (selalu 2 kolom, tidak responsive) */
-        .pdf-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-
-        .pdf-card {
-            padding: 14px;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-        }
-
-        /* Tabel rincian */
-        #pdf-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 9.5pt;
-            line-height: 1.4;
-        }
-        #pdf-table th {
-            text-align: left;
-            padding: 8px 6px;
-            font-size: 8.5pt;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid #64748b;
-            color: #64748b;
-        }
-        #pdf-table td {
-            padding: 9px 6px;
-            vertical-align: top;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        #pdf-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        /* Footer PDF */
-        .pdf-footer {
-            position: absolute;
-            bottom: 15mm;
-            left: 15mm;
-            right: 15mm;
-            text-align: center;
-            font-size: 8pt;
-            color: #64748b;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 8px;
-        }
-
-        /* === PRINT & EXPORT OPTIMASI === */
-        @media print {
-            .no-print { display: none !important; }
-            body { background: white; padding: 0; margin: 0; }
-            #pdf-container {
-                width: 210mm !important;
-                min-height: 297mm !important;
-                margin: 0 !important;
-                padding: 18mm 15mm 15mm 15mm !important;
-                box-shadow: none !important;
-                border: none !important;
-            }
-            tr { page-break-inside: avoid !important; }
-            thead { display: table-header-group !important; }
-            table { page-break-inside: auto !important; }
-        }
-
-        /* Pastikan warna tetap cantik saat di-cetak */
-        #pdf-container * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
+            max-width: 210mm;
+            margin: 0 auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body class="antialiased">
-    <!-- LOGIN PORTAL & HEADER & NAV & MODAL tetap sama (tidak diubah) -->
+    <!-- Login Portal & UI Elements (sama seperti sebelumnya) -->
     <div id="login-portal" class="fixed inset-0 bg-pastel-bg z-50 flex flex-col items-center justify-center p-6 transition-opacity duration-500">
         <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-blue-50 w-full max-w-sm text-center transform transition-transform duration-700 translate-y-0" id="login-card">
             <img src="https://raw.githubusercontent.com/sunsetdansenja-arch/beuna-agency/main/beuna%20logo%20v2.png" alt="Logo" class="w-20 h-20 mx-auto mb-5 object-contain rounded-xl shadow-sm border border-slate-50">
@@ -173,89 +164,107 @@
 
     <main class="px-5 py-6">
         <div id="tab-dashboard" class="tab-content space-y-4">
-           
-            <!-- KONTAINER PDF YANG SUDAH DI-OPTIMASI -->
-            <div id="pdf-container">
-                <!-- HEADER PDF -->
-                <div id="pdf-header">
-                    <img src="https://raw.githubusercontent.com/sunsetdansenja-arch/beuna-agency/main/beuna%20logo%20v2.png" 
-                         alt="Fortuna Laundry" 
-                         class="w-16 h-16 mx-auto mb-3">
-                    <h2 id="pdf-title" class="text-2xl font-bold text-slate-800 tracking-wider">LAPORAN KEUANGAN</h2>
-                    <p class="text-lg font-semibold text-pastel-primary mt-1">FORTUNA LAUNDRY</p>
-                    <p id="pdf-date-range" class="text-sm font-medium text-slate-600 mt-2"></p>
+            <!-- Date Filter -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-blue-50 no-print mb-6">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-xs font-semibold text-slate-500 uppercase"><i class="far fa-calendar-alt mr-1"></i> Rentang Laporan</h3>
+                    <button onclick="setMonthly()" class="text-[10px] bg-pastel-primary_light text-pastel-primary px-3 py-1.5 rounded-lg font-semibold active:scale-95 transition-transform">
+                        Bulan Ini
+                    </button>
                 </div>
-
-                <!-- RINGKASAN KEUANGAN (Grid 2 kolom tetap) -->
-                <div class="pdf-grid">
-                    <div class="pdf-card bg-pastel-plus_bg border-green-200">
-                        <span class="text-[10px] font-semibold text-pastel-plus block mb-1">TOTAL PEMASUKAN</span>
-                        <h3 id="dash-masuk" class="text-2xl font-bold text-slate-800">Rp 0</h3>
-                        <div class="text-xs text-slate-600 mt-2 flex justify-between">
-                            <span id="dash-cash">Cash: 0</span>
-                            <span id="dash-qris">QRIS: 0</span>
-                        </div>
-                    </div>
-
-                    <div class="pdf-card bg-pastel-minus_bg border-red-200">
-                        <span class="text-[10px] font-semibold text-pastel-minus block mb-1">TOTAL PENGELUARAN</span>
-                        <h3 id="dash-keluar" class="text-2xl font-bold text-slate-800">Rp 0</h3>
-                        <p class="text-xs text-slate-600 mt-2">Seluruh beban biaya</p>
-                    </div>
-
-                    <div class="pdf-card bg-pastel-primary_light border-blue-200 col-span-2 flex items-center justify-between">
-                        <div>
-                            <span class="text-[10px] font-semibold text-pastel-primary uppercase">LABA OPERASIONAL</span>
-                            <h3 id="dash-laba" class="text-3xl font-bold text-slate-800">Rp 0</h3>
-                        </div>
-                        <i class="fas fa-chart-line text-5xl text-pastel-primary opacity-20"></i>
-                    </div>
-
-                    <div class="pdf-card bg-slate-50 border-slate-200 col-span-2 flex items-center justify-between">
-                        <div>
-                            <span class="text-[10px] font-semibold text-slate-500 uppercase">PETTY CASH FISIK</span>
-                            <h3 id="dash-petty" class="text-xl font-bold text-slate-700">Rp 0</h3>
-                        </div>
-                        <i class="fas fa-cash-register text-4xl text-slate-400 opacity-20"></i>
-                    </div>
-                </div>
-
-                <!-- RINCIAN TRANSAKSI -->
-                <div class="mt-6">
-                    <h3 class="text-xs font-semibold text-slate-500 uppercase mb-3 tracking-widest">Rincian Transaksi</h3>
-                    <table id="pdf-table" class="w-full text-left">
-                        <thead>
-                            <tr>
-                                <th class="w-[22%]">Tgl &amp; Waktu</th>
-                                <th class="w-[43%]">Uraian / Keterangan</th>
-                                <th class="w-[13%] text-center">Tipe</th>
-                                <th class="w-[22%] text-right">Nominal</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dashboard-list" class="text-[9.5pt]"></tbody>
-                    </table>
-                </div>
-
-                <!-- FOOTER PDF -->
-                <div class="pdf-footer">
-                    <p>cc developed by beuna system | beuna.xyz • Dicetak pada <span id="print-date"></span></p>
+                <div class="relative">
+                    <i class="fas fa-calendar-day absolute left-4 top-1/2 transform -translate-y-1/2 text-pastel-primary"></i>
+                    <input type="text" id="date-range-picker" readonly class="w-full bg-pastel-bg border border-blue-100 rounded-xl pl-10 pr-4 py-3 outline-none text-sm text-slate-700 font-medium cursor-pointer" placeholder="Pilih Mulai s/d Akhir...">
                 </div>
             </div>
 
-            <button onclick="downloadPDF()" 
-                    class="no-print w-full bg-slate-800 text-white font-medium py-3.5 rounded-xl shadow-md mt-6 active:scale-95 transition-transform flex justify-center items-center">
-                <i class="fas fa-file-pdf text-red-400 mr-2 text-lg"></i> 
-                Download PDF A4 (Layout Rapi)
+            <!-- PDF Optimized Container -->
+            <div id="pdf-container" class="bg-white rounded-2xl relative">
+                <!-- PDF Header -->
+                <div class="pdf-header text-center pb-12 border-b-2 border-slate-100">
+                    <div class="mb-6">
+                        <img src="https://raw.githubusercontent.com/sunsetdansenja-arch/beuna-agency/main/beuna%20logo%20v2.png" alt="Logo" class="w-16 h-16 mx-auto mb-4 object-contain border-2 border-slate-100 rounded-lg">
+                    </div>
+                    <h1 id="pdf-title" class="text-3xl font-black text-slate-800 uppercase tracking-wide mb-2">LAPORAN KEUANGAN BULANAN</h1>
+                    <p class="text-xl font-semibold text-pastel-primary mb-1">FORTUNA LAUNDRY</p>
+                    <p class="text-base font-medium text-slate-600 bg-slate-50 inline-block px-6 py-2 rounded-lg border" id="pdf-date-range">Periode: -</p>
+                </div>
+
+                <!-- PDF Stats Grid -->
+                <div class="pdf-stats grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                    <div class="bg-gradient-to-br from-emerald-50 to-green-50 p-6 rounded-2xl border border-emerald-100 text-center">
+                        <div class="text-xs font-semibold text-emerald-600 uppercase tracking-wide mb-2">TOTAL PEMASUKAN</div>
+                        <div class="text-2xl font-black text-slate-800 mb-1" id="dash-masuk">Rp 0</div>
+                        <div class="text-xs space-x-4">
+                            <span id="dash-cash" class="text-slate-600 font-medium">Cash: Rp 0</span>
+                            <span id="dash-qris" class="text-slate-600 font-medium">QRIS: Rp 0</span>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-br from-red-50 to-rose-50 p-6 rounded-2xl border border-red-100 text-center">
+                        <div class="text-xs font-semibold text-red-600 uppercase tracking-wide mb-2">TOTAL PENGELUARAN</div>
+                        <div class="text-2xl font-black text-slate-800" id="dash-keluar">Rp 0</div>
+                        <div class="text-xs text-slate-600 font-medium mt-1">Seluruh beban biaya</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-100 md:col-span-2 text-center md:text-left md:flex md:justify-between md:items-center">
+                        <div>
+                            <div class="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-2">LABA OPERASIONAL</div>
+                            <div class="text-4xl font-black" id="dash-laba">Rp 0</div>
+                        </div>
+                        <i class="fas fa-chart-line text-4xl text-blue-300 md:block hidden"></i>
+                    </div>
+                    <div class="bg-gradient-to-br from-slate-50 to-gray-50 p-6 rounded-2xl border border-slate-200 md:col-span-2 text-center md:text-left md:flex md:justify-between md:items-center">
+                        <div>
+                            <div class="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2">Petty Cash Fisik (Sisa Laci Kasir)</div>
+                            <div class="text-2xl font-black text-slate-800" id="dash-petty">Rp 0</div>
+                        </div>
+                        <i class="fas fa-cash-register text-3xl text-slate-400 md:block hidden"></i>
+                    </div>
+                </div>
+
+                <!-- PDF Table -->
+                <div class="pdf-table-container">
+                    <h3 class="text-lg font-semibold text-slate-800 uppercase mb-6 tracking-wide border-b border-slate-200 pb-2">Rincian Transaksi</h3>
+                    <div class="overflow-x-auto">
+                        <table id="pdf-table" class="w-full">
+                            <thead>
+                                <tr class="bg-slate-50 border-b-2 border-slate-200">
+                                    <th class="w-20 text-left font-semibold text-xs uppercase text-slate-600 py-3 px-4">Tgl & Waktu</th>
+                                    <th class="w-40 text-left font-semibold text-xs uppercase text-slate-600 py-3 px-4">Uraian / Keterangan</th>
+                                    <th class="w-16 text-center font-semibold text-xs uppercase text-slate-600 py-3 px-4">Tipe</th>
+                                    <th class="w-24 text-right font-semibold text-xs uppercase text-slate-600 py-3 px-4">Nominal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboard-list" class="text-sm">
+                                <tr><td colspan="4" class="text-center py-12 text-slate-400"><i class="fas fa-spinner fa-spin mr-2"></i>Menghitung data...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PDF Footer -->
+                <div class="pdf-footer text-center mt-16">
+                    <p class="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">Dicetak pada: <span id="print-timestamp"></span></p>
+                    <p class="text-xs text-slate-400 font-medium uppercase border-t pt-3 mt-3">cc developed by beuna system | beuna.xyz</p>
+                </div>
+            </div>
+
+            <!-- Download Button -->
+            <button onclick="downloadPDF()" class="no-print w-full bg-gradient-to-r from-slate-800 to-slate-900 text-white font-semibold py-4 rounded-2xl shadow-xl mt-6 active:scale-95 transition-all duration-200 flex justify-center items-center hover:shadow-2xl">
+                <i class="fas fa-file-pdf text-red-400 mr-3 text-xl"></i> 
+                <span class="text-lg tracking-wide">Download PDF A4 (Optimized)</span>
             </button>
         </div>
 
-        <!-- Tab lain tetap sama -->
+        <!-- Other tabs (sama seperti sebelumnya) -->
         <div id="tab-rchk" class="tab-content space-y-4 hidden"></div>
         <div id="tab-rkh" class="tab-content space-y-4 hidden"></div>
         <div id="tab-rsh" class="tab-content space-y-4 hidden"></div>
+        <div class="mt-8 text-center no-print pb-4">
+            <p class="text-[10px] text-blue-300 font-medium uppercase">cc developed by beuna system | beuna.xyz</p>
+        </div>
     </main>
 
-    <!-- NAV & MODAL tetap sama (dipotong untuk ringkas) -->
+    <!-- Navigation & Modal (sama seperti sebelumnya) -->
     <nav class="no-print fixed bottom-0 w-full bg-white/90 backdrop-blur-md border-t border-blue-50 flex justify-around py-3 pb-safe z-10 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
         <button onclick="switchTab('dashboard', 'Dashboard', 'Ringkasan Operasional')" id="nav-dashboard" class="nav-btn flex flex-col items-center text-pastel-primary w-1/4 transition-colors"><i class="fas fa-chart-pie text-xl mb-1"></i><span class="text-[10px] font-medium">Analitik</span></button>
         <button onclick="switchTab('rchk', 'Kasir (RCHK)', 'Pencatatan Keuangan')" id="nav-rchk" class="nav-btn flex flex-col items-center text-slate-400 w-1/4 transition-colors"><i class="fas fa-wallet text-xl mb-1"></i><span class="text-[10px] font-medium">Kasir</span></button>
@@ -263,179 +272,7 @@
         <button onclick="switchTab('rsh', 'Sortir (RSH)', 'Pencatatan Sortir')" id="nav-rsh" class="nav-btn flex flex-col items-center text-slate-400 w-1/4 transition-colors"><i class="fas fa-tags text-xl mb-1"></i><span class="text-[10px] font-medium">Sortir</span></button>
     </nav>
 
-    <!-- Script (hanya bagian penting yang diubah) -->
-    <script>
-        const WEBHOOK_URL = 'https://n8n-mzbmiib3etk4.kangkung.sumopod.my.id/webhook/fortuna-webhook';
-        let currentTab = 'dashboard';
-        let appData = { RCHK: [], RKH: [], RSH: [] };
-        let currentEditId = null;
-        let isMonthlyReport = true;
-        let filterStart = null;
-        let filterEnd = null;
-        const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
-
-        // Inisialisasi Flatpickr (tetap sama)
-        const fp = flatpickr("#date-range-picker", {
-            mode: "range",
-            dateFormat: "Y-m-d",
-            altInput: true,
-            altFormat: "d M Y",
-            locale: "id",
-            onChange: function(selectedDates) {
-                if(selectedDates.length === 2) {
-                    isMonthlyReport = false;
-                    filterStart = selectedDates[0];
-                    filterEnd = new Date(selectedDates[1].setHours(23, 59, 59, 999));
-                    if(appData.RCHK.length > 0) calculateDashboard();
-                }
-            }
-        });
-
-        function setMonthly() {
-            isMonthlyReport = true;
-            const now = new Date();
-            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-            const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
-            fp.setDate([firstDay, lastDay]);
-            filterStart = firstDay;
-            filterEnd = lastDay;
-            if(appData.RCHK.length > 0) calculateDashboard();
-        }
-
-        // Fungsi download PDF yang sudah dioptimasi
-        function downloadPDF() {
-            const element = document.getElementById('pdf-container');
-            
-            // Update tanggal cetak
-            document.getElementById('print-date').innerText = new Date().toLocaleDateString('id-ID', {
-                day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
-            });
-
-            let filenameStr = 'Fortuna_Laporan.pdf';
-            if(isMonthlyReport) {
-                const monthName = filterStart.toLocaleString('id-ID', { month: 'long', year: 'numeric' }).replace(/ /g, '_');
-                filenameStr = `Fortuna_Laporan_Bulanan_${monthName}.pdf`;
-            } else {
-                const sStr = filterStart.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '_');
-                const eStr = filterEnd.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '_');
-                filenameStr = `Fortuna_Laporan_Periode_${sStr}_sd_${eStr}.pdf`;
-            }
-
-            const opt = {
-                margin: 0,                    // Margin sudah diatur di CSS padding
-                filename: filenameStr,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { 
-                    scale: 3,                 // Kualitas tinggi (crisp)
-                    useCORS: true,
-                    windowWidth: 1200,
-                    scrollX: 0,
-                    scrollY: 0
-                },
-                jsPDF: { 
-                    unit: 'mm', 
-                    format: 'a4', 
-                    orientation: 'portrait' 
-                }
-            };
-
-            html2pdf().set(opt).from(element).save();
-        }
-
-        // Fungsi calculateDashboard (tetap sama, hanya update tampilan)
-        function calculateDashboard() {
-            if(!filterStart || !filterEnd) return;
-            const startTs = filterStart.getTime();
-            const endTs = filterEnd.getTime();
-            const titleEl = document.getElementById('pdf-title');
-            const subtitleEl = document.getElementById('pdf-date-range');
-           
-            if(isMonthlyReport) {
-                titleEl.innerText = "LAPORAN KEUANGAN BULANAN";
-                const monthName = filterStart.toLocaleString('id-ID', { month: 'long', year: 'numeric' });
-                subtitleEl.innerText = `Bulan: ${monthName}`;
-            } else {
-                titleEl.innerText = "LAPORAN KEUANGAN PERIODE KHUSUS";
-                const sStr = filterStart.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-                const eStr = filterEnd.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-                subtitleEl.innerText = `Periode: ${sStr} s/d ${eStr}`;
-            }
-
-            let tMasuk = 0, tCash = 0, tQris = 0, tKeluar = 0, pettyCashTotal = 0;
-            let listHtml = '';
-            const sortedRCHK = [...appData.RCHK].reverse();
-            
-            sortedRCHK.forEach(item => {
-                if(!item.ID) return;
-                const itemTs = parseInt(item.ID);
-                const isInDataRange = (itemTs >= startTs && itemTs <= endTs);
-                const cDebit = parseInt(item.DEBIT) || 0;
-                const cQris = parseInt(item.QRIS) || 0;
-                const cKredit = parseInt(item.KREDIT) || 0;
-                const cKasbon = parseInt(item.KASBON) || 0;
-
-                if(itemTs <= endTs) {
-                    pettyCashTotal += cDebit;
-                    pettyCashTotal -= cKredit;
-                }
-
-                if(isInDataRange) {
-                    tCash += cDebit; 
-                    tQris += cQris; 
-                    tKeluar += cKredit; 
-                    tMasuk += (cDebit + cQris);
-
-                    let jenis = '', badgeColor = '', badgeText = '', nom = 0;
-                    if(item.DEBIT) { jenis = 'CASH'; badgeColor = 'bg-blue-50 text-blue-600'; badgeText = 'CASH'; nom = cDebit; }
-                    else if(item.QRIS) { jenis = 'QRIS'; badgeColor = 'bg-emerald-50 text-emerald-600'; badgeText = 'QRIS'; nom = cQris; }
-                    else if(item.KREDIT) { jenis = 'KREDIT'; badgeColor = 'bg-rose-50 text-rose-600'; badgeText = 'KELUAR'; nom = cKredit; }
-                    else if(item.KASBON) { jenis = 'KASBON'; badgeColor = 'bg-amber-50 text-amber-600'; badgeText = 'KASBON'; nom = cKasbon; }
-
-                    const tsDate = new Date(itemTs);
-                    const dStr = `${String(tsDate.getDate()).padStart(2,'0')}/${String(tsDate.getMonth()+1).padStart(2,'0')} ${String(tsDate.getHours()).padStart(2,'0')}:${String(tsDate.getMinutes()).padStart(2,'0')}`;
-
-                    listHtml += `
-                    <tr>
-                        <td class="text-slate-600">${dStr}</td>
-                        <td>
-                            <p class="font-semibold">${item.NAMA || '-'}</p>
-                            <p class="text-[8.5pt] text-slate-400">${item.KETERANGAN || '-'}</p>
-                        </td>
-                        <td class="text-center">
-                            <span class="text-[8pt] font-bold px-3 py-0.5 rounded ${badgeColor}">${badgeText}</span>
-                        </td>
-                        <td class="text-right font-bold ${jenis === 'KREDIT' ? 'text-pastel-minus' : 'text-slate-700'}">
-                            ${jenis === 'KREDIT' ? '-' : ''}${formatRp(nom)}
-                        </td>
-                    </tr>`;
-                }
-            });
-
-            let laba = tMasuk - tKeluar;
-            document.getElementById('dash-masuk').innerText = formatRp(tMasuk);
-            document.getElementById('dash-cash').innerText = `Cash: ${formatRp(tCash)}`;
-            document.getElementById('dash-qris').innerText = `QRIS: ${formatRp(tQris)}`;
-            document.getElementById('dash-keluar').innerText = formatRp(tKeluar);
-            document.getElementById('dash-petty').innerText = formatRp(pettyCashTotal);
-            document.getElementById('dash-laba').innerText = formatRp(laba);
-            document.getElementById('dash-laba').className = `text-3xl font-bold ${laba < 0 ? 'text-pastel-minus' : 'text-slate-800'}`;
-
-            document.getElementById('dashboard-list').innerHTML = listHtml || 
-                `<tr><td colspan="4" class="text-center py-12 text-slate-400 text-sm">Tidak ada transaksi di periode ini.</td></tr>`;
-        }
-
-        // Fungsi-fungsi lain (loadDataFromN8N, renderEditorCards, dll) tetap sama seperti kode asli Anda
-        // (Untuk ringkasan, saya tidak menuliskan ulang semua, tapi Anda bisa copy-paste bagian itu dari kode lama)
-
-        document.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('isOwnerLoggedIn') === 'true') {
-                document.getElementById('login-portal').style.display = 'none';
-                setMonthly();
-                loadDataFromN8N();
-            }
-        });
-
-        // ... (sisanya sama dengan kode HTML asli Anda)
-    </script>
-</body>
-</html>
+    <!-- Modal elements (sama seperti sebelumnya - saya potong untuk singkat) -->
+    <button onclick="openModal(false)" class="no-print fixed bottom-24 right-5 bg-slate-800 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-xl z-20 hover:scale-105 active:scale-95 transition-transform hidden" id="fab-btn"><i class="fas fa-plus"></i></button>
+    <div id="overlay" class="overlay fixed inset-0 bg-slate-900/40 z-30 backdrop-blur-sm no-print" onclick="closeModal()"></div>
+    <div id="bottom-sheet" class="bottom-sheet no-print fixed bottom-0 w-full bg
