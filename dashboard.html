@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fortuna Laundry - Owner Dashboard</title>
+    
+    <link rel="icon" href="https://raw.githubusercontent.com/sunsetdansenja-arch/beuna-agency/main/beuna%20logo%20v2.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Poppins', 'sans-serif'] },
+                    colors: {
+                        pastel: { bg: '#F5F9FF', primary: '#5C9CE6', primary_light: '#E6F0FA', text: '#334155', plus: '#34D399', plus_bg: '#ECFDF5', minus: '#F87171', minus_bg: '#FEF2F2', warn: '#FBBF24', warn_bg: '#FFFBEB' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #F5F9FF; color: #334155; padding-bottom: 90px; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .bottom-sheet { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform: translateY(100%); }
+        .bottom-sheet.open { transform: translateY(0); }
+        .overlay { transition: opacity 0.3s; opacity: 0; pointer-events: none; }
+        .overlay.open { opacity: 1; pointer-events: auto; }
+        #login-portal { transition: opacity 0.5s ease-out, visibility 0.5s; }
+        
+        /* CSS KHUSUS PRINT PDF (Sembunyikan tombol saat dicetak) */
+        @media print {
+            .no-print { display: none !important; }
+            body { padding-bottom: 0; background-color: white; }
+            #pdf-area { padding: 20px; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div id="login-portal" class="fixed inset-0 bg-pastel-bg z-50 flex flex-col items-center justify-center p-6">
+        <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-blue-50 w-full max-w-sm text-center transform transition-transform duration-700 translate-y-0" id="login-card">
+            <img src="https://raw.githubusercontent.com/sunsetdansenja-arch/beuna-agency/main/beuna%20logo%20v2.png" alt="Logo" class="w-20 h-20 mx-auto mb-5 object-contain rounded-xl shadow-sm border border-slate-50">
+            <h1 class="text-2xl font-semibold text-slate-700 mb-1">Owner Area</h1>
+            <p class="text-xs text-slate-400 mb-8">Dashboard Analitik Fortuna Laundry</p>
+            <button onclick="doLogin()" class="w-full bg-slate-800 text-white font-medium py-3.5 rounded-xl shadow-md active:scale-95 transition-transform flex justify-center items-center">
+                <i class="fas fa-lock mr-2 text-sm"></i> <span>Buka Dashboard</span>
+            </button>
+        </div>
+    </div>
+
+    <header class="bg-white px-5 py-4 shadow-sm sticky top-0 z-10 rounded-b-2xl border-b border-blue-50 no-print">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-semibold text-slate-800" id="header-title">Dashboard</h1>
+                <p class="text-xs text-slate-400" id="header-subtitle">Ringkasan Keuangan</p>
+            </div>
+            <button onclick="refreshData()" class="text-slate-400 hover:text-pastel-primary transition-colors p-2 rounded-full bg-pastel-bg">
+                <i class="fas fa-sync-alt" id="refresh-icon"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="px-5 py-6">
+        
+        <div id="tab-dashboard" class="tab-content space-y-6">
+            <div id="pdf-area" class="bg-white p-5 rounded-2xl shadow-sm border border-blue-50">
+                <div class="text-center mb-6">
+                    <h2 class="text-lg font-bold text-slate-800 uppercase tracking-wide">Laporan Keuangan</h2>
+                    <p class="text-xs text-slate-500">Fortuna Laundry - Seluruh Data</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-pastel-plus_bg p-4 rounded-xl border border-green-100">
+                        <div class="flex items-center justify-between mb-2">
+                            <i class="fas fa-arrow-down text-pastel-plus bg-white p-1.5 rounded-md shadow-sm"></i>
+                            <span class="text-[10px] font-medium text-pastel-plus">PEMASUKAN</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-700" id="dash-masuk">Rp 0</h3>
+                    </div>
+                    <div class="bg-pastel-minus_bg p-4 rounded-xl border border-red-100">
+                        <div class="flex items-center justify-between mb-2">
+                            <i class="fas fa-arrow-up text-pastel-minus bg-white p-1.5 rounded-md shadow-sm"></i>
+                            <span class="text-[10px] font-medium text-pastel-minus">PENGELUARAN</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-700" id="dash-keluar">Rp 0</h3>
+                    </div>
+                    <div class="bg-pastel-primary_light p-4 rounded-xl border border-blue-100 col-span-2">
+                        <div class="flex items-center justify-between mb-2">
+                            <i class="fas fa-wallet text-pastel-primary bg-white p-2 rounded-md shadow-sm"></i>
+                            <span class="text-[10px] font-medium text-pastel-primary uppercase tracking-wide">Laba Bersih Sementara</span>
+                        </div>
+                        <h3 class="text-3xl font-bold text-slate-800" id="dash-laba">Rp 0</h3>
+                    </div>
+                    <div class="bg-pastel-warn_bg p-4 rounded-xl border border-yellow-100 col-span-2 flex justify-between items-center">
+                        <div>
+                            <span class="text-[10px] font-medium text-pastel-warn block mb-1">PIUTANG / KASBON</span>
+                            <h3 class="text-base font-bold text-slate-700" id="dash-piutang">Rp 0</h3>
+                        </div>
+                        <i class="fas fa-hand-holding-usd text-2xl text-pastel-warn opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="downloadPDF()" class="no-print w-full bg-slate-800 text-white font-medium py-3.5 rounded-xl shadow-md active:scale-95 transition-transform flex justify-center items-center">
+                <i class="fas fa-file-pdf mr-2"></i> Download PDF Laporan
+            </button>
+        </div>
+
+        <div id="tab-rchk" class="tab-content space-y-4 hidden"></div>
+        <div id="tab-rkh" class="tab-content space-y-4 hidden"></div>
+        <div id="tab-rsh" class="tab-content space-y-4 hidden"></div>
+
+        <div class="mt-12 mb-8 text-center no-print">
+            <p class="text-[10px] text-blue-300 font-medium tracking-wide">cc developed by beuna system</p>
+        </div>
+    </main>
+
+    <button onclick="openModal(false)" class="no-print fixed bottom-24 right-5 bg-slate-800 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-xl z-20 hover:scale-105 active:scale-95 transition-transform">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <nav class="no-print fixed bottom-0 w-full bg-white border-t border-blue-50 flex justify-around py-3 pb-safe z-10 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
+        <button onclick="switchTab('dashboard', 'Dashboard', 'Ringkasan Keuangan')" id="nav-dashboard" class="nav-btn flex flex-col items-center text-pastel-primary w-1/4 transition-colors">
+            <i class="fas fa-chart-pie text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Analitik</span>
+        </button>
+        <button onclick="switchTab('rchk', 'Kasir (RCHK)', 'Pencatatan Keuangan')" id="nav-rchk" class="nav-btn flex flex-col items-center text-slate-400 w-1/4 transition-colors">
+            <i class="fas fa-wallet text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Kasir</span>
+        </button>
+        <button onclick="switchTab('rkh', 'Kiloan (RKH)', 'Pencatatan Kiloan')" id="nav-rkh" class="nav-btn flex flex-col items-center text-slate-400 w-1/4 transition-colors">
+            <i class="fas fa-weight-scale text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Kiloan</span>
+        </button>
+        <button onclick="switchTab('rsh', 'Sortir (RSH)', 'Pencatatan Sortir')" id="nav-rsh" class="nav-btn flex flex-col items-center text-slate-400 w-1/4 transition-colors">
+            <i class="fas fa-tags text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Sortir</span>
+        </button>
+    </nav>
+
+    <div id="overlay" class="overlay fixed inset-0 bg-slate-900/40 z-30 backdrop-blur-sm no-print" onclick="closeModal()"></div>
+    <div id="bottom-sheet" class="bottom-sheet no-print fixed bottom-0 w-full bg-white rounded-t-3xl shadow-2xl z-40 p-6 max-h-[85vh] overflow-y-auto hide-scrollbar border-t border-blue-100">
+        <div class="w-12 h-1.5 bg-blue-100 rounded-full mx-auto mb-6"></div>
+        <h2 class="text-lg font-semibold text-slate-800 mb-4" id="modal-title">Tambah Data</h2>
+        <form id="input-form" onsubmit="submitToWebhook(event)">
+            <div id="dynamic-form-fields" class="space-y-4"></div>
+            <button type="submit" id="submit-btn" class="w-full bg-slate-800 text-white font-medium py-3.5 rounded-xl mt-6 shadow-md active:scale-95 transition-transform flex justify-center items-center">
+                Simpan Data
+            </button>
+        </form>
+    </div>
+
+    <script>
+        const WEBHOOK_URL = 'https://n8n-mzbmiib3etk4.kangkung.sumopod.my.id/webhook/fortuna-webhook';
+        let currentTab = 'dashboard';
+        let appData = { RCHK: [], RKH: [], RSH: [] };
+        let currentEditId = null; 
+
+        // Fungsi Format Angka ke Rupiah
+        const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+        
+        function formatDateForInput(dateObj) {
+            const y = dateObj.getFullYear(); const m = String(dateObj.getMonth() + 1).padStart(2, '0'); const d = String(dateObj.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+        function formatDateForSheet(dateString) {
+            if(!dateString) return ''; const parts = dateString.split('-');
+            if(parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`; return dateString; 
+        }
+
+        // --- SISTEM LOGIN ---
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('isOwnerLoggedIn') === 'true') {
+                document.getElementById('login-portal').style.display = 'none';
+                refreshData();
+            }
+        });
+
+        function doLogin() {
+            localStorage.setItem('isOwnerLoggedIn', 'true');
+            const portal = document.getElementById('login-portal');
+            document.getElementById('login-card').style.transform = 'translateY(20px)';
+            portal.style.opacity = '0';
+            setTimeout(() => { portal.style.display = 'none'; }, 500);
+            refreshData();
+        }
+
+        // --- EXPORT PDF ---
+        function downloadPDF() {
+            const element = document.getElementById('pdf-area');
+            const opt = {
+                margin:       0.5,
+                filename:     `Laporan_Fortuna_${new Date().toLocaleDateString('id-ID')}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // --- FETCH DATA ---
+        async function loadDataFromN8N() {
+            const icon = document.getElementById('refresh-icon'); icon.classList.add('fa-spin');
+            try {
+                const response = await fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: "read" }) });
+                const result = await response.json();
+                if(result.status === "success") {
+                    appData = result.data; 
+                    calculateDashboard(); // Hitung Laba/Rugi Otomatis
+                    renderAllData();      // Render Tabel
+                }
+            } catch (error) {
+                alert("Gagal menarik data dari server n8n.");
+            } finally { icon.classList.remove('fa-spin'); }
+        }
+
+        function refreshData() { loadDataFromN8N(); }
+
+        // --- KALKULASI DASHBOARD OWNER ---
+        function calculateDashboard() {
+            let totalMasuk = 0, totalKeluar = 0, totalPiutang = 0;
+            
+            // Looping seluruh data RCHK
+            appData.RCHK.forEach(item => {
+                if(item.DEBIT) totalMasuk += parseInt(item.DEBIT) || 0;
+                if(item.QRIS) totalMasuk += parseInt(item.QRIS) || 0;
+                if(item.KREDIT) totalKeluar += parseInt(item.KREDIT) || 0;
+                if(item.KASBON) totalPiutang += parseInt(item.KASBON) || 0;
+            });
+
+            let laba = totalMasuk - totalKeluar;
+
+            // Cetak ke layar
+            document.getElementById('dash-masuk').innerText = formatRp(totalMasuk);
+            document.getElementById('dash-keluar').innerText = formatRp(totalKeluar);
+            document.getElementById('dash-laba').innerText = formatRp(laba);
+            document.getElementById('dash-piutang').innerText = formatRp(totalPiutang);
+            
+            // Ubah warna teks laba jika minus
+            if(laba < 0) {
+                document.getElementById('dash-laba').classList.remove('text-slate-800');
+                document.getElementById('dash-laba').classList.add('text-pastel-minus');
+            } else {
+                document.getElementById('dash-laba').classList.add('text-slate-800');
+                document.getElementById('dash-laba').classList.remove('text-pastel-minus');
+            }
+        }
+
+        // --- RENDER HTML KARTU (SUPER ADMIN) ---
+        function renderAllData() {
+            const rchkHtml = [...appData.RCHK].reverse().map(item => {
+                if(!item.ID) return ''; 
+                let jenis = 'Keterangan'; let nominal = 0; let isMin = false;
+                if(item.DEBIT) { jenis = 'Debit'; nominal = item.DEBIT; }
+                else if(item.QRIS) { jenis = 'QRIS'; nominal = item.QRIS; }
+                else if(item.KREDIT) { jenis = 'Kredit'; nominal = item.KREDIT; isMin = true; }
+                else if(item.KASBON) { jenis = 'Kasbon'; nominal = item.KASBON; isMin = true; }
+                const colorText = isMin ? 'text-pastel-minus' : 'text-pastel-plus';
+                const colorBg = isMin ? 'bg-pastel-minus_bg text-pastel-minus' : 'bg-pastel-plus_bg text-pastel-plus';
+                const sign = isMin ? '-' : '+';
+                
+                return `
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-blue-50 relative">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="font-medium text-slate-700">${item.NAMA || '-'}</span>
+                        <span class="text-sm font-semibold ${colorText}">${sign} ${formatRp(nominal)}</span>
+                    </div>
+                    <div class="flex justify-between items-end mt-2">
+                        <div><span class="text-[10px] font-medium px-2 py-1 ${colorBg} rounded-md">${jenis}</span><p class="text-xs text-slate-400 mt-1">${item.KETERANGAN || '-'}</p></div>
+                        <button onclick="openModal(true, '${item.ID}')" class="text-blue-200 hover:text-slate-800 p-2 bg-pastel-bg rounded-lg transition-colors"><i class="fas fa-pen text-sm"></i></button>
+                    </div>
+                </div>`;
+            }).join('') || `<div class="text-center py-10 text-slate-400 text-sm">Belum ada data</div>`;
+            document.getElementById('tab-rchk').innerHTML = rchkHtml;
+
+            const renderLaundryCard = (item) => {
+                if(!item.ID) return '';
+                return `
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-blue-50 relative">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium text-slate-700">${item.NAMA || '-'}</span>
+                        <div class="flex items-center gap-3">
+                            <span class="text-[10px] text-slate-400 bg-pastel-bg px-2 py-1 rounded-md">${item['TANGGAL MASUK'] || '-'} | ${item['JAM PENGERJAAN'] || ''}</span>
+                            <button onclick="openModal(true, '${item.ID}')" class="text-blue-200 hover:text-slate-800"><i class="fas fa-pen text-sm"></i></button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mt-3">
+                        <div class="bg-pastel-primary_light p-2 rounded-xl text-center"><p class="text-[10px] text-pastel-primary font-medium">Berat</p><p class="font-semibold text-slate-700">${item.KG || 0} Kg</p></div>
+                        <div class="bg-pastel-bg p-2 rounded-xl text-center"><p class="text-[10px] text-slate-500">Pcs</p><p class="font-semibold text-slate-600">${item.PCS || 0}</p></div>
+                        <div class="bg-pastel-bg p-2 rounded-xl text-center"><p class="text-[10px] text-slate-500">Keranjang</p><p class="font-semibold text-slate-600">#${item['NOMOR KERANJANG'] || '-'}</p></div>
+                    </div>
+                    <p class="text-[10px] font-medium text-slate-400 mt-3 border-t border-pastel-bg pt-2"><i class="fas fa-tag mr-1 text-pastel-primary"></i> ${item['JENIS SATUAN'] || '-'}</p>
+                </div>`;
+            };
+
+            document.getElementById('tab-rkh').innerHTML = [...appData.RKH].reverse().map(i => renderLaundryCard(i)).join('');
+            document.getElementById('tab-rsh').innerHTML = [...appData.RSH].reverse().map(i => renderLaundryCard(i)).join('');
+        }
+
+        // --- TAB SWITCHER (4 TAB) ---
+        function switchTab(tabId, title, subtitle) {
+            currentTab = tabId;
+            document.getElementById('header-title').innerText = title;
+            document.getElementById('header-subtitle').innerText = subtitle;
+            
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-pastel-primary'); btn.classList.add('text-slate-400');
+            });
+            document.getElementById(`nav-${tabId}`).classList.add('text-pastel-primary');
+            document.getElementById(`nav-${tabId}`).classList.remove('text-slate-400');
+
+            // Sembunyikan tombol + jika di tab Dashboard
+            const fab = document.querySelector('.fa-plus').parentElement;
+            if(tabId === 'dashboard') fab.classList.add('hidden');
+            else fab.classList.remove('hidden');
+        }
+
+        // --- FORM MODAL (DENGAN DROPDOWN KARPET) ---
+        function openModal(isEdit = false, itemId = null) {
+            if(currentTab === 'dashboard') return; // Cegah input dari tab dashboard
+            currentEditId = isEdit ? itemId : null; 
+            const formFields = document.getElementById('dynamic-form-fields');
+            document.getElementById('modal-title').innerText = isEdit ? `Edit Data ${currentTab.toUpperCase()}` : `Tambah Data ${currentTab.toUpperCase()}`;
+            document.getElementById('submit-btn').innerHTML = isEdit ? 'Update Data' : 'Simpan Data';
+            
+            let oldData = {};
+            if(isEdit) oldData = appData[currentTab.toUpperCase()].find(item => item.ID == itemId) || {};
+
+            if(currentTab === 'rchk') {
+                let oldJenis = 'Debit'; let oldNom = '';
+                if(isEdit) {
+                    if(oldData.DEBIT) { oldJenis = 'Debit'; oldNom = oldData.DEBIT; }
+                    else if(oldData.QRIS) { oldJenis = 'QRIS'; oldNom = oldData.QRIS; }
+                    else if(oldData.KREDIT) { oldJenis = 'Kredit'; oldNom = oldData.KREDIT; }
+                    else if(oldData.KASBON) { oldJenis = 'Kasbon'; oldNom = oldData.KASBON; }
+                }
+
+                formFields.innerHTML = `
+                    <div><label class="text-xs font-medium text-slate-500 ml-1">Nama / Keterangan</label><input type="text" id="input-nama" value="${oldData.NAMA || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-4 py-3 outline-none focus:border-slate-800 text-slate-700"></div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="text-xs font-medium text-slate-500 ml-1">Jenis Transaksi</label><select id="input-jenis" class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-4 py-3 outline-none focus:border-slate-800 text-slate-700">
+                            <option value="Debit" ${oldJenis === 'Debit' ? 'selected' : ''}>Debit (Masuk)</option>
+                            <option value="QRIS" ${oldJenis === 'QRIS' ? 'selected' : ''}>QRIS (Masuk)</option>
+                            <option value="Kredit" ${oldJenis === 'Kredit' ? 'selected' : ''}>Kredit (Keluar)</option>
+                            <option value="Kasbon" ${oldJenis === 'Kasbon' ? 'selected' : ''}>Kasbon (Piutang)</option>
+                        </select></div>
+                        <div><label class="text-xs font-medium text-slate-500 ml-1">Nominal (Rp)</label><input type="number" id="input-nominal" value="${oldNom}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-4 py-3 outline-none focus:border-slate-800 text-slate-700"></div>
+                    </div>
+                    <div><label class="text-xs font-medium text-slate-500 ml-1">Catatan Tambahan</label><input type="text" id="input-ket" value="${oldData.KETERANGAN || ''}" class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-4 py-3 outline-none focus:border-slate-800 text-slate-700" placeholder="-"></div>
+                `;
+            } else {
+                let tglMasukVal = formatDateForInput(new Date()); let tglNotaVal = formatDateForInput(new Date()); let jamVal = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+                if (isEdit && oldData['TANGGAL MASUK']) { const parts = oldData['TANGGAL MASUK'].split('/'); if(parts.length === 3) tglMasukVal = `${parts[2]}-${parts[1]}-${parts[0]}`; }
+                if (isEdit && oldData['TANGGAL NOTA']) { const parts = oldData['TANGGAL NOTA'].split('/'); if(parts.length === 3) tglNotaVal = `${parts[2]}-${parts[1]}-${parts[0]}`; }
+                if (isEdit && oldData['JAM PENGERJAAN']) jamVal = oldData['JAM PENGERJAAN'].replace('.', ':').substring(0,5);
+
+                const satuan = oldData['JENIS SATUAN'] || '';
+
+                formFields.innerHTML = `
+                    <div class="grid grid-cols-2 gap-3 mb-2">
+                        <div><label class="text-xs font-medium text-slate-500 ml-1">Tgl Masuk</label><input type="date" id="input-tgl-masuk" value="${tglMasukVal}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-3 py-3 outline-none focus:border-slate-800 text-slate-700 text-sm"></div>
+                        <div><label class="text-xs font-medium text-slate-500 ml-1">Jam Kerja</label><input type="time" id="input-jam" value="${jamVal}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-3 py-3 outline-none focus:border-slate-800 text-slate-700 text-sm"></div>
+                    </div>
+                    <div><label class="text-xs font-medium text-slate-500 ml-1">Tgl Nota</label><input type="date" id="input-tgl-nota" value="${tglNotaVal}" required class="w-full mt-1 mb-2 bg-pastel-bg border border-blue-100 rounded-xl px-4 py-3 outline-none focus:border-slate-800 text-slate-700"></div>
+
+                    <div><label class="text-xs font-medium text-slate-500 ml-1">Nama Pelanggan</label><input type="text" id="input-nama" value="${oldData.NAMA || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-4 py-3 outline-none focus:border-slate-800 text-slate-700"></div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div><label class="text-xs font-medium text-slate-500 ml-1">Berat (Kg)</label><input type="number" step="0.1" id="input-kg" value="${oldData.KG || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-3 py-3 outline-none focus:border-slate-800 text-center text-slate-700"></div>
+                        <div><label class="text-xs font-medium text-slate-500 ml-1">Pcs</label><input type="number" id="input-pcs" value="${oldData.PCS || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-3 py-3 outline-none focus:border-slate-800 text-center text-slate-700"></div>
+                        <div><label class="text-xs font-medium text-slate-500 ml-1">Keranjang</label><input type="text" id="input-krj" value="${oldData['NOMOR KERANJANG'] || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-3 py-3 outline-none focus:border-slate-800 text-center text-slate-700"></div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <label class="text-xs font-medium text-slate-500 ml-1">Jenis Satuan (Pilih)</label>
+                        <select id="input-satuan" class="w-full mt-1 bg-pastel-bg border border-blue-100 rounded-xl px-4 py-3 outline-none focus:border-slate-800 text-slate-700">
+                            <option value="-" ${satuan === '-' ? 'selected' : ''}>Baju / Pcs Bebas (Standar)</option>
+                            <option value="Karpet Tebal" ${satuan === 'Karpet Tebal' ? 'selected' : ''}>Karpet Tebal</option>
+                            <option value="Karpet Hambal" ${satuan === 'Karpet Hambal' ? 'selected' : ''}>Karpet Hambal</option>
+                            <option value="Karpet Macan" ${satuan === 'Karpet Macan' ? 'selected' : ''}>Karpet Macan</option>
+                            <option value="Kasur Sedang" ${satuan === 'Kasur Sedang' ? 'selected' : ''}>Kasur Sedang</option>
+                            <option value="Taplak Panjang" ${satuan === 'Taplak Panjang' ? 'selected' : ''}>Taplak Panjang</option>
+                            <option value="Karpet Turki Besar" ${satuan === 'Karpet Turki Besar' ? 'selected' : ''}>Karpet Turki Besar</option>
+                            <option value="Karpet Turki Sedang" ${satuan === 'Karpet Turki Sedang' ? 'selected' : ''}>Karpet Turki Sedang</option>
+                            <option value="Karpet Malaysia" ${satuan === 'Karpet Malaysia' ? 'selected' : ''}>Karpet Malaysia</option>
+                        </select>
+                    </div>
+                `;
+            }
+            document.getElementById('overlay').classList.add('open');
+            document.getElementById('bottom-sheet').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('overlay').classList.remove('open');
+            document.getElementById('bottom-sheet').classList.remove('open');
+            currentEditId = null; 
+        }
+
+        // --- SUBMIT DATA ---
+        async function submitToWebhook(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const isEditing = currentEditId !== null;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${isEditing ? 'Memperbarui...' : 'Menyimpan...'}`;
+
+            const targetId = isEditing ? currentEditId : Date.now().toString();
+            let payloadData = {};
+            
+            if (currentTab === 'rchk') {
+                const jenis = document.getElementById('input-jenis').value;
+                const nominal = document.getElementById('input-nominal').value;
+                payloadData = { "id": targetId, "NAMA": document.getElementById('input-nama').value, "KREDIT": jenis === 'Kredit' ? nominal : "", "KASBON": jenis === 'Kasbon' ? nominal : "", "QRIS": jenis === 'QRIS' ? nominal : "", "DEBIT": jenis === 'Debit' ? nominal : "", "KETERANGAN": document.getElementById('input-ket').value };
+            } else {
+                const rawMasuk = document.getElementById('input-tgl-masuk').value; const rawNota = document.getElementById('input-tgl-nota').value; const rawJam = document.getElementById('input-jam').value;
+                payloadData = { "id": targetId, "TANGGAL MASUK": formatDateForSheet(rawMasuk), "NAMA": document.getElementById('input-nama').value, "TANGGAL NOTA": formatDateForSheet(rawNota), "JAM PENGERJAAN": rawJam.replace(':', '.'), "PCS": document.getElementById('input-pcs').value, "KG": document.getElementById('input-kg').value, "NOMOR KERANJANG": document.getElementById('input-krj').value, "JENIS SATUAN": document.getElementById('input-satuan').value };
+            }
+
+            try {
+                const response = await fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: currentTab, data: payloadData }) });
+                if(response.ok) { closeModal(); refreshData(); } else { alert("Gagal menyambung ke Database."); }
+            } catch (err) { alert("Terjadi kesalahan jaringan."); } finally { btn.innerHTML = 'Simpan Data'; }
+        }
+    </script>
+</body>
+</html>
