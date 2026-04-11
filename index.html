@@ -17,9 +17,13 @@
                 extend: {
                     fontFamily: { sans: ['Poppins', 'sans-serif'] },
                     colors: {
-                        pastel: { 
-                            bg: '#F5F9FF', primary: '#5C9CE6', primary_light: '#E6F0FA', text: '#334155', 
-                            plus: '#34D399', plus_bg: '#ECFDF5', minus: '#F87171', minus_bg: '#FEF2F2' 
+                        theme: { 
+                            bg: '#F5F5F7',         // Apple light grey
+                            primary: '#8B1818',    // Deep Maroon / Merah Gelap
+                            primary_light: '#FDECEF', // Soft maroon background
+                            text: '#1D1D1F',       // Apple dark text
+                            plus: '#34C759',       // Apple green
+                            minus: '#FF3B30'       // Apple red
                         }
                     }
                 }
@@ -28,72 +32,76 @@
     </script>
 
     <style>
-        body { background-color: #F5F9FF; color: #334155; padding-bottom: 90px; }
+        body { background-color: #F5F5F7; color: #1D1D1F; padding-bottom: 100px; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .bottom-sheet { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform: translateY(100%); }
+        
+        /* Glassmorphism Utilities */
+        .glass-panel { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.4); }
+        .glass-card { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04); }
+        
+        .bottom-sheet { transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1); transform: translateY(100%); }
         .bottom-sheet.open { transform: translateY(0); }
         .overlay { transition: opacity 0.3s; opacity: 0; pointer-events: none; }
         .overlay.open { opacity: 1; pointer-events: auto; }
-        input[type="date"]::-webkit-calendar-picker-indicator, input[type="time"]::-webkit-calendar-picker-indicator { background-color: transparent; cursor: pointer; opacity: 0.6; }
+        input[type="date"]::-webkit-calendar-picker-indicator, input[type="time"]::-webkit-calendar-picker-indicator { background-color: transparent; cursor: pointer; opacity: 0.5; }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased selection:bg-theme-primary selection:text-white">
 
-    <div id="login-portal" class="fixed inset-0 bg-pastel-bg z-50 flex flex-col items-center justify-center p-6 transition-opacity duration-500">
-        <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-blue-50 w-full max-w-sm text-center transform transition-transform duration-700 translate-y-0" id="login-card">
-            <div class="w-20 h-20 bg-pastel-primary_light rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-sm border border-blue-100">
-                <i class="fas fa-tshirt text-3xl text-pastel-primary"></i>
+    <div id="login-portal" class="fixed inset-0 bg-theme-bg z-50 flex flex-col items-center justify-center p-6 transition-opacity duration-500">
+        <div class="glass-card p-10 rounded-[2.5rem] w-full max-w-sm text-center transform transition-transform duration-700 translate-y-0" id="login-card">
+            <div class="w-24 h-24 bg-gradient-to-br from-theme-primary to-red-900 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-theme-primary/30">
+                <i class="fas fa-tshirt text-4xl text-white"></i>
             </div>
-            <h1 class="text-2xl font-semibold text-slate-800 mb-1">Fortuna Kasir</h1>
-            <p class="text-xs text-slate-400 mb-8">Pencatatan Operasional Staf</p>
-            <button onclick="doLogin()" class="w-full bg-pastel-primary text-white font-medium py-3.5 rounded-xl shadow-md shadow-blue-200 active:scale-95 transition-transform flex justify-center items-center">
+            <h1 class="text-2xl font-bold text-theme-text mb-1 tracking-tight">Fortuna OS</h1>
+            <p class="text-xs text-slate-500 mb-10 font-medium">Sistem Kasir & Operasional</p>
+            <button onclick="doLogin()" class="w-full bg-theme-text text-white font-semibold py-4 rounded-2xl shadow-lg active:scale-95 transition-transform flex justify-center items-center">
                 <span>Masuk Shift</span> <i class="fas fa-arrow-right ml-2 text-sm"></i>
             </button>
-            <p class="text-[10px] text-slate-300 mt-6 tracking-wide">INTERNAL USE ONLY</p>
         </div>
     </div>
 
-    <header class="bg-white px-5 py-4 shadow-sm sticky top-0 z-10 rounded-b-2xl border-b border-blue-50 backdrop-blur-md bg-white/90">
+    <header class="glass-panel px-6 py-5 sticky top-0 z-10 rounded-b-[2rem] shadow-sm">
         <div class="flex justify-between items-center">
             <div>
-                <h1 class="text-xl font-semibold text-slate-800 tracking-tight" id="header-title">Kasir (RCHK)</h1>
-                <p class="text-xs text-slate-400" id="header-subtitle">Pencatatan Keuangan</p>
+                <h1 class="text-2xl font-bold text-theme-text tracking-tight" id="header-title">Kasir (RCHK)</h1>
+                <p class="text-xs text-theme-primary font-medium mt-0.5" id="header-subtitle">Pencatatan Keuangan</p>
             </div>
-            <button onclick="refreshData()" class="text-slate-400 hover:text-pastel-primary transition-colors p-2 rounded-full bg-pastel-bg">
+            <button onclick="refreshData()" class="text-slate-500 hover:text-theme-primary transition-colors p-2.5 rounded-full bg-white/50 shadow-sm border border-white">
                 <i class="fas fa-sync-alt" id="refresh-icon"></i>
             </button>
         </div>
-        <div class="mt-2 flex items-center gap-2">
-            <span class="text-[9px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-md font-medium"><i class="fas fa-shield-alt mr-1"></i> Data ditayangkan H-7</span>
-            <span class="text-[9px] bg-amber-50 text-amber-600 px-2 py-0.5 rounded-md font-medium"><i class="fas fa-lock mr-1"></i> Edit H-3</span>
+        <div class="mt-3 flex items-center gap-2">
+            <span class="text-[9px] bg-white/60 border border-white text-slate-600 px-2.5 py-1 rounded-lg font-medium shadow-sm"><i class="fas fa-history mr-1 text-theme-primary"></i> History H-7</span>
+            <span class="text-[9px] bg-white/60 border border-white text-slate-600 px-2.5 py-1 rounded-lg font-medium shadow-sm"><i class="fas fa-unlock-alt mr-1 text-theme-primary"></i> Edit H-3</span>
         </div>
     </header>
 
-    <main class="px-5 py-4">
-        <div id="tab-rchk" class="tab-content space-y-4"></div>
-        <div id="tab-rkh" class="tab-content space-y-4 hidden"></div>
-        <div id="tab-rsh" class="tab-content space-y-4 hidden"></div>
-        <div class="mt-10 mb-8 text-center pb-4"><p class="text-[10px] text-blue-300 font-medium tracking-wide uppercase">cc developed by beuna system | beuna.xyz</p></div>
+    <main class="px-5 py-6">
+        <div id="tab-rchk" class="tab-content space-y-5"></div>
+        <div id="tab-rkh" class="tab-content space-y-5 hidden"></div>
+        <div id="tab-rsh" class="tab-content space-y-5 hidden"></div>
+        <div class="mt-12 mb-8 text-center pb-4"><p class="text-[10px] text-slate-400 font-medium tracking-wide uppercase">cc developed by beuna system | beuna.xyz</p></div>
     </main>
 
-    <button onclick="openModal(false)" class="fixed bottom-24 right-5 bg-pastel-primary text-white w-14 h-14 rounded-full shadow-lg shadow-blue-300 flex items-center justify-center text-xl z-20 hover:scale-105 active:scale-95 transition-transform" id="fab-btn">
+    <button onclick="openModal(false)" class="fixed bottom-28 right-6 bg-gradient-to-br from-theme-primary to-red-900 text-white w-14 h-14 rounded-[1.2rem] shadow-xl shadow-theme-primary/30 flex items-center justify-center text-xl z-20 hover:scale-105 active:scale-95 transition-transform" id="fab-btn">
         <i class="fas fa-plus"></i>
     </button>
 
-    <nav class="fixed bottom-0 w-full bg-white/90 backdrop-blur-md border-t border-blue-50 flex justify-around py-3 pb-safe z-10 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
-        <button onclick="switchTab('rchk', 'Kasir (RCHK)', 'Pencatatan Keuangan')" id="nav-rchk" class="nav-btn flex flex-col items-center text-pastel-primary w-1/3 transition-colors"><i class="fas fa-wallet text-xl mb-1"></i><span class="text-[10px] font-medium">Kasir</span></button>
-        <button onclick="switchTab('rkh', 'Kiloan (RKH)', 'Pencatatan Pakaian Kiloan')" id="nav-rkh" class="nav-btn flex flex-col items-center text-slate-400 w-1/3 transition-colors"><i class="fas fa-weight-scale text-xl mb-1"></i><span class="text-[10px] font-medium">Kiloan</span></button>
-        <button onclick="switchTab('rsh', 'Sortir (RSH)', 'Pencatatan Sortir Pakaian')" id="nav-rsh" class="nav-btn flex flex-col items-center text-slate-400 w-1/3 transition-colors"><i class="fas fa-tags text-xl mb-1"></i><span class="text-[10px] font-medium">Sortir</span></button>
+    <nav class="fixed bottom-6 left-6 right-6 glass-panel flex justify-around py-3 px-2 z-10 rounded-3xl shadow-xl">
+        <button onclick="switchTab('rchk', 'Kasir (RCHK)', 'Pencatatan Keuangan')" id="nav-rchk" class="nav-btn flex flex-col items-center text-theme-primary w-1/3 transition-colors"><i class="fas fa-wallet text-xl mb-1"></i><span class="text-[10px] font-semibold">Kasir</span></button>
+        <button onclick="switchTab('rkh', 'Kiloan (RKH)', 'Pencatatan Kiloan Masuk')" id="nav-rkh" class="nav-btn flex flex-col items-center text-slate-400 w-1/3 transition-colors"><i class="fas fa-weight-scale text-xl mb-1"></i><span class="text-[10px] font-semibold">Kiloan</span></button>
+        <button onclick="switchTab('rsh', 'Sortir (RSH)', 'Quality Control (QC)')" id="nav-rsh" class="nav-btn flex flex-col items-center text-slate-400 w-1/3 transition-colors"><i class="fas fa-clipboard-check text-xl mb-1"></i><span class="text-[10px] font-semibold">QC Sortir</span></button>
     </nav>
 
     <div id="overlay" class="overlay fixed inset-0 bg-slate-900/40 z-30 backdrop-blur-sm" onclick="closeModal()"></div>
-    <div id="bottom-sheet" class="bottom-sheet fixed bottom-0 w-full bg-white rounded-t-3xl shadow-2xl z-40 p-6 max-h-[85vh] overflow-y-auto hide-scrollbar border-t border-blue-100">
-        <div class="w-12 h-1.5 bg-blue-100 rounded-full mx-auto mb-6"></div>
-        <h2 class="text-lg font-semibold text-slate-800 mb-4 tracking-tight" id="modal-title">Tambah Data</h2>
+    <div id="bottom-sheet" class="bottom-sheet fixed bottom-0 w-full glass-panel rounded-t-[2.5rem] shadow-2xl z-40 p-6 sm:p-8 max-h-[90vh] overflow-y-auto hide-scrollbar border-t border-white/80">
+        <div class="w-12 h-1.5 bg-slate-300/50 rounded-full mx-auto mb-8"></div>
+        <h2 class="text-xl font-bold text-theme-text mb-6 tracking-tight" id="modal-title">Tambah Data</h2>
         <form id="input-form" onsubmit="submitToWebhook(event)">
             <div id="dynamic-form-fields" class="space-y-4"></div>
-            <button type="submit" id="submit-btn" class="w-full bg-pastel-primary text-white font-medium py-3.5 rounded-xl mt-6 shadow-md shadow-blue-200 active:scale-95 transition-transform flex justify-center items-center">Simpan Data</button>
+            <button type="submit" id="submit-btn" class="w-full bg-theme-text text-white font-semibold py-4 rounded-2xl mt-8 shadow-xl shadow-slate-900/10 active:scale-95 transition-transform flex justify-center items-center">Simpan Data</button>
         </form>
     </div>
 
@@ -103,17 +111,12 @@
         let appData = { RCHK: [], RKH: [], RSH: [] };
         let currentEditId = null; 
 
-        // Konstanta Waktu (Umur Transaksi)
         const MS_PER_DAY = 24 * 60 * 60 * 1000;
-        const LIMIT_VIEW_MS = 7 * MS_PER_DAY; // Maksimal tampil H-7
-        const LIMIT_EDIT_MS = 3 * MS_PER_DAY; // Maksimal edit H-3
+        const LIMIT_VIEW_MS = 7 * MS_PER_DAY; 
+        const LIMIT_EDIT_MS = 3 * MS_PER_DAY; 
 
         const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
-        
-        function formatDateForInput(dateObj) {
-            const y = dateObj.getFullYear(); const m = String(dateObj.getMonth() + 1).padStart(2, '0'); const d = String(dateObj.getDate()).padStart(2, '0');
-            return `${y}-${m}-${d}`;
-        }
+        function formatDateForInput(dateObj) { const y = dateObj.getFullYear(); const m = String(dateObj.getMonth() + 1).padStart(2, '0'); const d = String(dateObj.getDate()).padStart(2, '0'); return `${y}-${m}-${d}`; }
 
         document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('isStaffLoggedIn') === 'true') {
@@ -136,72 +139,80 @@
             try {
                 const response = await fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: "read" }) });
                 const result = await response.json();
-                if(result.status === "success") {
-                    appData = result.data; 
-                    renderAllData(); 
-                }
+                if(result.status === "success") { appData = result.data; renderAllData(); }
             } catch (error) { alert("Gagal menarik data dari server."); } 
             finally { icon.classList.remove('fa-spin'); }
         }
 
         function refreshData() {
-            document.querySelectorAll('.tab-content').forEach(el => { el.innerHTML = `<div class="text-center py-10 text-pastel-primary text-sm"><i class="fas fa-spinner fa-spin mr-2"></i>Memuat...</div>`; });
+            document.querySelectorAll('.tab-content').forEach(el => { el.innerHTML = `<div class="text-center py-10 text-theme-primary text-sm font-medium"><i class="fas fa-spinner fa-spin mr-2"></i>Memuat data...</div>`; });
             loadDataFromN8N();
         }
 
-        // --- RENDER DATA DENGAN LOGIKA RBAC (Pagination H-7 & Lock H-3) ---
         function renderAllData() {
             const now = Date.now();
 
-            // Render RCHK (Kasir)
+            // Render RCHK
             let rchkCards = '';
             [...appData.RCHK].reverse().forEach(item => {
-                if(!item.ID) return;
-                const itemTs = parseInt(item.ID);
-                const ageMs = now - itemTs;
-                
-                // 1. VIEW LIMIT (Sembunyikan jika lebih dari 7 Hari)
+                if(!item.ID) return; const itemTs = parseInt(item.ID); const ageMs = now - itemTs;
                 if (ageMs > LIMIT_VIEW_MS) return; 
-
-                // 2. EDIT LIMIT (Kunci jika lebih dari 3 Hari)
                 const isEditable = ageMs <= LIMIT_EDIT_MS;
 
                 let jenis = 'Keterangan'; let nominal = 0; let isMin = false;
                 if(item.DEBIT) { jenis = 'Debit'; nominal = item.DEBIT; } else if(item.QRIS) { jenis = 'QRIS'; nominal = item.QRIS; } else if(item.KREDIT) { jenis = 'Kredit'; nominal = item.KREDIT; isMin = true; } else if(item.KASBON) { jenis = 'Kasbon'; nominal = item.KASBON; isMin = true; }
                 
-                let actionBtn = isEditable 
-                    ? `<button onclick="openModal(true, '${item.ID}')" class="text-blue-400 hover:text-pastel-primary p-2 bg-pastel-bg rounded-lg transition-colors"><i class="fas fa-pen text-sm"></i></button>`
-                    : `<div class="p-2 text-slate-300" title="Data terkunci (H-3)"><i class="fas fa-lock text-sm"></i></div>`;
+                let actionBtn = isEditable ? `<button onclick="openModal(true, '${item.ID}')" class="text-slate-400 hover:text-theme-primary p-2 bg-white/50 border border-white rounded-xl shadow-sm transition-colors"><i class="fas fa-pen text-sm"></i></button>` : `<div class="p-2 text-slate-300" title="Terkunci (H-3)"><i class="fas fa-lock text-sm"></i></div>`;
 
-                rchkCards += `<div class="bg-white p-4 rounded-2xl shadow-sm border border-blue-50 relative mb-4"><div class="flex justify-between items-start mb-1"><span class="font-medium text-slate-700">${item.NAMA || '-'}</span><span class="text-sm font-semibold ${isMin ? 'text-pastel-minus' : 'text-pastel-plus'}">${isMin ? '-' : '+'} ${formatRp(nominal)}</span></div><div class="flex justify-between items-end mt-2"><div><span class="text-[10px] font-medium px-2 py-1 ${isMin ? 'bg-pastel-minus_bg text-pastel-minus' : 'bg-pastel-plus_bg text-pastel-plus'} rounded-md">${jenis}</span><p class="text-xs text-slate-400 mt-1">${item.KETERANGAN || '-'}</p></div>${actionBtn}</div></div>`;
+                rchkCards += `<div class="glass-card p-5 rounded-3xl relative mb-5"><div class="flex justify-between items-start mb-2"><span class="font-bold text-theme-text text-sm">${item.NAMA || '-'}</span><span class="text-sm font-bold ${isMin ? 'text-theme-minus' : 'text-theme-plus'}">${isMin ? '-' : '+'} ${formatRp(nominal)}</span></div><div class="flex justify-between items-end mt-3"><div><span class="text-[10px] font-bold px-2.5 py-1 ${isMin ? 'bg-red-50 text-theme-minus' : 'bg-green-50 text-theme-plus'} rounded-lg">${jenis}</span><p class="text-[11px] text-slate-500 font-medium mt-2">${item.KETERANGAN || '-'}</p></div>${actionBtn}</div></div>`;
             });
-            document.getElementById('tab-rchk').innerHTML = rchkCards || `<div class="text-center py-10 text-slate-400 text-sm">Belum ada data di 7 hari terakhir.</div>`;
+            document.getElementById('tab-rchk').innerHTML = rchkCards || `<div class="text-center py-10 text-slate-400 text-sm font-medium">Belum ada data (7 Hari).</div>`;
 
-            // Fungsi Pembantu Render RKH/RSH
-            const renderLaundryCard = (item) => {
-                if(!item.ID) return '';
-                const itemTs = parseInt(item.ID);
-                const ageMs = now - itemTs;
-                if (ageMs > LIMIT_VIEW_MS) return ''; // Hide > H-7
-                const isEditable = ageMs <= LIMIT_EDIT_MS; // Lock > H-3
+            // Render RKH / RSH
+            const renderLaundryCard = (item, isRsh = false) => {
+                if(!item.ID) return ''; const itemTs = parseInt(item.ID); const ageMs = now - itemTs;
+                if (ageMs > LIMIT_VIEW_MS) return ''; const isEditable = ageMs <= LIMIT_EDIT_MS; 
                 
-                let actionBtn = isEditable 
-                    ? `<button onclick="openModal(true, '${item.ID}')" class="text-blue-400 hover:text-pastel-primary p-1.5 bg-pastel-bg rounded-md"><i class="fas fa-pen text-xs"></i></button>`
-                    : `<div class="text-slate-300 p-1.5"><i class="fas fa-lock text-xs"></i></div>`;
+                let actionBtn = isEditable ? `<button onclick="openModal(true, '${item.ID}')" class="text-slate-400 hover:text-theme-primary p-2 bg-white/50 border border-white rounded-xl shadow-sm"><i class="fas fa-pen text-xs"></i></button>` : `<div class="text-slate-300 p-2"><i class="fas fa-lock text-xs"></i></div>`;
+                let satuanBadge = isRsh ? `<p class="text-[10px] font-bold text-theme-primary mt-4 border-t border-white/50 pt-3"><i class="fas fa-tag mr-1"></i> ${item['JENIS SATUAN'] || '-'}</p>` : '';
 
-                return `<div class="bg-white p-4 rounded-2xl shadow-sm border border-blue-50 relative mb-4"><div class="flex justify-between items-center mb-2"><span class="font-medium text-slate-700">${item.NAMA || '-'}</span><div class="flex items-center gap-2"><span class="text-[10px] text-slate-400 bg-pastel-bg px-2 py-1 rounded-md">${item['TANGGAL MASUK'] || '-'} | ${item['JAM PENGERJAAN'] || ''}</span>${actionBtn}</div></div><div class="grid grid-cols-3 gap-2 mt-3"><div class="bg-pastel-primary_light p-2 rounded-xl text-center"><p class="text-[10px] text-pastel-primary font-medium">Berat</p><p class="font-semibold text-slate-700">${item.KG || 0} Kg</p></div><div class="bg-pastel-bg p-2 rounded-xl text-center"><p class="text-[10px] text-slate-500">Pcs</p><p class="font-semibold text-slate-600">${item.PCS || 0}</p></div><div class="bg-pastel-bg p-2 rounded-xl text-center"><p class="text-[10px] text-slate-500">Keranjang</p><p class="font-semibold text-slate-600">#${item['NOMOR KERANJANG'] || '-'}</p></div></div><p class="text-[10px] font-medium text-slate-400 mt-3 border-t border-pastel-bg pt-2"><i class="fas fa-tag mr-1 text-pastel-primary"></i> ${item['JENIS SATUAN'] || '-'}</p></div>`;
+                return `<div class="glass-card p-5 rounded-3xl relative mb-5"><div class="flex justify-between items-center mb-3"><span class="font-bold text-theme-text text-sm">${item.NAMA || '-'}</span><div class="flex items-center gap-2"><span class="text-[10px] text-slate-500 bg-white/50 border border-white px-2.5 py-1 rounded-lg font-medium shadow-sm">${item['TANGGAL MASUK'] || '-'}</span>${actionBtn}</div></div><div class="grid grid-cols-3 gap-3 mt-4"><div class="bg-theme-primary_light/50 border border-white p-3 rounded-2xl text-center shadow-sm"><p class="text-[10px] text-theme-primary font-bold mb-0.5">Berat</p><p class="font-bold text-theme-text text-sm">${item.KG || 0} Kg</p></div><div class="bg-white/50 border border-white p-3 rounded-2xl text-center shadow-sm"><p class="text-[10px] text-slate-500 font-bold mb-0.5">Pcs</p><p class="font-bold text-theme-text text-sm">${item.PCS || 0}</p></div><div class="bg-white/50 border border-white p-3 rounded-2xl text-center shadow-sm"><p class="text-[10px] text-slate-500 font-bold mb-0.5">Keranjang</p><p class="font-bold text-theme-text text-sm">#${item['NOMOR KERANJANG'] || '-'}</p></div></div>${satuanBadge}</div>`;
             };
 
-            document.getElementById('tab-rkh').innerHTML = [...appData.RKH].reverse().map(i => renderLaundryCard(i)).join('') || `<div class="text-center py-10 text-slate-400 text-sm">Belum ada data di 7 hari terakhir.</div>`;
-            document.getElementById('tab-rsh').innerHTML = [...appData.RSH].reverse().map(i => renderLaundryCard(i)).join('') || `<div class="text-center py-10 text-slate-400 text-sm">Belum ada data di 7 hari terakhir.</div>`;
+            document.getElementById('tab-rkh').innerHTML = [...appData.RKH].reverse().map(i => renderLaundryCard(i, false)).join('') || `<div class="text-center py-10 text-slate-400 text-sm font-medium">Belum ada data (7 Hari).</div>`;
+            document.getElementById('tab-rsh').innerHTML = [...appData.RSH].reverse().map(i => renderLaundryCard(i, true)).join('') || `<div class="text-center py-10 text-slate-400 text-sm font-medium">Belum ada data (7 Hari).</div>`;
         }
 
         function switchTab(tabId, title, subtitle) {
             currentTab = tabId;
             document.getElementById('header-title').innerText = title; document.getElementById('header-subtitle').innerText = subtitle;
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden')); document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-            document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('text-pastel-primary'); btn.classList.add('text-slate-400'); });
-            document.getElementById(`nav-${tabId}`).classList.add('text-pastel-primary'); document.getElementById(`nav-${tabId}`).classList.remove('text-slate-400');
+            document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('text-theme-primary'); btn.classList.add('text-slate-400'); });
+            document.getElementById(`nav-${tabId}`).classList.add('text-theme-primary'); document.getElementById(`nav-${tabId}`).classList.remove('text-slate-400');
+        }
+
+        // --- PENDING QUEUE LOGIC (Sihir Auto-Fill) ---
+        function handleQueueSelection(sel) {
+            const val = sel.value;
+            const namaContainer = document.getElementById('nama-container');
+            const namaInput = document.getElementById('input-nama');
+            const krjInput = document.getElementById('input-krj');
+
+            if (val === 'NEW') {
+                namaContainer.style.display = 'block';
+                namaInput.value = '';
+                krjInput.value = '';
+                namaInput.focus();
+            } else if (val !== '') {
+                namaContainer.style.display = 'none';
+                const [nama, krj] = val.split('|');
+                namaInput.value = nama; // Sudah kapital dari value option
+                krjInput.value = krj;
+            } else {
+                namaContainer.style.display = 'none';
+                namaInput.value = '';
+                krjInput.value = '';
+            }
         }
 
         function openModal(isEdit = false, itemId = null) {
@@ -212,10 +223,14 @@
 
             let oldData = {}; if(isEdit) oldData = appData[currentTab.toUpperCase()].find(item => item.ID == itemId) || {};
 
+            // Helper Class UI Apple Form
+            const inputClass = "w-full mt-1.5 bg-white/70 border border-white shadow-sm rounded-2xl px-4 py-3.5 outline-none focus:border-theme-primary focus:ring-2 focus:ring-theme-primary/20 text-sm font-semibold text-theme-text transition-all";
+            const labelClass = "text-[11px] font-bold text-slate-500 ml-1 uppercase tracking-wider";
+
             if(currentTab === 'rchk') {
                 let oldJenis = 'Debit'; let oldNom = '';
                 if(isEdit) { if(oldData.DEBIT) { oldJenis = 'Debit'; oldNom = oldData.DEBIT; } else if(oldData.QRIS) { oldJenis = 'QRIS'; oldNom = oldData.QRIS; } else if(oldData.KREDIT) { oldJenis = 'Kredit'; oldNom = oldData.KREDIT; } else if(oldData.KASBON) { oldJenis = 'Kasbon'; oldNom = oldData.KASBON; } }
-                formFields.innerHTML = `<div><label class="text-xs font-medium text-slate-500 ml-1">Nama / Keterangan</label><input type="text" id="input-nama" value="${oldData.NAMA || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary text-slate-700"></div><div class="grid grid-cols-2 gap-4"><div><label class="text-xs font-medium text-slate-500 ml-1">Jenis Transaksi</label><select id="input-jenis" class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary text-slate-700"><option value="Debit" ${oldJenis === 'Debit' ? 'selected' : ''}>CASH (Masuk)</option><option value="QRIS" ${oldJenis === 'QRIS' ? 'selected' : ''}>QRIS (Masuk)</option><option value="Kredit" ${oldJenis === 'Kredit' ? 'selected' : ''}>KREDIT (Keluar)</option><option value="Kasbon" ${oldJenis === 'Kasbon' ? 'selected' : ''}>KASBON (Piutang)</option></select></div><div><label class="text-xs font-medium text-slate-500 ml-1">Nominal (Rp)</label><input type="number" id="input-nominal" value="${oldNom}" required class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary text-slate-700"></div></div><div><label class="text-xs font-medium text-slate-500 ml-1">Catatan Tambahan</label><input type="text" id="input-ket" value="${oldData.KETERANGAN || ''}" class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary text-slate-700" placeholder="-"></div>`;
+                formFields.innerHTML = `<div><label class="${labelClass}">Nama / Keterangan</label><input type="text" id="input-nama" value="${oldData.NAMA || ''}" oninput="this.value = this.value.toUpperCase()" required class="${inputClass}"></div><div class="grid grid-cols-2 gap-4"><div><label class="${labelClass}">Jenis Transaksi</label><select id="input-jenis" class="${inputClass}"><option value="Debit" ${oldJenis === 'Debit' ? 'selected' : ''}>CASH (Masuk)</option><option value="QRIS" ${oldJenis === 'QRIS' ? 'selected' : ''}>QRIS (Masuk)</option><option value="Kredit" ${oldJenis === 'Kredit' ? 'selected' : ''}>KREDIT (Keluar)</option><option value="Kasbon" ${oldJenis === 'Kasbon' ? 'selected' : ''}>KASBON (Piutang)</option></select></div><div><label class="${labelClass}">Nominal (Rp)</label><input type="number" id="input-nominal" value="${oldNom}" required class="${inputClass}"></div></div><div><label class="${labelClass}">Catatan Tambahan</label><input type="text" id="input-ket" value="${oldData.KETERANGAN || ''}" class="${inputClass}" placeholder="-"></div>`;
             } else {
                 const padZero = (num) => String(num).padStart(2, '0');
                 const formatDateForHTMLInput = (dateStr) => { if (!dateStr) return ''; const parts = dateStr.split('/'); return parts.length === 3 ? `${parts[2]}-${padZero(parts[1])}-${padZero(parts[0])}` : ''; };
@@ -224,7 +239,34 @@
                 if (isEdit && oldData['TANGGAL MASUK']) tMasuk = formatDateForHTMLInput(oldData['TANGGAL MASUK']); if (isEdit && oldData['TANGGAL NOTA']) tNota = formatDateForHTMLInput(oldData['TANGGAL NOTA']); if (isEdit && oldData['JAM PENGERJAAN']) jam = oldData['JAM PENGERJAAN'].replace('.', ':').substring(0,5);
                 const sat = oldData['JENIS SATUAN'] || '-';
 
-                formFields.innerHTML = `<div class="grid grid-cols-2 gap-3 mb-2"><div><label class="text-xs font-medium text-slate-500 ml-1">Tgl Masuk</label><input type="date" id="input-tgl-masuk" value="${tMasuk}" required class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-3 py-3 outline-none focus:border-pastel-primary text-slate-700 text-sm"></div><div><label class="text-xs font-medium text-slate-500 ml-1">Jam Kerja</label><input type="time" id="input-jam" value="${jam}" required class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-3 py-3 outline-none focus:border-pastel-primary text-slate-700 text-sm"></div></div><div><label class="text-xs font-medium text-slate-500 ml-1">Tgl Nota</label><input type="date" id="input-tgl-nota" value="${tNota}" required class="w-full mt-1 mb-2 bg-pastel-bg border border-blue-50 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary text-slate-700"></div><div><label class="text-xs font-medium text-slate-500 ml-1">Nama Pelanggan</label><input type="text" id="input-nama" value="${oldData.NAMA || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary text-slate-700"></div><div class="grid grid-cols-3 gap-3"><div><label class="text-xs font-medium text-slate-500 ml-1">Berat (Kg)</label><input type="number" step="0.1" id="input-kg" value="${oldData.KG || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-3 py-3 outline-none focus:border-pastel-primary text-center text-slate-700"></div><div><label class="text-xs font-medium text-slate-500 ml-1">Pcs</label><input type="number" id="input-pcs" value="${oldData.PCS || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-3 py-3 outline-none focus:border-pastel-primary text-center text-slate-700"></div><div><label class="text-xs font-medium text-slate-500 ml-1">Keranjang</label><input type="text" id="input-krj" value="${oldData['NOMOR KERANJANG'] || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-3 py-3 outline-none focus:border-pastel-primary text-center text-slate-700"></div></div><div class="mt-4"><label class="text-xs font-medium text-slate-500 ml-1">Jenis Satuan</label><select id="input-satuan" class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-4 py-3 outline-none focus:border-pastel-primary text-slate-700"><option value="-" ${sat === '-' ? 'selected' : ''}>Baju / Pcs Bebas (Standar)</option><option value="Karpet Tebal" ${sat === 'Karpet Tebal' ? 'selected' : ''}>Karpet Tebal</option><option value="Karpet Hambal" ${sat === 'Karpet Hambal' ? 'selected' : ''}>Karpet Hambal</option><option value="Karpet Macan" ${sat === 'Karpet Macan' ? 'selected' : ''}>Karpet Macan</option><option value="Kasur Sedang" ${sat === 'Kasur Sedang' ? 'selected' : ''}>Kasur Sedang</option><option value="Taplak Panjang" ${sat === 'Taplak Panjang' ? 'selected' : ''}>Taplak Panjang</option><option value="Karpet Turki Besar" ${sat === 'Karpet Turki Besar' ? 'selected' : ''}>Karpet Turki Besar</option></select></div>`;
+                // LOGIKA PENDING QUEUE RSH
+                let queueHtml = '';
+                let namaHtml = `<div><label class="${labelClass}">Nama Pelanggan</label><input type="text" id="input-nama" value="${oldData.NAMA || ''}" oninput="this.value = this.value.toUpperCase()" required class="${inputClass}"></div>`;
+                
+                if (currentTab === 'rsh' && !isEdit) {
+                    let queueOptions = `<option value="">-- Pilih Cucian (Dari Kiloan) --</option><option value="NEW">[+] Input Manual (Tanpa Antrean)</option>`;
+                    const completedKeys = appData.RSH.map(i => `${i.NAMA?.toUpperCase()}-${i['NOMOR KERANJANG']}`);
+                    const pendingItems = appData.RKH.filter(i => i.NAMA && !completedKeys.includes(`${i.NAMA.toUpperCase()}-${i['NOMOR KERANJANG']}`));
+                    
+                    pendingItems.forEach(item => {
+                        const namaCaps = item.NAMA.toUpperCase();
+                        const val = `${namaCaps}|${item['NOMOR KERANJANG']}`;
+                        queueOptions += `<option value="${val}">${namaCaps} - Krj: #${item['NOMOR KERANJANG']}</option>`;
+                    });
+
+                    queueHtml = `<div><label class="${labelClass} text-theme-primary">Antrean QC (Pencocokan)</label><select id="input-queue" onchange="handleQueueSelection(this)" class="${inputClass} border-theme-primary/30">${queueOptions}</select></div>`;
+                    namaHtml = `<div id="nama-container" style="display:none;"><label class="${labelClass}">Nama Pelanggan Baru</label><input type="text" id="input-nama" oninput="this.value = this.value.toUpperCase()" required class="${inputClass}"></div>`;
+                }
+
+                formFields.innerHTML = `
+                    <div class="grid grid-cols-2 gap-3 mb-2"><div><label class="${labelClass}">Tgl Masuk</label><input type="date" id="input-tgl-masuk" value="${tMasuk}" required class="${inputClass}"></div><div><label class="${labelClass}">Jam Kerja</label><input type="time" id="input-jam" value="${jam}" required class="${inputClass}"></div></div>
+                    <div><label class="${labelClass}">Tgl Nota</label><input type="date" id="input-tgl-nota" value="${tNota}" required class="${inputClass} mb-3"></div>
+                    
+                    ${queueHtml}
+                    ${namaHtml}
+                    
+                    <div class="grid grid-cols-3 gap-3 mt-3"><div><label class="${labelClass}">Berat (Kg)</label><input type="number" step="0.1" id="input-kg" value="${oldData.KG || ''}" required class="${inputClass} text-center"></div><div><label class="${labelClass}">Pcs Fisik</label><input type="number" id="input-pcs" value="${oldData.PCS || ''}" required class="${inputClass} text-center"></div><div><label class="${labelClass}">Keranjang</label><input type="text" id="input-krj" value="${oldData['NOMOR KERANJANG'] || ''}" required class="${inputClass} text-center"></div></div>
+                    <div class="mt-4"><label class="${labelClass}">Jenis Satuan (Jika Ada)</label><select id="input-satuan" class="${inputClass}"><option value="-" ${sat === '-' ? 'selected' : ''}>Baju / Pcs Bebas (Standar)</option><option value="Karpet Tebal" ${sat === 'Karpet Tebal' ? 'selected' : ''}>Karpet Tebal</option><option value="Karpet Hambal" ${sat === 'Karpet Hambal' ? 'selected' : ''}>Karpet Hambal</option><option value="Karpet Macan" ${sat === 'Karpet Macan' ? 'selected' : ''}>Karpet Macan</option><option value="Kasur Sedang" ${sat === 'Kasur Sedang' ? 'selected' : ''}>Kasur Sedang</option><option value="Taplak Panjang" ${sat === 'Taplak Panjang' ? 'selected' : ''}>Taplak Panjang</option><option value="Karpet Turki Besar" ${sat === 'Karpet Turki Besar' ? 'selected' : ''}>Karpet Turki Besar</option></select></div>`;
             }
             document.getElementById('overlay').classList.add('open'); document.getElementById('bottom-sheet').classList.add('open');
         }
@@ -238,16 +280,24 @@
 
         async function submitToWebhook(e) {
             e.preventDefault(); const btn = document.getElementById('submit-btn'); const isEditing = currentEditId !== null;
+            
+            // Validasi Khusus RSH (Pastikan nama tidak kosong jika select masih default)
+            if (currentTab === 'rsh' && !isEditing) {
+                const qVal = document.getElementById('input-queue').value;
+                if(qVal === "") { alert("Silakan pilih Antrean QC atau pilih Input Manual!"); return; }
+            }
+
             btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${isEditing ? 'Memperbarui...' : 'Menyimpan...'}`;
 
             const targetId = isEditing ? currentEditId : Date.now().toString();
             let payloadData = {};
             if (currentTab === 'rchk') {
                 const jenis = document.getElementById('input-jenis').value; const nominal = document.getElementById('input-nominal').value;
-                payloadData = { "id": targetId, "NAMA": document.getElementById('input-nama').value, "KREDIT": jenis === 'Kredit' ? nominal : "", "KASBON": jenis === 'Kasbon' ? nominal : "", "QRIS": jenis === 'QRIS' ? nominal : "", "DEBIT": jenis === 'Debit' ? nominal : "", "KETERANGAN": document.getElementById('input-ket').value };
+                // Selalu paksakan toUpperCase() saat disave untuk keamanan ganda
+                payloadData = { "id": targetId, "NAMA": document.getElementById('input-nama').value.toUpperCase(), "KREDIT": jenis === 'Kredit' ? nominal : "", "KASBON": jenis === 'Kasbon' ? nominal : "", "QRIS": jenis === 'QRIS' ? nominal : "", "DEBIT": jenis === 'Debit' ? nominal : "", "KETERANGAN": document.getElementById('input-ket').value };
             } else {
                 const rMasuk = document.getElementById('input-tgl-masuk').value; const rNota = document.getElementById('input-tgl-nota').value; const rJam = document.getElementById('input-jam').value;
-                payloadData = { "id": targetId, "TANGGAL MASUK": formatDateForSheetSave(rMasuk), "NAMA": document.getElementById('input-nama').value, "TANGGAL NOTA": formatDateForSheetSave(rNota), "JAM PENGERJAAN": rJam.replace(':', '.'), "PCS": document.getElementById('input-pcs').value, "KG": document.getElementById('input-kg').value, "NOMOR KERANJANG": document.getElementById('input-krj').value, "JENIS SATUAN": document.getElementById('input-satuan').value };
+                payloadData = { "id": targetId, "TANGGAL MASUK": formatDateForSheetSave(rMasuk), "NAMA": document.getElementById('input-nama').value.toUpperCase(), "TANGGAL NOTA": formatDateForSheetSave(rNota), "JAM PENGERJAAN": rJam.replace(':', '.'), "PCS": document.getElementById('input-pcs').value, "KG": document.getElementById('input-kg').value, "NOMOR KERANJANG": document.getElementById('input-krj').value, "JENIS SATUAN": document.getElementById('input-satuan').value };
             }
             try { const res = await fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: currentTab, data: payloadData }) }); if(res.ok) { closeModal(); refreshData(); } else alert("Gagal menyambung ke Database."); } catch (err) { alert("Kesalahan jaringan."); } finally { btn.innerHTML = 'Simpan Data'; }
         }
