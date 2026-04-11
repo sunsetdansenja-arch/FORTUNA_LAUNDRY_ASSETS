@@ -6,10 +6,15 @@
     <title>Owner Dashboard - Fortuna Laundry</title>
     
     <link rel="icon" href="https://raw.githubusercontent.com/sunsetdansenja-arch/beuna-agency/main/beuna%20logo%20v2.png" type="image/png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <script>
@@ -37,15 +42,16 @@
         .overlay { transition: opacity 0.3s; opacity: 0; pointer-events: none; }
         .overlay.open { opacity: 1; pointer-events: auto; }
         
-        input[type="date"]::-webkit-calendar-picker-indicator { background-color: transparent; cursor: pointer; opacity: 0.6; }
-
-        /* Konfigurasi Khusus Cetak PDF A4 */
+        /* CSS Khusus Cetak PDF A4 */
         @media print {
             .no-print { display: none !important; }
             body { background-color: white; padding-bottom: 0; }
-            #pdf-container { padding: 10px; width: 100%; max-width: 100%; }
-            .print-break-inside-avoid { break-inside: avoid; }
-            .shadow-sm { box-shadow: none !important; border: 1px solid #e2e8f0 !important; }
+            #pdf-container { padding: 0; margin: 0; width: 100%; max-width: 100%; box-shadow: none !important; border: none !important; }
+            tr { page-break-inside: avoid !important; page-break-after: auto !important; }
+            thead { display: table-header-group !important; }
+            tfoot { display: table-footer-group !important; }
+            table { width: 100% !important; border-collapse: collapse !important; }
+            .pdf-card { border: 1px solid #e2e8f0 !important; break-inside: avoid; }
         }
     </style>
 </head>
@@ -81,73 +87,75 @@
             
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-blue-50 no-print mb-6">
                 <div class="flex justify-between items-center mb-3">
-                    <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider"><i class="far fa-calendar-alt mr-1"></i> Filter Laporan</h3>
-                    <div class="flex gap-2">
-                        <button onclick="setQuickDate('today')" class="text-[10px] bg-pastel-bg text-pastel-primary px-2 py-1 rounded-md font-medium">Hari Ini</button>
-                        <button onclick="setQuickDate('month')" class="text-[10px] bg-pastel-bg text-pastel-primary px-2 py-1 rounded-md font-medium">Bulan Ini</button>
-                    </div>
+                    <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider"><i class="far fa-calendar-alt mr-1"></i> Rentang Laporan</h3>
+                    <button onclick="setMonthly()" class="text-[10px] bg-pastel-primary_light text-pastel-primary px-3 py-1.5 rounded-lg font-semibold active:scale-95 transition-transform">
+                        Bulan Ini
+                    </button>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-[10px] text-slate-400 ml-1">Dari Tanggal</label>
-                        <input type="date" id="filter-start" class="w-full bg-pastel-bg border border-blue-50 rounded-xl px-3 py-2 outline-none focus:border-pastel-primary text-xs text-slate-700" onchange="applyFilter()">
-                    </div>
-                    <div>
-                        <label class="text-[10px] text-slate-400 ml-1">Sampai Tanggal</label>
-                        <input type="date" id="filter-end" class="w-full bg-pastel-bg border border-blue-50 rounded-xl px-3 py-2 outline-none focus:border-pastel-primary text-xs text-slate-700" onchange="applyFilter()">
-                    </div>
+                <div class="relative">
+                    <i class="fas fa-calendar-day absolute left-4 top-1/2 transform -translate-y-1/2 text-pastel-primary"></i>
+                    <input type="text" id="date-range-picker" readonly class="w-full bg-pastel-bg border border-blue-100 rounded-xl pl-10 pr-4 py-3 outline-none text-sm text-slate-700 font-medium cursor-pointer" placeholder="Pilih Mulai s/d Akhir...">
                 </div>
             </div>
 
-            <div id="pdf-container" class="bg-white p-0 sm:p-6 rounded-2xl sm:shadow-sm sm:border border-blue-50">
+            <div id="pdf-container" class="bg-white p-4 sm:p-8 rounded-2xl sm:shadow-sm sm:border border-blue-50 relative">
                 
-                <div class="text-center mb-6 border-b border-dashed border-slate-200 pb-4">
-                    <h2 class="text-xl font-bold text-slate-800 tracking-tight">LAPORAN KEUANGAN</h2>
-                    <p class="text-sm font-semibold text-pastel-primary uppercase tracking-widest mt-1">Fortuna Laundry</p>
-                    <p class="text-xs text-slate-500 mt-2" id="pdf-date-range">Periode: -</p>
+                <div class="text-center mb-6 border-b-2 border-slate-100 pb-5">
+                    <h2 id="pdf-title" class="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight uppercase">LAPORAN KEUANGAN BULANAN</h2>
+                    <p class="text-sm font-semibold text-pastel-primary tracking-widest mt-1">FORTUNA LAUNDRY</p>
+                    <p class="text-xs font-medium text-slate-500 mt-2 bg-pastel-bg inline-block px-3 py-1 rounded-md" id="pdf-date-range">Periode: -</p>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3 mb-6">
-                    <div class="bg-pastel-plus_bg p-4 rounded-xl border border-green-100 print-break-inside-avoid">
+                <div class="grid grid-cols-2 gap-3 sm:gap-4 mb-8">
+                    <div class="pdf-card bg-pastel-plus_bg p-4 rounded-xl border border-green-100">
                         <span class="text-[10px] font-semibold text-pastel-plus block mb-1">TOTAL PEMASUKAN</span>
-                        <h3 class="text-sm sm:text-base font-bold text-slate-700" id="dash-masuk">Rp 0</h3>
-                        <div class="text-[9px] text-slate-400 mt-1 flex justify-between"><span id="dash-cash">Cash: 0</span> <span id="dash-qris">QRIS: 0</span></div>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-700" id="dash-masuk">Rp 0</h3>
+                        <div class="text-[9px] text-slate-500 mt-1 flex justify-between"><span id="dash-cash">Cash: 0</span> <span id="dash-qris">QRIS: 0</span></div>
                     </div>
-                    <div class="bg-pastel-minus_bg p-4 rounded-xl border border-red-100 print-break-inside-avoid">
+                    <div class="pdf-card bg-pastel-minus_bg p-4 rounded-xl border border-red-100">
                         <span class="text-[10px] font-semibold text-pastel-minus block mb-1">TOTAL PENGELUARAN</span>
-                        <h3 class="text-sm sm:text-base font-bold text-slate-700" id="dash-keluar">Rp 0</h3>
-                        <p class="text-[9px] text-slate-400 mt-1">Seluruh beban biaya</p>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-700" id="dash-keluar">Rp 0</h3>
+                        <p class="text-[9px] text-slate-500 mt-1">Seluruh beban biaya</p>
                     </div>
-                    <div class="bg-pastel-primary_light p-4 rounded-xl border border-blue-100 col-span-2 flex justify-between items-center print-break-inside-avoid">
+                    <div class="pdf-card bg-pastel-primary_light p-4 rounded-xl border border-blue-200 col-span-2 flex justify-between items-center">
                         <div>
                             <span class="text-[10px] font-semibold text-pastel-primary uppercase tracking-wide block mb-1">Laba Operasional</span>
-                            <h3 class="text-2xl font-bold text-slate-800" id="dash-laba">Rp 0</h3>
+                            <h3 class="text-2xl sm:text-3xl font-bold text-slate-800" id="dash-laba">Rp 0</h3>
                         </div>
                         <i class="fas fa-chart-line text-3xl text-pastel-primary opacity-20"></i>
                     </div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 col-span-2 flex justify-between items-center print-break-inside-avoid">
+                    <div class="pdf-card bg-slate-50 p-4 rounded-xl border border-slate-200 col-span-2 flex justify-between items-center">
                         <div>
-                            <span class="text-[10px] font-semibold text-slate-500 uppercase block mb-1">Petty Cash (Laci Kasir)</span>
+                            <span class="text-[10px] font-semibold text-slate-500 uppercase block mb-1">Petty Cash Fisik (Sisa Laci Kasir)</span>
                             <h3 class="text-base font-bold text-slate-700" id="dash-petty">Rp 0</h3>
-                            <p class="text-[9px] text-slate-400 mt-1">Uang fisik hasil pemasukan tunai dikurangi pengeluaran</p>
                         </div>
                         <i class="fas fa-cash-register text-2xl text-slate-400 opacity-20"></i>
                     </div>
                 </div>
 
                 <div>
-                    <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 border-b border-slate-100 pb-2">Rincian Transaksi</h3>
-                    <div id="dashboard-list" class="space-y-3">
-                        <div class="text-center py-8 text-slate-400 text-xs"><i class="fas fa-spinner fa-spin mr-2"></i>Menghitung data...</div>
-                    </div>
+                    <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Rincian Transaksi</h3>
+                    <table class="w-full text-left border-collapse" id="pdf-table">
+                        <thead>
+                            <tr class="border-b-2 border-slate-200 text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider">
+                                <th class="pb-2 pt-2 w-1/4">Tgl & Waktu</th>
+                                <th class="pb-2 pt-2 w-2/5">Uraian / Keterangan</th>
+                                <th class="pb-2 pt-2 text-center">Tipe</th>
+                                <th class="pb-2 pt-2 text-right">Nominal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboard-list" class="text-xs sm:text-sm">
+                            <tr><td colspan="4" class="text-center py-8 text-slate-400"><i class="fas fa-spinner fa-spin mr-2"></i>Menghitung data...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
 
-                <div class="mt-10 pt-4 border-t border-slate-100 text-center">
-                    <p class="text-[9px] text-slate-300 tracking-widest font-medium uppercase">cc developed by beuna system | beuna.xyz</p>
+                <div class="mt-12 pt-6 border-t border-slate-200 text-center">
+                    <p class="text-[9px] sm:text-[10px] text-slate-400 tracking-widest font-medium uppercase">cc developed by beuna system | beuna.xyz</p>
                 </div>
 
             </div> <button onclick="downloadPDF()" class="no-print w-full bg-slate-800 text-white font-medium py-3.5 rounded-xl shadow-md mt-4 active:scale-95 transition-transform flex justify-center items-center">
-                <i class="fas fa-file-pdf mr-2"></i> Ekspor PDF Laporan
+                <i class="fas fa-file-pdf text-red-400 mr-2 text-lg"></i> Download PDF A4
             </button>
         </div>
 
@@ -157,24 +165,14 @@
         <div class="mt-8 text-center no-print pb-4"><p class="text-[10px] text-blue-300 font-medium tracking-wide uppercase">cc developed by beuna system | beuna.xyz</p></div>
     </main>
 
-    <button onclick="openModal(false)" class="no-print fixed bottom-24 right-5 bg-slate-800 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-xl z-20 hover:scale-105 active:scale-95 transition-transform">
-        <i class="fas fa-plus"></i>
-    </button>
-
     <nav class="no-print fixed bottom-0 w-full bg-white/90 backdrop-blur-md border-t border-blue-50 flex justify-around py-3 pb-safe z-10 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
-        <button onclick="switchTab('dashboard', 'Dashboard', 'Ringkasan Operasional')" id="nav-dashboard" class="nav-btn flex flex-col items-center text-pastel-primary w-1/4 transition-colors">
-            <i class="fas fa-chart-pie text-xl mb-1"></i><span class="text-[10px] font-medium">Analitik</span>
-        </button>
-        <button onclick="switchTab('rchk', 'Kasir (RCHK)', 'Pencatatan Keuangan')" id="nav-rchk" class="nav-btn flex flex-col items-center text-slate-400 w-1/4 transition-colors">
-            <i class="fas fa-wallet text-xl mb-1"></i><span class="text-[10px] font-medium">Kasir</span>
-        </button>
-        <button onclick="switchTab('rkh', 'Kiloan (RKH)', 'Pencatatan Kiloan')" id="nav-rkh" class="nav-btn flex flex-col items-center text-slate-400 w-1/4 transition-colors">
-            <i class="fas fa-weight-scale text-xl mb-1"></i><span class="text-[10px] font-medium">Kiloan</span>
-        </button>
-        <button onclick="switchTab('rsh', 'Sortir (RSH)', 'Pencatatan Sortir')" id="nav-rsh" class="nav-btn flex flex-col items-center text-slate-400 w-1/4 transition-colors">
-            <i class="fas fa-tags text-xl mb-1"></i><span class="text-[10px] font-medium">Sortir</span>
-        </button>
+        <button onclick="switchTab('dashboard', 'Dashboard', 'Ringkasan Operasional')" id="nav-dashboard" class="nav-btn flex flex-col items-center text-pastel-primary w-1/4 transition-colors"><i class="fas fa-chart-pie text-xl mb-1"></i><span class="text-[10px] font-medium">Analitik</span></button>
+        <button onclick="switchTab('rchk', 'Kasir (RCHK)', 'Pencatatan Keuangan')" id="nav-rchk" class="nav-btn flex flex-col items-center text-slate-400 w-1/4 transition-colors"><i class="fas fa-wallet text-xl mb-1"></i><span class="text-[10px] font-medium">Kasir</span></button>
+        <button onclick="switchTab('rkh', 'Kiloan (RKH)', 'Pencatatan Kiloan')" id="nav-rkh" class="nav-btn flex flex-col items-center text-slate-400 w-1/4 transition-colors"><i class="fas fa-weight-scale text-xl mb-1"></i><span class="text-[10px] font-medium">Kiloan</span></button>
+        <button onclick="switchTab('rsh', 'Sortir (RSH)', 'Pencatatan Sortir')" id="nav-rsh" class="nav-btn flex flex-col items-center text-slate-400 w-1/4 transition-colors"><i class="fas fa-tags text-xl mb-1"></i><span class="text-[10px] font-medium">Sortir</span></button>
     </nav>
+
+    <button onclick="openModal(false)" class="no-print fixed bottom-24 right-5 bg-slate-800 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-xl z-20 hover:scale-105 active:scale-95 transition-transform hidden" id="fab-btn"><i class="fas fa-plus"></i></button>
 
     <div id="overlay" class="overlay fixed inset-0 bg-slate-900/40 z-30 backdrop-blur-sm no-print" onclick="closeModal()"></div>
     <div id="bottom-sheet" class="bottom-sheet no-print fixed bottom-0 w-full bg-white rounded-t-3xl shadow-2xl z-40 p-6 max-h-[85vh] overflow-y-auto hide-scrollbar border-t border-blue-100">
@@ -182,9 +180,7 @@
         <h2 class="text-lg font-semibold text-slate-800 mb-4 tracking-tight" id="modal-title">Tambah Data</h2>
         <form id="input-form" onsubmit="submitToWebhook(event)">
             <div id="dynamic-form-fields" class="space-y-4"></div>
-            <button type="submit" id="submit-btn" class="w-full bg-slate-800 text-white font-medium py-3.5 rounded-xl mt-6 shadow-md active:scale-95 transition-transform flex justify-center items-center">
-                Simpan Data
-            </button>
+            <button type="submit" id="submit-btn" class="w-full bg-slate-800 text-white font-medium py-3.5 rounded-xl mt-6 shadow-md active:scale-95 transition-transform flex justify-center items-center">Simpan Data</button>
         </form>
     </div>
 
@@ -193,22 +189,47 @@
         let currentTab = 'dashboard';
         let appData = { RCHK: [], RKH: [], RSH: [] };
         let currentEditId = null; 
+        let isMonthlyReport = true; 
+        
+        let filterStart = null;
+        let filterEnd = null;
 
         const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
         
-        function formatDateForInput(dateObj) {
-            const y = dateObj.getFullYear(); const m = String(dateObj.getMonth() + 1).padStart(2, '0'); const d = String(dateObj.getDate()).padStart(2, '0');
-            return `${y}-${m}-${d}`;
-        }
-        function formatDateForSheet(dateString) {
-            if(!dateString) return ''; const parts = dateString.split('-');
-            if(parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`; return dateString; 
+        // Inisialisasi Flatpickr (Kalender Ala Agoda)
+        const fp = flatpickr("#date-range-picker", {
+            mode: "range",
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "d M Y",
+            locale: "id", // Bahasa Indonesia
+            onChange: function(selectedDates) {
+                if(selectedDates.length === 2) {
+                    isMonthlyReport = false;
+                    filterStart = selectedDates[0];
+                    // Atur End Date ke pukul 23:59:59 agar masuk hitungan full
+                    filterEnd = new Date(selectedDates[1].setHours(23, 59, 59, 999));
+                    if(appData.RCHK.length > 0) calculateDashboard();
+                }
+            }
+        });
+
+        function setMonthly() {
+            isMonthlyReport = true;
+            const now = new Date();
+            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+            const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+            fp.setDate([firstDay, lastDay]);
+            filterStart = firstDay;
+            filterEnd = lastDay;
+            if(appData.RCHK.length > 0) calculateDashboard();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('isOwnerLoggedIn') === 'true') {
                 document.getElementById('login-portal').style.display = 'none';
-                setQuickDate('today'); // Otomatis filter hari ini saat buka app
+                setMonthly(); // Default load bulanan
+                loadDataFromN8N();
             }
         });
 
@@ -218,23 +239,8 @@
             document.getElementById('login-card').style.transform = 'translateY(20px)';
             portal.style.opacity = '0';
             setTimeout(() => { portal.style.display = 'none'; }, 500);
-            setQuickDate('today');
-        }
-
-        // --- FILTER WAKTU (KALENDER) ---
-        function setQuickDate(type) {
-            const now = new Date();
-            document.getElementById('filter-end').value = formatDateForInput(now);
-            if(type === 'today') {
-                document.getElementById('filter-start').value = formatDateForInput(now);
-            } else if(type === 'month') {
-                document.getElementById('filter-start').value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
-            }
-            refreshData();
-        }
-
-        function applyFilter() {
-            if(appData.RCHK.length > 0) calculateDashboard(); // Recalculate without refetching if data exists
+            setMonthly();
+            loadDataFromN8N();
         }
 
         // --- FETCH DATA ---
@@ -246,7 +252,7 @@
                 if(result.status === "success") {
                     appData = result.data; 
                     calculateDashboard(); 
-                    renderEditorCards(); // Render list biasa untuk tab input
+                    renderEditorCards(); 
                 }
             } catch (error) { alert("Gagal menarik data dari server n8n."); } 
             finally { icon.classList.remove('fa-spin'); }
@@ -254,95 +260,103 @@
 
         function refreshData() { loadDataFromN8N(); }
 
-        // --- LOGIKA KALKULASI DASHBOARD & PETTY CASH ---
+        // --- KALKULASI DASHBOARD & TABEL A4 ---
         function calculateDashboard() {
-            const startStr = document.getElementById('filter-start').value;
-            const endStr = document.getElementById('filter-end').value;
-            
-            const startTs = startStr ? new Date(`${startStr}T00:00:00`).getTime() : 0;
-            const endTs = endStr ? new Date(`${endStr}T23:59:59`).getTime() : Infinity;
+            if(!filterStart || !filterEnd) return;
 
-            // Teks Header PDF
-            document.getElementById('pdf-date-range').innerText = `Periode: ${startStr ? formatDateForSheet(startStr) : '-'} s/d ${endStr ? formatDateForSheet(endStr) : '-'}`;
+            const startTs = filterStart.getTime();
+            const endTs = filterEnd.getTime();
+
+            // Update Judul Laporan Cerdas
+            const titleEl = document.getElementById('pdf-title');
+            const subtitleEl = document.getElementById('pdf-date-range');
+            
+            if(isMonthlyReport) {
+                titleEl.innerText = "LAPORAN KEUANGAN BULANAN";
+                const monthName = filterStart.toLocaleString('id-ID', { month: 'long', year: 'numeric' });
+                subtitleEl.innerText = `Bulan: ${monthName}`;
+            } else {
+                titleEl.innerText = "LAPORAN KEUANGAN PERIODE KHUSUS";
+                const sStr = filterStart.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+                const eStr = filterEnd.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+                subtitleEl.innerText = `Periode: ${sStr} s/d ${eStr}`;
+            }
 
             let tMasuk = 0, tCash = 0, tQris = 0, tKeluar = 0, tPiutang = 0;
             let pettyCashTotal = 0; 
             let listHtml = '';
 
-            // Balik data agar urutan dari yang paling baru
             const sortedRCHK = [...appData.RCHK].reverse();
 
             sortedRCHK.forEach(item => {
                 if(!item.ID) return;
-                const itemTs = parseInt(item.ID); // ID adalah Date.now() timestamp
+                const itemTs = parseInt(item.ID); 
                 const isInDataRange = (itemTs >= startTs && itemTs <= endTs);
 
-                const cDebit = parseInt(item.DEBIT) || 0;
-                const cQris = parseInt(item.QRIS) || 0;
-                const cKredit = parseInt(item.KREDIT) || 0;
-                const cKasbon = parseInt(item.KASBON) || 0;
+                const cDebit = parseInt(item.DEBIT) || 0; const cQris = parseInt(item.QRIS) || 0;
+                const cKredit = parseInt(item.KREDIT) || 0; const cKasbon = parseInt(item.KASBON) || 0;
 
-                // Petty Cash Logika Keseluruhan (Termasuk sebelum start date)
-                if(itemTs <= endTs) {
-                    pettyCashTotal += cDebit;  // Uang fisik masuk
-                    pettyCashTotal -= cKredit; // Uang fisik keluar
-                }
+                // Logika Petty Cash
+                if(itemTs <= endTs) { pettyCashTotal += cDebit; pettyCashTotal -= cKredit; }
 
-                // Kalkulasi Metrik Sesuai Filter Tanggal
+                // Jika Transaksi Masuk Filter
                 if(isInDataRange) {
-                    tCash += cDebit;
-                    tQris += cQris;
-                    tKeluar += cKredit;
-                    tPiutang += cKasbon;
-                    tMasuk += (cDebit + cQris);
+                    tCash += cDebit; tQris += cQris; tKeluar += cKredit; tPiutang += cKasbon; tMasuk += (cDebit + cQris);
 
-                    // Render List Transaksi Dashboard
-                    let jenis = '', badgeColor = '', badgeText = '', icon = '';
-                    let nom = 0;
-                    if(item.DEBIT) { jenis = 'CASH'; badgeColor = 'bg-blue-50 text-pastel-primary border-blue-100'; badgeText = 'CASH'; icon = 'fa-money-bill'; nom = cDebit; }
-                    else if(item.QRIS) { jenis = 'QRIS'; badgeColor = 'bg-emerald-50 text-emerald-600 border-emerald-100'; badgeText = 'QRIS'; icon = 'fa-qrcode'; nom = cQris; }
-                    else if(item.KREDIT) { jenis = 'KREDIT'; badgeColor = 'bg-rose-50 text-rose-500 border-rose-100'; badgeText = 'KELUAR'; icon = 'fa-arrow-up'; nom = cKredit; }
-                    else if(item.KASBON) { jenis = 'KASBON'; badgeColor = 'bg-amber-50 text-amber-600 border-amber-100'; badgeText = 'KASBON'; icon = 'fa-hand-holding-usd'; nom = cKasbon; }
+                    let jenis = '', badgeColor = '', badgeText = '', nom = 0;
+                    if(item.DEBIT) { jenis = 'CASH'; badgeColor = 'bg-blue-50 text-blue-600'; badgeText = 'CASH'; nom = cDebit; }
+                    else if(item.QRIS) { jenis = 'QRIS'; badgeColor = 'bg-emerald-50 text-emerald-600'; badgeText = 'QRIS'; nom = cQris; }
+                    else if(item.KREDIT) { jenis = 'KREDIT'; badgeColor = 'bg-rose-50 text-rose-600'; badgeText = 'KELUAR'; nom = cKredit; }
+                    else if(item.KASBON) { jenis = 'KASBON'; badgeColor = 'bg-amber-50 text-amber-600'; badgeText = 'KASBON'; nom = cKasbon; }
 
                     const tsDate = new Date(itemTs);
                     const dStr = `${String(tsDate.getDate()).padStart(2,'0')}/${String(tsDate.getMonth()+1).padStart(2,'0')} ${String(tsDate.getHours()).padStart(2,'0')}:${String(tsDate.getMinutes()).padStart(2,'0')}`;
 
+                    // Baris Tabel (Sangat Rapi untuk PDF)
                     listHtml += `
-                    <div class="flex justify-between items-center p-3 bg-white border border-slate-100 rounded-xl print-break-inside-avoid shadow-sm">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg flex items-center justify-center ${badgeColor} border bg-opacity-50">
-                                <i class="fas ${icon} text-xs"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-xs font-semibold text-slate-700">${item.NAMA}</h4>
-                                <p class="text-[9px] text-slate-400 mt-0.5">${dStr} | ${item.KETERANGAN || '-'}</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-xs font-bold ${jenis === 'KREDIT' ? 'text-pastel-minus' : 'text-slate-700'}">${jenis === 'KREDIT' ? '-' : ''} ${formatRp(nom)}</p>
-                            <span class="text-[8px] font-medium px-1.5 py-0.5 rounded ${badgeColor} mt-1 inline-block">${badgeText}</span>
-                        </div>
-                    </div>`;
+                    <tr class="border-b border-slate-100 hover:bg-slate-50">
+                        <td class="py-3 pr-2 align-top text-slate-500">${dStr}</td>
+                        <td class="py-3 pr-2 align-top">
+                            <p class="font-semibold text-slate-800">${item.NAMA || '-'}</p>
+                            <p class="text-[10px] text-slate-400 mt-0.5">${item.KETERANGAN || '-'}</p>
+                        </td>
+                        <td class="py-3 align-top text-center">
+                            <span class="text-[9px] font-bold px-2 py-1 rounded ${badgeColor}">${badgeText}</span>
+                        </td>
+                        <td class="py-3 text-right align-top font-bold ${jenis === 'KREDIT' ? 'text-pastel-minus' : 'text-slate-700'}">
+                            ${jenis === 'KREDIT' ? '-' : ''} ${formatRp(nom)}
+                        </td>
+                    </tr>`;
                 }
             });
 
             let laba = tMasuk - tKeluar;
-
-            // Update DOM Dashboard
-            document.getElementById('dash-masuk').innerText = formatRp(tMasuk);
-            document.getElementById('dash-cash').innerText = `Cash: ${formatRp(tCash)}`;
-            document.getElementById('dash-qris').innerText = `QRIS: ${formatRp(tQris)}`;
-            document.getElementById('dash-keluar').innerText = formatRp(tKeluar);
-            document.getElementById('dash-laba').innerText = formatRp(laba);
-            document.getElementById('dash-petty').innerText = formatRp(pettyCashTotal);
-            document.getElementById('dash-laba').className = `text-2xl font-bold ${laba < 0 ? 'text-pastel-minus' : 'text-slate-800'}`;
+            document.getElementById('dash-masuk').innerText = formatRp(tMasuk); document.getElementById('dash-cash').innerText = `Cash: ${formatRp(tCash)}`; document.getElementById('dash-qris').innerText = `QRIS: ${formatRp(tQris)}`;
+            document.getElementById('dash-keluar').innerText = formatRp(tKeluar); document.getElementById('dash-petty').innerText = formatRp(pettyCashTotal);
+            document.getElementById('dash-laba').innerText = formatRp(laba); document.getElementById('dash-laba').className = `text-2xl sm:text-3xl font-bold ${laba < 0 ? 'text-pastel-minus' : 'text-slate-800'}`;
             
-            document.getElementById('dashboard-list').innerHTML = listHtml || `<div class="text-center py-6 text-slate-400 text-xs">Tidak ada transaksi di tanggal ini.</div>`;
+            document.getElementById('dashboard-list').innerHTML = listHtml || `<tr><td colspan="4" class="text-center py-6 text-slate-400">Tidak ada transaksi di periode ini.</td></tr>`;
+        }
+
+        // --- EXPORT PDF MUTAKHIR (Kertas A4 Sempurna) ---
+        function downloadPDF() {
+            const element = document.getElementById('pdf-container');
+            const title = document.getElementById('pdf-title').innerText.replace(/ /g, '_');
+            
+            const opt = {
+                margin:       [0.4, 0.4, 0.4, 0.4], // Top, Left, Bottom, Right
+                filename:     `Fortuna_${title}.pdf`,
+                image:        { type: 'jpeg', quality: 1 },
+                // windowWidth: 1024 adalah trik sakti agar render di HP terasa seperti di Laptop (tabel tidak tergencet)
+                html2canvas:  { scale: 2, useCORS: true, windowWidth: 1024, letterRendering: true },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['css', 'legacy'] } // Menghindari potongan baris tabel
+            };
+            html2pdf().set(opt).from(element).save();
         }
 
         // --- RENDER EDITOR CARDS (Untuk Tab Kasir, Kiloan, Sortir) ---
         function renderEditorCards() {
-            // Render RCHK Editor
             document.getElementById('tab-rchk').innerHTML = [...appData.RCHK].reverse().map(item => {
                 if(!item.ID) return ''; 
                 let jenis = 'Keterangan'; let nominal = 0; let isMin = false;
@@ -350,7 +364,6 @@
                 return `<div class="bg-white p-4 rounded-2xl shadow-sm border border-blue-50 relative"><div class="flex justify-between items-start mb-1"><span class="font-medium text-slate-700">${item.NAMA || '-'}</span><span class="text-sm font-semibold ${isMin ? 'text-pastel-minus' : 'text-pastel-plus'}">${isMin ? '-' : '+'} ${formatRp(nominal)}</span></div><div class="flex justify-between items-end mt-2"><div><span class="text-[10px] font-medium px-2 py-1 ${isMin ? 'bg-pastel-minus_bg text-pastel-minus' : 'bg-pastel-plus_bg text-pastel-plus'} rounded-md">${jenis}</span><p class="text-xs text-slate-400 mt-1">${item.KETERANGAN || '-'}</p></div><button onclick="openModal(true, '${item.ID}')" class="text-blue-200 hover:text-slate-800 p-2 bg-pastel-bg rounded-lg transition-colors"><i class="fas fa-pen text-sm"></i></button></div></div>`;
             }).join('') || `<div class="text-center py-10 text-slate-400 text-sm">Belum ada data</div>`;
 
-            // Render RKH / RSH Editor
             const renderLaundryCard = (item) => {
                 if(!item.ID) return '';
                 return `<div class="bg-white p-4 rounded-2xl shadow-sm border border-blue-50 relative"><div class="flex justify-between items-center mb-2"><span class="font-medium text-slate-700">${item.NAMA || '-'}</span><div class="flex items-center gap-3"><span class="text-[10px] text-slate-400 bg-pastel-bg px-2 py-1 rounded-md">${item['TANGGAL MASUK'] || '-'} | ${item['JAM PENGERJAAN'] || ''}</span><button onclick="openModal(true, '${item.ID}')" class="text-blue-200 hover:text-slate-800"><i class="fas fa-pen text-sm"></i></button></div></div><div class="grid grid-cols-3 gap-2 mt-3"><div class="bg-pastel-primary_light p-2 rounded-xl text-center"><p class="text-[10px] text-pastel-primary font-medium">Berat</p><p class="font-semibold text-slate-700">${item.KG || 0} Kg</p></div><div class="bg-pastel-bg p-2 rounded-xl text-center"><p class="text-[10px] text-slate-500">Pcs</p><p class="font-semibold text-slate-600">${item.PCS || 0}</p></div><div class="bg-pastel-bg p-2 rounded-xl text-center"><p class="text-[10px] text-slate-500">Keranjang</p><p class="font-semibold text-slate-600">#${item['NOMOR KERANJANG'] || '-'}</p></div></div><p class="text-[10px] font-medium text-slate-400 mt-3 border-t border-pastel-bg pt-2"><i class="fas fa-tag mr-1 text-pastel-primary"></i> ${item['JENIS SATUAN'] || '-'}</p></div>`;
@@ -366,21 +379,8 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden')); document.getElementById(`tab-${tabId}`).classList.remove('hidden');
             document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('text-pastel-primary'); btn.classList.add('text-slate-400'); });
             document.getElementById(`nav-${tabId}`).classList.add('text-pastel-primary'); document.getElementById(`nav-${tabId}`).classList.remove('text-slate-400');
-            const fab = document.querySelector('.fa-plus').parentElement;
+            const fab = document.getElementById('fab-btn');
             if(tabId === 'dashboard') fab.classList.add('hidden'); else fab.classList.remove('hidden');
-        }
-
-        // --- EXPORT PDF MUTAKHIR ---
-        function downloadPDF() {
-            const element = document.getElementById('pdf-container');
-            const opt = {
-                margin:       0.4,
-                filename:     `Fortuna_Laundry_Laporan_${document.getElementById('filter-start').value}.pdf`,
-                image:        { type: 'jpeg', quality: 1 },
-                html2canvas:  { scale: 3, useCORS: true, logging: true },
-                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(element).save();
         }
 
         // --- FORM MODAL & SUBMIT ---
@@ -396,9 +396,17 @@
                 if(isEdit) { if(oldData.DEBIT) { oldJenis = 'Debit'; oldNom = oldData.DEBIT; } else if(oldData.QRIS) { oldJenis = 'QRIS'; oldNom = oldData.QRIS; } else if(oldData.KREDIT) { oldJenis = 'Kredit'; oldNom = oldData.KREDIT; } else if(oldData.KASBON) { oldJenis = 'Kasbon'; oldNom = oldData.KASBON; } }
                 formFields.innerHTML = `<div><label class="text-xs font-medium text-slate-500 ml-1">Nama / Keterangan</label><input type="text" id="input-nama" value="${oldData.NAMA || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-4 py-3 outline-none focus:border-slate-400 text-slate-700"></div><div class="grid grid-cols-2 gap-4"><div><label class="text-xs font-medium text-slate-500 ml-1">Jenis Transaksi</label><select id="input-jenis" class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-4 py-3 outline-none focus:border-slate-400 text-slate-700"><option value="Debit" ${oldJenis === 'Debit' ? 'selected' : ''}>CASH (Masuk)</option><option value="QRIS" ${oldJenis === 'QRIS' ? 'selected' : ''}>QRIS (Masuk)</option><option value="Kredit" ${oldJenis === 'Kredit' ? 'selected' : ''}>KREDIT (Keluar)</option><option value="Kasbon" ${oldJenis === 'Kasbon' ? 'selected' : ''}>KASBON (Piutang)</option></select></div><div><label class="text-xs font-medium text-slate-500 ml-1">Nominal (Rp)</label><input type="number" id="input-nominal" value="${oldNom}" required class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-4 py-3 outline-none focus:border-slate-400 text-slate-700"></div></div><div><label class="text-xs font-medium text-slate-500 ml-1">Catatan Tambahan</label><input type="text" id="input-ket" value="${oldData.KETERANGAN || ''}" class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-4 py-3 outline-none focus:border-slate-400 text-slate-700" placeholder="-"></div>`;
             } else {
+                // Helpers for Date input formatting
+                const padZero = (num) => String(num).padStart(2, '0');
+                const formatDateForHTMLInput = (dateStr) => {
+                    if (!dateStr) return '';
+                    const parts = dateStr.split('/');
+                    return parts.length === 3 ? `${parts[2]}-${padZero(parts[1])}-${padZero(parts[0])}` : '';
+                };
+
                 let tMasuk = formatDateForInput(new Date()); let tNota = formatDateForInput(new Date()); let jam = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-                if (isEdit && oldData['TANGGAL MASUK']) { const p = oldData['TANGGAL MASUK'].split('/'); if(p.length === 3) tMasuk = `${p[2]}-${p[1]}-${p[0]}`; }
-                if (isEdit && oldData['TANGGAL NOTA']) { const p = oldData['TANGGAL NOTA'].split('/'); if(p.length === 3) tNota = `${p[2]}-${p[1]}-${p[0]}`; }
+                if (isEdit && oldData['TANGGAL MASUK']) tMasuk = formatDateForHTMLInput(oldData['TANGGAL MASUK']);
+                if (isEdit && oldData['TANGGAL NOTA']) tNota = formatDateForHTMLInput(oldData['TANGGAL NOTA']);
                 if (isEdit && oldData['JAM PENGERJAAN']) jam = oldData['JAM PENGERJAAN'].replace('.', ':').substring(0,5);
                 const sat = oldData['JENIS SATUAN'] || '-';
 
@@ -408,6 +416,11 @@
         }
 
         function closeModal() { document.getElementById('overlay').classList.remove('open'); document.getElementById('bottom-sheet').classList.remove('open'); currentEditId = null; }
+
+        function formatDateForSheetSave(dateString) {
+            if(!dateString) return ''; const parts = dateString.split('-');
+            if(parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`; return dateString; 
+        }
 
         async function submitToWebhook(e) {
             e.preventDefault(); const btn = document.getElementById('submit-btn'); const isEditing = currentEditId !== null;
@@ -420,7 +433,7 @@
                 payloadData = { "id": targetId, "NAMA": document.getElementById('input-nama').value, "KREDIT": jenis === 'Kredit' ? nominal : "", "KASBON": jenis === 'Kasbon' ? nominal : "", "QRIS": jenis === 'QRIS' ? nominal : "", "DEBIT": jenis === 'Debit' ? nominal : "", "KETERANGAN": document.getElementById('input-ket').value };
             } else {
                 const rMasuk = document.getElementById('input-tgl-masuk').value; const rNota = document.getElementById('input-tgl-nota').value; const rJam = document.getElementById('input-jam').value;
-                payloadData = { "id": targetId, "TANGGAL MASUK": formatDateForSheet(rMasuk), "NAMA": document.getElementById('input-nama').value, "TANGGAL NOTA": formatDateForSheet(rNota), "JAM PENGERJAAN": rJam.replace(':', '.'), "PCS": document.getElementById('input-pcs').value, "KG": document.getElementById('input-kg').value, "NOMOR KERANJANG": document.getElementById('input-krj').value, "JENIS SATUAN": document.getElementById('input-satuan').value };
+                payloadData = { "id": targetId, "TANGGAL MASUK": formatDateForSheetSave(rMasuk), "NAMA": document.getElementById('input-nama').value, "TANGGAL NOTA": formatDateForSheetSave(rNota), "JAM PENGERJAAN": rJam.replace(':', '.'), "PCS": document.getElementById('input-pcs').value, "KG": document.getElementById('input-kg').value, "NOMOR KERANJANG": document.getElementById('input-krj').value, "JENIS SATUAN": document.getElementById('input-satuan').value };
             }
             try { const res = await fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: currentTab, data: payloadData }) }); if(res.ok) { closeModal(); refreshData(); } else alert("Gagal menyambung ke Database."); } catch (err) { alert("Kesalahan jaringan."); } finally { btn.innerHTML = 'Simpan Data'; }
         }
