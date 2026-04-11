@@ -21,9 +21,13 @@
                 extend: {
                     fontFamily: { sans: ['Poppins', 'sans-serif'] },
                     colors: {
-                        pastel: { 
-                            bg: '#F5F9FF', primary: '#5C9CE6', primary_light: '#E6F0FA', text: '#334155', 
-                            plus: '#34D399', plus_bg: '#ECFDF5', minus: '#F87171', minus_bg: '#FEF2F2', warn: '#FBBF24', warn_bg: '#FFFBEB' 
+                        theme: { 
+                            bg: '#F5F5F7',         
+                            primary: '#8B1818',    
+                            primary_light: '#FDECEF', 
+                            text: '#1D1D1F',       
+                            plus: '#34C759',       
+                            minus: '#FF3B30'       
                         }
                     }
                 }
@@ -32,67 +36,55 @@
     </script>
 
     <style>
-        body { background-color: #F5F9FF; color: #334155; padding-bottom: 90px; }
+        body { background-color: #F5F5F7; color: #1D1D1F; padding-bottom: 100px; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .bottom-sheet { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform: translateY(100%); }
+        
+        .glass-panel { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.4); }
+        .glass-card { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04); }
+        
+        .bottom-sheet { transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1); transform: translateY(100%); }
         .bottom-sheet.open { transform: translateY(0); }
         .overlay { transition: opacity 0.3s; opacity: 0; pointer-events: none; }
         .overlay.open { opacity: 1; pointer-events: auto; }
         
-        /* CSS KHUSUS NATIVE PRINT (Sangat Ketat) */
+        /* CSS NATIVE PRINT */
         @media print {
             @page { size: A4 portrait; margin: 1cm; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            
             body { background-color: white !important; padding-bottom: 0 !important; }
-            
-            /* Sembunyikan elemen UI yang tidak perlu dicetak */
             .no-print, header, nav, button, #login-portal, .bottom-sheet, .overlay { display: none !important; }
-            
             main { padding: 0 !important; margin: 0 !important; }
-            
-            #pdf-container { 
-                padding: 0 !important; 
-                margin: 0 !important; 
-                width: 100% !important; 
-                box-shadow: none !important; 
-                border: none !important; 
-            }
-            
-            /* Aturan pemotongan tabel yang rapi */
+            #pdf-container, #pdf-ops-container { padding: 0 !important; margin: 0 !important; width: 100% !important; box-shadow: none !important; border: none !important; }
             table { page-break-inside: auto; width: 100%; border-collapse: collapse; }
             tr { page-break-inside: avoid; page-break-after: auto; }
             thead { display: table-header-group; }
             tfoot { display: table-footer-group; }
-            
-            /* Pastikan teks hitam pekat untuk kontras di kertas */
-            .text-slate-400 { color: #64748b !important; }
-            .text-slate-500 { color: #475569 !important; }
         }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased selection:bg-theme-primary selection:text-white">
 
-    <div id="login-portal" class="fixed inset-0 bg-pastel-bg z-50 flex flex-col items-center justify-center p-6 transition-opacity duration-500 no-print">
-        <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-blue-50 w-full max-w-sm text-center transform transition-transform duration-700 translate-y-0" id="login-card">
-            <img src="https://raw.githubusercontent.com/sunsetdansenja-arch/beuna-agency/main/beuna%20logo%20v2.png" alt="Logo" class="w-20 h-20 mx-auto mb-5 object-contain rounded-xl shadow-sm border border-slate-50">
-            <h1 class="text-2xl font-semibold text-slate-800 mb-1 tracking-tight">Owner Dashboard</h1>
-            <p class="text-xs text-slate-400 mb-8">Executive Analytics & Reports</p>
-            <button onclick="doLogin()" class="w-full bg-slate-800 text-white font-medium py-3.5 rounded-xl shadow-md active:scale-95 transition-transform flex justify-center items-center">
+    <div id="login-portal" class="fixed inset-0 bg-theme-bg z-50 flex flex-col items-center justify-center p-6 transition-opacity duration-500 no-print">
+        <div class="glass-card p-10 rounded-[2.5rem] w-full max-w-sm text-center transform transition-transform duration-700 translate-y-0" id="login-card">
+            <div class="w-24 h-24 bg-gradient-to-br from-theme-primary to-red-900 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-theme-primary/30">
+                <i class="fas fa-chart-line text-4xl text-white"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-theme-text mb-1 tracking-tight">Executive Area</h1>
+            <p class="text-xs text-slate-500 mb-10 font-medium">Dashboard Analitik Fortuna</p>
+            <button onclick="doLogin()" class="w-full bg-theme-text text-white font-semibold py-4 rounded-2xl shadow-lg active:scale-95 transition-transform flex justify-center items-center">
                 <i class="fas fa-lock mr-2 text-sm"></i> <span>Akses Dashboard</span>
             </button>
-            <p class="text-[10px] text-slate-300 mt-6 tracking-wide">SECURE CONNECTION</p>
         </div>
     </div>
 
-    <header class="bg-white px-5 py-4 shadow-sm sticky top-0 z-10 rounded-b-2xl border-b border-blue-50 no-print backdrop-blur-md bg-white/90">
+    <header class="glass-panel px-6 py-5 sticky top-0 z-10 rounded-b-[2rem] shadow-sm no-print">
         <div class="flex justify-between items-center">
             <div>
-                <h1 class="text-xl font-semibold text-slate-800 tracking-tight" id="header-title">Dashboard</h1>
-                <p class="text-xs text-slate-400" id="header-subtitle">Ringkasan Operasional</p>
+                <h1 class="text-2xl font-bold text-theme-text tracking-tight" id="header-title">Keuangan</h1>
+                <p class="text-xs text-theme-primary font-medium mt-0.5" id="header-subtitle">Ringkasan Pemasukan</p>
             </div>
-            <button onclick="refreshData()" class="text-slate-400 hover:text-pastel-primary transition-colors p-2 rounded-full bg-pastel-bg">
+            <button onclick="refreshData()" class="text-slate-500 hover:text-theme-primary transition-colors p-2.5 rounded-full bg-white/50 shadow-sm border border-white">
                 <i class="fas fa-sync-alt" id="refresh-icon"></i>
             </button>
         </div>
@@ -100,104 +92,159 @@
 
     <main class="px-5 py-6">
         
-        <div id="tab-dashboard" class="tab-content space-y-4">
-            
-            <div class="bg-white p-4 rounded-2xl shadow-sm border border-blue-50 no-print mb-6">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider"><i class="far fa-calendar-alt mr-1"></i> Rentang Laporan</h3>
-                    <button onclick="setMonthly()" class="text-[10px] bg-pastel-primary_light text-pastel-primary px-3 py-1.5 rounded-lg font-semibold active:scale-95 transition-transform">
-                        Bulan Ini
-                    </button>
-                </div>
-                <div class="relative">
-                    <i class="fas fa-calendar-day absolute left-4 top-1/2 transform -translate-y-1/2 text-pastel-primary"></i>
-                    <input type="text" id="date-range-picker" readonly class="w-full bg-pastel-bg border border-blue-100 rounded-xl pl-10 pr-4 py-3 outline-none text-sm text-slate-700 font-medium cursor-pointer" placeholder="Pilih Mulai s/d Akhir...">
-                </div>
+        <div class="glass-card p-4 rounded-3xl no-print mb-6" id="global-filter">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider"><i class="far fa-calendar-alt mr-1 text-theme-primary"></i> Rentang Laporan</h3>
+                <button onclick="setMonthly()" class="text-[10px] bg-theme-primary_light text-theme-primary px-3 py-1.5 rounded-lg font-bold active:scale-95 transition-transform">
+                    Bulan Ini
+                </button>
             </div>
+            <div class="relative">
+                <i class="fas fa-calendar-day absolute left-4 top-1/2 transform -translate-y-1/2 text-theme-primary"></i>
+                <input type="text" id="date-range-picker" readonly class="w-full bg-white/70 border border-white rounded-2xl pl-10 pr-4 py-3 outline-none text-sm text-theme-text font-bold cursor-pointer shadow-sm" placeholder="Pilih Mulai s/d Akhir...">
+            </div>
+        </div>
 
-            <div id="pdf-container" class="bg-white p-4 sm:p-8 rounded-2xl sm:shadow-sm sm:border border-blue-50 relative">
-                
-                <div class="text-center mb-6 border-b-2 border-slate-100 pb-5">
-                    <h2 id="pdf-title" class="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight uppercase">LAPORAN KEUANGAN BULANAN</h2>
-                    <p class="text-sm font-semibold text-pastel-primary tracking-widest mt-1">FORTUNA LAUNDRY</p>
-                    <p class="text-xs font-medium text-slate-500 mt-2 bg-pastel-bg inline-block px-3 py-1 rounded-md print-bg-visible" id="pdf-date-range">Periode: -</p>
+        <div id="tab-dashboard" class="tab-content space-y-4">
+            <div id="pdf-container" class="glass-card p-5 sm:p-8 rounded-3xl relative">
+                <div class="text-center mb-6 border-b-2 border-slate-200/50 pb-5">
+                    <h2 id="pdf-title" class="text-xl sm:text-2xl font-bold text-theme-text tracking-tight uppercase">LAPORAN KEUANGAN</h2>
+                    <p class="text-sm font-bold text-theme-primary tracking-widest mt-1">FORTUNA LAUNDRY</p>
+                    <p class="text-[10px] font-bold text-slate-500 mt-2 bg-white/50 inline-block px-3 py-1 rounded-lg border border-white" id="pdf-date-range">Periode: -</p>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3 sm:gap-4 mb-8">
-                    <div class="pdf-card bg-pastel-plus_bg p-4 rounded-xl border border-green-100">
-                        <span class="text-[10px] font-semibold text-pastel-plus block mb-1">TOTAL PEMASUKAN</span>
-                        <h3 class="text-base sm:text-lg font-bold text-slate-700" id="dash-masuk">Rp 0</h3>
-                        <div class="text-[9px] text-slate-500 mt-1 flex justify-between"><span id="dash-cash">Cash: 0</span> <span id="dash-qris">QRIS: 0</span></div>
+                <div class="grid grid-cols-2 gap-3 mb-8">
+                    <div class="bg-green-50/80 p-4 rounded-2xl border border-green-100">
+                        <span class="text-[10px] font-bold text-theme-plus block mb-1">PEMASUKAN KOTOR</span>
+                        <h3 class="text-base font-bold text-theme-text" id="dash-masuk">Rp 0</h3>
+                        <div class="text-[9px] text-slate-500 mt-1 flex justify-between font-medium"><span id="dash-cash">Cash: 0</span> <span id="dash-qris">QRIS: 0</span></div>
                     </div>
-                    <div class="pdf-card bg-pastel-minus_bg p-4 rounded-xl border border-red-100">
-                        <span class="text-[10px] font-semibold text-pastel-minus block mb-1">TOTAL PENGELUARAN</span>
-                        <h3 class="text-base sm:text-lg font-bold text-slate-700" id="dash-keluar">Rp 0</h3>
-                        <p class="text-[9px] text-slate-500 mt-1">Seluruh beban biaya</p>
+                    <div class="bg-red-50/80 p-4 rounded-2xl border border-red-100">
+                        <span class="text-[10px] font-bold text-theme-minus block mb-1">TOTAL PENGELUARAN</span>
+                        <h3 class="text-base font-bold text-theme-text" id="dash-keluar">Rp 0</h3>
+                        <p class="text-[9px] text-slate-500 mt-1 font-medium">Beban & Gaji</p>
                     </div>
-                    <div class="pdf-card bg-pastel-primary_light p-4 rounded-xl border border-blue-200 col-span-2 flex justify-between items-center">
+                    <div class="bg-theme-primary_light/80 p-4 rounded-2xl border border-white col-span-2 flex justify-between items-center shadow-sm">
                         <div>
-                            <span class="text-[10px] font-semibold text-pastel-primary uppercase tracking-wide block mb-1">Laba Operasional</span>
-                            <h3 class="text-2xl sm:text-3xl font-bold text-slate-800" id="dash-laba">Rp 0</h3>
+                            <span class="text-[10px] font-bold text-theme-primary uppercase tracking-wider block mb-1">Laba Operasional</span>
+                            <h3 class="text-2xl font-bold text-theme-text" id="dash-laba">Rp 0</h3>
                         </div>
-                        <i class="fas fa-chart-line text-3xl text-pastel-primary opacity-20"></i>
+                        <i class="fas fa-chart-line text-3xl text-theme-primary opacity-20"></i>
                     </div>
-                    <div class="pdf-card bg-slate-50 p-4 rounded-xl border border-slate-200 col-span-2 flex justify-between items-center">
+                    <div class="bg-slate-100/80 p-4 rounded-2xl border border-white col-span-2 flex justify-between items-center shadow-sm">
                         <div>
-                            <span class="text-[10px] font-semibold text-slate-500 uppercase block mb-1">Petty Cash Fisik (Sisa Laci Kasir)</span>
-                            <h3 class="text-base font-bold text-slate-700" id="dash-petty">Rp 0</h3>
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Petty Cash Fisik Laci</span>
+                            <h3 class="text-base font-bold text-theme-text" id="dash-petty">Rp 0</h3>
                         </div>
-                        <i class="fas fa-cash-register text-2xl text-slate-400 opacity-20"></i>
+                        <i class="fas fa-cash-register text-2xl text-slate-400 opacity-30"></i>
                     </div>
                 </div>
 
                 <div>
-                    <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Rincian Transaksi</h3>
+                    <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3">Rincian Transaksi RCHK</h3>
                     <table class="w-full text-left border-collapse" id="pdf-table">
                         <thead>
-                            <tr class="border-b-2 border-slate-200 text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider">
-                                <th class="pb-2 pt-2 w-1/4">Tgl & Waktu</th>
-                                <th class="pb-2 pt-2 w-2/5">Uraian / Keterangan</th>
+                            <tr class="border-b-2 border-slate-200/50 text-[10px] text-slate-400 uppercase tracking-wider">
+                                <th class="pb-2 pt-2 w-1/4">Waktu</th>
+                                <th class="pb-2 pt-2 w-2/5">Uraian</th>
                                 <th class="pb-2 pt-2 text-center">Tipe</th>
                                 <th class="pb-2 pt-2 text-right">Nominal</th>
                             </tr>
                         </thead>
-                        <tbody id="dashboard-list" class="text-xs sm:text-sm">
-                            <tr><td colspan="4" class="text-center py-8 text-slate-400"><i class="fas fa-spinner fa-spin mr-2"></i>Menghitung data...</td></tr>
+                        <tbody id="dashboard-list" class="text-[11px] font-medium text-slate-600">
+                            <tr><td colspan="4" class="text-center py-8 text-slate-400">Memuat...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <button onclick="downloadPDF('keuangan')" class="no-print w-full bg-theme-text text-white font-semibold py-4 rounded-2xl shadow-lg mt-2 active:scale-95 transition-transform flex justify-center items-center">
+                <i class="fas fa-print text-theme-primary mr-2 text-lg"></i> Cetak Laporan Keuangan
+            </button>
+        </div>
+
+        <div id="tab-ops" class="tab-content space-y-4 hidden">
+            <div id="pdf-ops-container" class="glass-card p-5 sm:p-8 rounded-3xl relative">
+                <div class="text-center mb-6 border-b-2 border-slate-200/50 pb-5">
+                    <h2 class="text-xl sm:text-2xl font-bold text-theme-text tracking-tight uppercase">LAPORAN PRODUKSI & QC</h2>
+                    <p class="text-sm font-bold text-theme-primary tracking-widest mt-1">FORTUNA LAUNDRY</p>
+                    <p class="text-[10px] font-bold text-slate-500 mt-2 bg-white/50 inline-block px-3 py-1 rounded-lg border border-white" id="pdf-ops-date-range">Periode: -</p>
+                </div>
+
+                <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3">Beban Kerja Mesin (Kiloan)</h3>
+                <div class="grid grid-cols-3 gap-3 mb-8">
+                    <div class="bg-white/60 p-3 rounded-2xl border border-white text-center shadow-sm">
+                        <i class="fas fa-weight-scale text-theme-primary mb-2 text-lg"></i>
+                        <h3 class="text-lg font-bold text-theme-text" id="ops-kg">0</h3>
+                        <span class="text-[9px] font-bold text-slate-500">TOTAL KG</span>
+                    </div>
+                    <div class="bg-white/60 p-3 rounded-2xl border border-white text-center shadow-sm">
+                        <i class="fas fa-tshirt text-theme-primary mb-2 text-lg"></i>
+                        <h3 class="text-lg font-bold text-theme-text" id="ops-pcs">0</h3>
+                        <span class="text-[9px] font-bold text-slate-500">TOTAL PCS</span>
+                    </div>
+                    <div class="bg-white/60 p-3 rounded-2xl border border-white text-center shadow-sm">
+                        <i class="fas fa-shopping-basket text-theme-primary mb-2 text-lg"></i>
+                        <h3 class="text-lg font-bold text-theme-text" id="ops-krj">0</h3>
+                        <span class="text-[9px] font-bold text-slate-500">KERANJANG</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center justify-between">
+                        <span>Radar QC & Kehilangan</span>
+                        <span class="text-[8px] bg-red-100 text-red-700 px-2 py-0.5 rounded border border-red-200">Hanya menampilkan selisih/proses</span>
+                    </h3>
+                    <table class="w-full text-left border-collapse" id="pdf-table-qc">
+                        <thead>
+                            <tr class="border-b-2 border-slate-200/50 text-[10px] text-slate-400 uppercase tracking-wider">
+                                <th class="pb-2 pt-2 w-1/2">Pelanggan & Krj</th>
+                                <th class="pb-2 pt-2 text-center">RKH (Masuk)</th>
+                                <th class="pb-2 pt-2 text-center">RSH (QC)</th>
+                                <th class="pb-2 pt-2 text-right">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ops-qc-list" class="text-[11px] font-medium text-slate-600">
+                            <tr><td colspan="4" class="text-center py-8 text-slate-400">Memuat...</td></tr>
                         </tbody>
                     </table>
                 </div>
 
-                <div class="mt-12 pt-6 border-t border-slate-200 text-center">
-                    <p class="text-[9px] sm:text-[10px] text-slate-400 tracking-widest font-medium uppercase">cc developed by beuna system | beuna.xyz</p>
+                <div class="mt-8">
+                    <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3">Rekap Satuan & Karpet Premium</h3>
+                    <div class="bg-white/50 rounded-2xl border border-white p-4 shadow-sm">
+                        <ul id="ops-satuan-list" class="space-y-2 text-xs font-medium text-slate-600">
+                            </ul>
+                    </div>
                 </div>
-
-            </div> <button onclick="downloadPDF()" class="no-print w-full bg-slate-800 text-white font-medium py-3.5 rounded-xl shadow-md mt-4 active:scale-95 transition-transform flex justify-center items-center">
-                <i class="fas fa-print text-blue-300 mr-2 text-lg"></i> Cetak / Simpan PDF
+            </div>
+            <button onclick="downloadPDF('ops')" class="no-print w-full bg-theme-text text-white font-semibold py-4 rounded-2xl shadow-lg mt-2 active:scale-95 transition-transform flex justify-center items-center">
+                <i class="fas fa-print text-theme-primary mr-2 text-lg"></i> Cetak Laporan QC
             </button>
         </div>
 
         <div id="tab-rchk" class="tab-content space-y-4 hidden"></div>
         <div id="tab-rkh" class="tab-content space-y-4 hidden"></div>
         <div id="tab-rsh" class="tab-content space-y-4 hidden"></div>
-        <div class="mt-8 text-center no-print pb-4"><p class="text-[10px] text-blue-300 font-medium tracking-wide uppercase">cc developed by beuna system | beuna.xyz</p></div>
+        <div class="mt-8 text-center no-print pb-4"><p class="text-[10px] text-slate-400 font-medium uppercase tracking-widest">cc developed by beuna system | beuna.xyz</p></div>
     </main>
 
-    <nav class="no-print fixed bottom-0 w-full bg-white/90 backdrop-blur-md border-t border-blue-50 flex justify-around py-3 pb-safe z-10 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
-        <button onclick="switchTab('dashboard', 'Dashboard', 'Ringkasan Operasional')" id="nav-dashboard" class="nav-btn flex flex-col items-center text-pastel-primary w-1/4 transition-colors"><i class="fas fa-chart-pie text-xl mb-1"></i><span class="text-[10px] font-medium">Analitik</span></button>
-        <button onclick="switchTab('rchk', 'Kasir (RCHK)', 'Pencatatan Keuangan')" id="nav-rchk" class="nav-btn flex flex-col items-center text-slate-400 w-1/4 transition-colors"><i class="fas fa-wallet text-xl mb-1"></i><span class="text-[10px] font-medium">Kasir</span></button>
-        <button onclick="switchTab('rkh', 'Kiloan (RKH)', 'Pencatatan Kiloan')" id="nav-rkh" class="nav-btn flex flex-col items-center text-slate-400 w-1/4 transition-colors"><i class="fas fa-weight-scale text-xl mb-1"></i><span class="text-[10px] font-medium">Kiloan</span></button>
-        <button onclick="switchTab('rsh', 'Sortir (RSH)', 'Pencatatan Sortir')" id="nav-rsh" class="nav-btn flex flex-col items-center text-slate-400 w-1/4 transition-colors"><i class="fas fa-tags text-xl mb-1"></i><span class="text-[10px] font-medium">Sortir</span></button>
+    <nav class="no-print fixed bottom-4 left-4 right-4 glass-panel flex justify-around py-3 px-1 z-10 rounded-3xl shadow-xl">
+        <button onclick="switchTab('dashboard', 'Keuangan', 'Ringkasan Pemasukan')" id="nav-dashboard" class="nav-btn flex flex-col items-center text-theme-primary w-1/5 transition-colors"><i class="fas fa-chart-pie text-xl mb-1"></i><span class="text-[9px] font-bold">Finance</span></button>
+        <button onclick="switchTab('ops', 'Produksi & QC', 'Pantau Kinerja Operasional')" id="nav-ops" class="nav-btn flex flex-col items-center text-slate-400 w-1/5 transition-colors"><i class="fas fa-clipboard-check text-xl mb-1"></i><span class="text-[9px] font-bold">Ops/QC</span></button>
+        <button onclick="switchTab('rchk', 'Kasir (RCHK)', 'Edit Data Keuangan')" id="nav-rchk" class="nav-btn flex flex-col items-center text-slate-400 w-1/5 transition-colors"><i class="fas fa-wallet text-xl mb-1"></i><span class="text-[9px] font-bold">Kasir</span></button>
+        <button onclick="switchTab('rkh', 'Kiloan (RKH)', 'Edit Data Kiloan')" id="nav-rkh" class="nav-btn flex flex-col items-center text-slate-400 w-1/5 transition-colors"><i class="fas fa-weight-scale text-xl mb-1"></i><span class="text-[9px] font-bold">Kiloan</span></button>
+        <button onclick="switchTab('rsh', 'Sortir (RSH)', 'Edit Data Sortir')" id="nav-rsh" class="nav-btn flex flex-col items-center text-slate-400 w-1/5 transition-colors"><i class="fas fa-tags text-xl mb-1"></i><span class="text-[9px] font-bold">Sortir</span></button>
     </nav>
 
-    <button onclick="openModal(false)" class="no-print fixed bottom-24 right-5 bg-slate-800 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-xl z-20 hover:scale-105 active:scale-95 transition-transform hidden" id="fab-btn"><i class="fas fa-plus"></i></button>
+    <button onclick="openModal(false)" class="no-print fixed bottom-24 right-6 bg-gradient-to-br from-theme-primary to-red-900 text-white w-14 h-14 rounded-[1.2rem] shadow-xl flex items-center justify-center text-xl z-20 hover:scale-105 active:scale-95 transition-transform hidden" id="fab-btn"><i class="fas fa-plus"></i></button>
 
     <div id="overlay" class="overlay fixed inset-0 bg-slate-900/40 z-30 backdrop-blur-sm no-print" onclick="closeModal()"></div>
-    <div id="bottom-sheet" class="bottom-sheet no-print fixed bottom-0 w-full bg-white rounded-t-3xl shadow-2xl z-40 p-6 max-h-[85vh] overflow-y-auto hide-scrollbar border-t border-blue-100">
-        <div class="w-12 h-1.5 bg-blue-100 rounded-full mx-auto mb-6"></div>
-        <h2 class="text-lg font-semibold text-slate-800 mb-4 tracking-tight" id="modal-title">Tambah Data</h2>
+    <div id="bottom-sheet" class="bottom-sheet no-print fixed bottom-0 w-full glass-panel rounded-t-[2.5rem] shadow-2xl z-40 p-6 sm:p-8 max-h-[90vh] overflow-y-auto hide-scrollbar border-t border-white/80">
+        <div class="w-12 h-1.5 bg-slate-300/50 rounded-full mx-auto mb-8"></div>
+        <h2 class="text-xl font-bold text-theme-text mb-6" id="modal-title">Tambah Data</h2>
         <form id="input-form" onsubmit="submitToWebhook(event)">
             <div id="dynamic-form-fields" class="space-y-4"></div>
-            <button type="submit" id="submit-btn" class="w-full bg-slate-800 text-white font-medium py-3.5 rounded-xl mt-6 shadow-md active:scale-95 transition-transform flex justify-center items-center">Simpan Data</button>
+            <button type="submit" id="submit-btn" class="w-full bg-theme-text text-white font-semibold py-4 rounded-2xl mt-8 shadow-xl active:scale-95 transition-transform flex justify-center items-center">Simpan Data</button>
         </form>
     </div>
 
@@ -207,55 +254,39 @@
         let appData = { RCHK: [], RKH: [], RSH: [] };
         let currentEditId = null; 
         let isMonthlyReport = true; 
-        
-        let filterStart = null;
-        let filterEnd = null;
+        let filterStart = null; let filterEnd = null;
 
         const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
         
         const fp = flatpickr("#date-range-picker", {
-            mode: "range",
-            dateFormat: "Y-m-d",
-            altInput: true,
-            altFormat: "d M Y",
-            locale: "id", 
+            mode: "range", dateFormat: "Y-m-d", altInput: true, altFormat: "d M Y", locale: "id", 
             onChange: function(selectedDates) {
                 if(selectedDates.length === 2) {
-                    isMonthlyReport = false;
-                    filterStart = selectedDates[0];
-                    filterEnd = new Date(selectedDates[1].setHours(23, 59, 59, 999));
-                    if(appData.RCHK.length > 0) calculateDashboard();
+                    isMonthlyReport = false; filterStart = selectedDates[0]; filterEnd = new Date(selectedDates[1].setHours(23, 59, 59, 999));
+                    if(appData.RCHK.length > 0) { calculateDashboard(); calculateOpsDashboard(); }
                 }
             }
         });
 
         function setMonthly() {
-            isMonthlyReport = true;
-            const now = new Date();
-            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-            const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
-            fp.setDate([firstDay, lastDay]);
-            filterStart = firstDay;
-            filterEnd = lastDay;
-            if(appData.RCHK.length > 0) calculateDashboard();
+            isMonthlyReport = true; const now = new Date();
+            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1); const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+            fp.setDate([firstDay, lastDay]); filterStart = firstDay; filterEnd = lastDay;
+            if(appData.RCHK.length > 0) { calculateDashboard(); calculateOpsDashboard(); }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('isOwnerLoggedIn') === 'true') {
                 document.getElementById('login-portal').style.display = 'none';
-                setMonthly(); 
-                loadDataFromN8N();
+                setMonthly(); loadDataFromN8N();
             }
         });
 
         function doLogin() {
-            localStorage.setItem('isOwnerLoggedIn', 'true');
-            const portal = document.getElementById('login-portal');
-            document.getElementById('login-card').style.transform = 'translateY(20px)';
-            portal.style.opacity = '0';
+            localStorage.setItem('isOwnerLoggedIn', 'true'); const portal = document.getElementById('login-portal');
+            document.getElementById('login-card').style.transform = 'translateY(20px)'; portal.style.opacity = '0';
             setTimeout(() => { portal.style.display = 'none'; }, 500);
-            setMonthly();
-            loadDataFromN8N();
+            setMonthly(); loadDataFromN8N();
         }
 
         async function loadDataFromN8N() {
@@ -263,151 +294,205 @@
             try {
                 const response = await fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: "read" }) });
                 const result = await response.json();
-                if(result.status === "success") {
-                    appData = result.data; 
-                    calculateDashboard(); 
-                    renderEditorCards(); 
-                }
-            } catch (error) { alert("Gagal menarik data dari server n8n."); } 
+                if(result.status === "success") { appData = result.data; calculateDashboard(); calculateOpsDashboard(); renderEditorCards(); }
+            } catch (error) { alert("Gagal menarik data dari server."); } 
             finally { icon.classList.remove('fa-spin'); }
         }
 
         function refreshData() { loadDataFromN8N(); }
 
+        // --- KALKULASI TAB KEUANGAN ---
         function calculateDashboard() {
             if(!filterStart || !filterEnd) return;
-
-            const startTs = filterStart.getTime();
-            const endTs = filterEnd.getTime();
-
-            const titleEl = document.getElementById('pdf-title');
-            const subtitleEl = document.getElementById('pdf-date-range');
+            const startTs = filterStart.getTime(); const endTs = filterEnd.getTime();
             
-            if(isMonthlyReport) {
-                titleEl.innerText = "LAPORAN KEUANGAN BULANAN";
-                const monthName = filterStart.toLocaleString('id-ID', { month: 'long', year: 'numeric' });
-                subtitleEl.innerText = `Bulan: ${monthName}`;
-            } else {
-                titleEl.innerText = "LAPORAN KEUANGAN PERIODE KHUSUS";
-                const sStr = filterStart.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-                const eStr = filterEnd.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-                subtitleEl.innerText = `Periode: ${sStr} s/d ${eStr}`;
-            }
+            const sStr = filterStart.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+            const eStr = filterEnd.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+            document.getElementById('pdf-date-range').innerText = isMonthlyReport ? `Bulan: ${filterStart.toLocaleString('id-ID', { month: 'long', year: 'numeric' })}` : `Periode: ${sStr} s/d ${eStr}`;
 
-            let tMasuk = 0, tCash = 0, tQris = 0, tKeluar = 0, tPiutang = 0;
-            let pettyCashTotal = 0; 
-            let listHtml = '';
-
+            let tMasuk = 0, tCash = 0, tQris = 0, tKeluar = 0; let pettyCashTotal = 0; let listHtml = '';
             const sortedRCHK = [...appData.RCHK].reverse();
 
             sortedRCHK.forEach(item => {
-                if(!item.ID) return;
-                const itemTs = parseInt(item.ID); 
-                const isInDataRange = (itemTs >= startTs && itemTs <= endTs);
-
-                const cDebit = parseInt(item.DEBIT) || 0; const cQris = parseInt(item.QRIS) || 0;
-                const cKredit = parseInt(item.KREDIT) || 0; const cKasbon = parseInt(item.KASBON) || 0;
-
+                if(!item.ID) return; const itemTs = parseInt(item.ID); const isInDataRange = (itemTs >= startTs && itemTs <= endTs);
+                const cDebit = parseInt(item.DEBIT) || 0; const cQris = parseInt(item.QRIS) || 0; const cKredit = parseInt(item.KREDIT) || 0;
+                
                 if(itemTs <= endTs) { pettyCashTotal += cDebit; pettyCashTotal -= cKredit; }
-
                 if(isInDataRange) {
-                    tCash += cDebit; tQris += cQris; tKeluar += cKredit; tPiutang += cKasbon; tMasuk += (cDebit + cQris);
-
+                    tCash += cDebit; tQris += cQris; tKeluar += cKredit; tMasuk += (cDebit + cQris);
                     let jenis = '', badgeColor = '', badgeText = '', nom = 0;
                     if(item.DEBIT) { jenis = 'CASH'; badgeColor = 'bg-blue-100 text-blue-700'; badgeText = 'CASH'; nom = cDebit; }
                     else if(item.QRIS) { jenis = 'QRIS'; badgeColor = 'bg-emerald-100 text-emerald-700'; badgeText = 'QRIS'; nom = cQris; }
-                    else if(item.KREDIT) { jenis = 'KREDIT'; badgeColor = 'bg-rose-100 text-rose-700'; badgeText = 'KELUAR'; nom = cKredit; }
-                    else if(item.KASBON) { jenis = 'KASBON'; badgeColor = 'bg-amber-100 text-amber-700'; badgeText = 'KASBON'; nom = cKasbon; }
+                    else if(item.KREDIT) { jenis = 'KREDIT'; badgeColor = 'bg-red-100 text-red-700'; badgeText = 'KELUAR'; nom = cKredit; }
+                    else if(item.KASBON) { jenis = 'KASBON'; badgeColor = 'bg-amber-100 text-amber-700'; badgeText = 'KASBON'; nom = parseInt(item.KASBON)||0; }
 
-                    const tsDate = new Date(itemTs);
-                    const dStr = `${String(tsDate.getDate()).padStart(2,'0')}/${String(tsDate.getMonth()+1).padStart(2,'0')} ${String(tsDate.getHours()).padStart(2,'0')}:${String(tsDate.getMinutes()).padStart(2,'0')}`;
-
-                    listHtml += `
-                    <tr class="border-b border-slate-100 hover:bg-slate-50">
-                        <td class="py-3 pr-2 align-top text-slate-500">${dStr}</td>
-                        <td class="py-3 pr-2 align-top">
-                            <p class="font-semibold text-slate-800">${item.NAMA || '-'}</p>
-                            <p class="text-[10px] text-slate-400 mt-0.5">${item.KETERANGAN || '-'}</p>
-                        </td>
-                        <td class="py-3 align-top text-center">
-                            <span class="text-[9px] font-bold px-2 py-1 rounded ${badgeColor}">${badgeText}</span>
-                        </td>
-                        <td class="py-3 text-right align-top font-bold ${jenis === 'KREDIT' ? 'text-pastel-minus' : 'text-slate-700'}">
-                            ${jenis === 'KREDIT' ? '-' : ''} ${formatRp(nom)}
-                        </td>
-                    </tr>`;
+                    const tsDate = new Date(itemTs); const dStr = `${String(tsDate.getDate()).padStart(2,'0')}/${String(tsDate.getMonth()+1).padStart(2,'0')}`;
+                    listHtml += `<tr class="border-b border-slate-100"><td class="py-2.5 pr-2 align-top text-slate-500">${dStr}</td><td class="py-2.5 pr-2 align-top"><p class="font-bold text-slate-800">${item.NAMA || '-'}</p><p class="text-[9px] text-slate-400 mt-0.5">${item.KETERANGAN || '-'}</p></td><td class="py-2.5 align-top text-center"><span class="text-[8px] font-bold px-2 py-1 rounded ${badgeColor}">${badgeText}</span></td><td class="py-2.5 text-right align-top font-bold ${jenis === 'KREDIT' ? 'text-theme-minus' : 'text-slate-700'}">${jenis === 'KREDIT' ? '-' : ''} ${formatRp(nom)}</td></tr>`;
                 }
             });
 
             let laba = tMasuk - tKeluar;
             document.getElementById('dash-masuk').innerText = formatRp(tMasuk); document.getElementById('dash-cash').innerText = `Cash: ${formatRp(tCash)}`; document.getElementById('dash-qris').innerText = `QRIS: ${formatRp(tQris)}`;
             document.getElementById('dash-keluar').innerText = formatRp(tKeluar); document.getElementById('dash-petty').innerText = formatRp(pettyCashTotal);
-            document.getElementById('dash-laba').innerText = formatRp(laba); document.getElementById('dash-laba').className = `text-2xl sm:text-3xl font-bold ${laba < 0 ? 'text-pastel-minus' : 'text-slate-800'}`;
-            
-            document.getElementById('dashboard-list').innerHTML = listHtml || `<tr><td colspan="4" class="text-center py-6 text-slate-400">Tidak ada transaksi di periode ini.</td></tr>`;
+            document.getElementById('dash-laba').innerText = formatRp(laba); document.getElementById('dash-laba').className = `text-2xl font-bold ${laba < 0 ? 'text-theme-minus' : 'text-theme-text'}`;
+            document.getElementById('dashboard-list').innerHTML = listHtml || `<tr><td colspan="4" class="text-center py-6 text-slate-400">Tidak ada transaksi.</td></tr>`;
         }
 
-        // --- NATIVE OS PRINT (Pendekatan Mutakhir) ---
-        function downloadPDF() {
-            let filenameStr = 'Fortuna_Laporan';
+        // --- KALKULASI TAB OPERASIONAL (Baru) ---
+        function calculateOpsDashboard() {
+            if(!filterStart || !filterEnd) return;
+            const startTs = filterStart.getTime(); const endTs = filterEnd.getTime();
+            
+            const sStr = filterStart.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+            const eStr = filterEnd.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+            document.getElementById('pdf-ops-date-range').innerText = isMonthlyReport ? `Bulan: ${filterStart.toLocaleString('id-ID', { month: 'long', year: 'numeric' })}` : `Periode: ${sStr} s/d ${eStr}`;
+
+            let tKg = 0, tPcs = 0, krjSet = new Set();
+            let qcMap = {}; // { "NAMA-KRJ": { rkh: 10, rsh: 0, dateStr: '...' } }
+
+            // 1. Kumpulkan Data RKH (Masuk)
+            appData.RKH.forEach(item => {
+                if(!item.ID) return; const itemTs = parseInt(item.ID);
+                if(itemTs >= startTs && itemTs <= endTs) {
+                    tKg += parseFloat(item.KG) || 0;
+                    tPcs += parseInt(item.PCS) || 0;
+                    if(item['NOMOR KERANJANG']) krjSet.add(item['NOMOR KERANJANG']);
+                    
+                    const key = `${(item.NAMA||'').toUpperCase()}-${item['NOMOR KERANJANG']}`;
+                    const dDate = new Date(itemTs);
+                    qcMap[key] = { 
+                        name: item.NAMA, krj: item['NOMOR KERANJANG'],
+                        rkh: parseInt(item.PCS)||0, rsh: 0, 
+                        dateStr: `${String(dDate.getDate()).padStart(2,'0')}/${String(dDate.getMonth()+1).padStart(2,'0')}`
+                    };
+                }
+            });
+
+            document.getElementById('ops-kg').innerText = tKg.toFixed(1);
+            document.getElementById('ops-pcs').innerText = tPcs;
+            document.getElementById('ops-krj').innerText = krjSet.size;
+
+            // 2. Cocokkan dengan Data RSH (Keluar/Sortir) & Hitung Satuan Premium
+            let satuanCounts = {};
+            appData.RSH.forEach(item => {
+                if(!item.ID) return; const itemTs = parseInt(item.ID);
+                if(itemTs >= startTs && itemTs <= endTs) {
+                    // Update QC Map
+                    const key = `${(item.NAMA||'').toUpperCase()}-${item['NOMOR KERANJANG']}`;
+                    if(qcMap[key]) { qcMap[key].rsh = parseInt(item.PCS)||0; }
+
+                    // Rekap Satuan
+                    const satuan = item['JENIS SATUAN'] || '-';
+                    if(satuan !== '-' && satuan !== '') {
+                        satuanCounts[satuan] = (satuanCounts[satuan] || 0) + 1;
+                    }
+                }
+            });
+
+            // 3. Render Tabel Radar QC (Hanya tampilkan yang bermasalah/belum selesai)
+            let qcHtml = '';
+            for (const [key, data] of Object.entries(qcMap)) {
+                let statusBadge = ''; let show = false;
+                if (data.rsh === 0) {
+                    statusBadge = `<span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-[8px] font-bold">PROSES</span>`;
+                    show = true;
+                } else if (data.rkh !== data.rsh) {
+                    statusBadge = `<span class="bg-red-100 text-red-700 px-2 py-1 rounded text-[8px] font-bold">SELISIH</span>`;
+                    show = true;
+                }
+                
+                if(show) {
+                    qcHtml += `<tr class="border-b border-slate-100"><td class="py-2 pr-2 align-top"><p class="font-bold text-slate-800">${data.name}</p><p class="text-[9px] text-slate-400 mt-0.5">Krj: #${data.krj} | In: ${data.dateStr}</p></td><td class="py-2 align-top text-center font-bold text-slate-700">${data.rkh}</td><td class="py-2 align-top text-center font-bold ${data.rsh===0 ? 'text-slate-300':'text-theme-minus'}">${data.rsh===0 ? '-' : data.rsh}</td><td class="py-2 text-right align-top">${statusBadge}</td></tr>`;
+                }
+            }
+            document.getElementById('ops-qc-list').innerHTML = qcHtml || `<tr><td colspan="4" class="text-center py-6 text-slate-400">Semua keranjang selesai & pas. (Aman)</td></tr>`;
+
+            // 4. Render Rekap Satuan Premium
+            let satuanHtml = '';
+            if(Object.keys(satuanCounts).length === 0) {
+                satuanHtml = `<li class="text-slate-400 text-center py-2">Tidak ada item karpet/satuan di periode ini.</li>`;
+            } else {
+                for (const [namaSatuan, qty] of Object.entries(satuanCounts)) {
+                    satuanHtml += `<li class="flex justify-between items-center border-b border-white pb-2 mb-2 last:border-0 last:mb-0 last:pb-0"><span class="text-theme-text font-bold"><i class="fas fa-tag text-theme-primary/50 mr-2"></i>${namaSatuan}</span><span class="bg-theme-primary_light text-theme-primary px-3 py-1 rounded-lg font-bold text-[10px]">${qty} Item</span></li>`;
+                }
+            }
+            document.getElementById('ops-satuan-list').innerHTML = satuanHtml;
+        }
+
+        // --- NATIVE OS PRINT ---
+        function downloadPDF(type) {
+            let filenameStr = type === 'keuangan' ? 'Fortuna_Keuangan' : 'Fortuna_Ops_QC';
             if(isMonthlyReport) {
                 const monthName = filterStart.toLocaleString('id-ID', { month: 'long', year: 'numeric' }).replace(/ /g, '_');
-                filenameStr = `Fortuna_Laporan_Bulanan_${monthName}`;
+                filenameStr += `_${monthName}`;
             } else {
                 const sStr = filterStart.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '_');
                 const eStr = filterEnd.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '_');
-                filenameStr = `Fortuna_Laporan_Periode_${sStr}_sd_${eStr}`;
+                filenameStr += `_${sStr}_sd_${eStr}`;
             }
 
-            // Simpan title asli lalu ubah sementara agar nama file PDF mengikuti variabel
+            // Sembunyikan tab yang tidak dicetak
+            document.getElementById('global-filter').classList.add('no-print');
+            
             const originalTitle = document.title;
             document.title = filenameStr;
-
-            // Trigger print OS
             window.print();
-
-            // Kembalikan title
-            setTimeout(() => { document.title = originalTitle; }, 500);
+            
+            setTimeout(() => { 
+                document.title = originalTitle; 
+                document.getElementById('global-filter').classList.remove('no-print');
+            }, 500);
         }
 
-        // --- RENDER EDITOR CARDS & TAB SWITCHER (Kode sisanya tetap sama) ---
+        // --- RENDER EDITOR CARDS ---
         function renderEditorCards() {
             document.getElementById('tab-rchk').innerHTML = [...appData.RCHK].reverse().map(item => {
                 if(!item.ID) return ''; 
                 let jenis = 'Keterangan'; let nominal = 0; let isMin = false;
                 if(item.DEBIT) { jenis = 'Debit'; nominal = item.DEBIT; } else if(item.QRIS) { jenis = 'QRIS'; nominal = item.QRIS; } else if(item.KREDIT) { jenis = 'Kredit'; nominal = item.KREDIT; isMin = true; } else if(item.KASBON) { jenis = 'Kasbon'; nominal = item.KASBON; isMin = true; }
-                return `<div class="bg-white p-4 rounded-2xl shadow-sm border border-blue-50 relative"><div class="flex justify-between items-start mb-1"><span class="font-medium text-slate-700">${item.NAMA || '-'}</span><span class="text-sm font-semibold ${isMin ? 'text-pastel-minus' : 'text-pastel-plus'}">${isMin ? '-' : '+'} ${formatRp(nominal)}</span></div><div class="flex justify-between items-end mt-2"><div><span class="text-[10px] font-medium px-2 py-1 ${isMin ? 'bg-pastel-minus_bg text-pastel-minus' : 'bg-pastel-plus_bg text-pastel-plus'} rounded-md">${jenis}</span><p class="text-xs text-slate-400 mt-1">${item.KETERANGAN || '-'}</p></div><button onclick="openModal(true, '${item.ID}')" class="text-blue-200 hover:text-slate-800 p-2 bg-pastel-bg rounded-lg transition-colors"><i class="fas fa-pen text-sm"></i></button></div></div>`;
-            }).join('') || `<div class="text-center py-10 text-slate-400 text-sm">Belum ada data</div>`;
+                return `<div class="glass-card p-5 rounded-3xl relative mb-5"><div class="flex justify-between items-start mb-2"><span class="font-bold text-theme-text text-sm">${item.NAMA || '-'}</span><span class="text-sm font-bold ${isMin ? 'text-theme-minus' : 'text-theme-plus'}">${isMin ? '-' : '+'} ${formatRp(nominal)}</span></div><div class="flex justify-between items-end mt-3"><div><span class="text-[10px] font-bold px-2.5 py-1 ${isMin ? 'bg-red-50 text-theme-minus' : 'bg-green-50 text-theme-plus'} rounded-lg">${jenis}</span><p class="text-[11px] text-slate-500 font-medium mt-2">${item.KETERANGAN || '-'}</p></div><button onclick="openModal(true, '${item.ID}')" class="text-slate-400 hover:text-theme-primary p-2 bg-white/50 border border-white rounded-xl shadow-sm transition-colors"><i class="fas fa-pen text-sm"></i></button></div></div>`;
+            }).join('') || `<div class="text-center py-10 text-slate-400 text-sm font-medium">Belum ada data.</div>`;
 
             const renderLaundryCard = (item) => {
                 if(!item.ID) return '';
-                return `<div class="bg-white p-4 rounded-2xl shadow-sm border border-blue-50 relative"><div class="flex justify-between items-center mb-2"><span class="font-medium text-slate-700">${item.NAMA || '-'}</span><div class="flex items-center gap-3"><span class="text-[10px] text-slate-400 bg-pastel-bg px-2 py-1 rounded-md">${item['TANGGAL MASUK'] || '-'} | ${item['JAM PENGERJAAN'] || ''}</span><button onclick="openModal(true, '${item.ID}')" class="text-blue-200 hover:text-slate-800"><i class="fas fa-pen text-sm"></i></button></div></div><div class="grid grid-cols-3 gap-2 mt-3"><div class="bg-pastel-primary_light p-2 rounded-xl text-center"><p class="text-[10px] text-pastel-primary font-medium">Berat</p><p class="font-semibold text-slate-700">${item.KG || 0} Kg</p></div><div class="bg-pastel-bg p-2 rounded-xl text-center"><p class="text-[10px] text-slate-500">Pcs</p><p class="font-semibold text-slate-600">${item.PCS || 0}</p></div><div class="bg-pastel-bg p-2 rounded-xl text-center"><p class="text-[10px] text-slate-500">Keranjang</p><p class="font-semibold text-slate-600">#${item['NOMOR KERANJANG'] || '-'}</p></div></div><p class="text-[10px] font-medium text-slate-400 mt-3 border-t border-pastel-bg pt-2"><i class="fas fa-tag mr-1 text-pastel-primary"></i> ${item['JENIS SATUAN'] || '-'}</p></div>`;
+                return `<div class="glass-card p-5 rounded-3xl relative mb-5"><div class="flex justify-between items-center mb-3"><span class="font-bold text-theme-text text-sm">${item.NAMA || '-'}</span><div class="flex items-center gap-2"><span class="text-[10px] text-slate-500 bg-white/50 border border-white px-2.5 py-1 rounded-lg font-medium shadow-sm">${item['TANGGAL MASUK'] || '-'}</span><button onclick="openModal(true, '${item.ID}')" class="text-slate-400 hover:text-theme-primary p-2 bg-white/50 border border-white rounded-xl shadow-sm"><i class="fas fa-pen text-xs"></i></button></div></div><div class="grid grid-cols-3 gap-3 mt-4"><div class="bg-theme-primary_light/50 border border-white p-3 rounded-2xl text-center shadow-sm"><p class="text-[10px] text-theme-primary font-bold mb-0.5">Berat</p><p class="font-bold text-theme-text text-sm">${item.KG || 0} Kg</p></div><div class="bg-white/50 border border-white p-3 rounded-2xl text-center shadow-sm"><p class="text-[10px] text-slate-500 font-bold mb-0.5">Pcs</p><p class="font-bold text-theme-text text-sm">${item.PCS || 0}</p></div><div class="bg-white/50 border border-white p-3 rounded-2xl text-center shadow-sm"><p class="text-[10px] text-slate-500 font-bold mb-0.5">Keranjang</p><p class="font-bold text-theme-text text-sm">#${item['NOMOR KERANJANG'] || '-'}</p></div></div><p class="text-[10px] font-bold text-theme-primary mt-4 border-t border-white/50 pt-3"><i class="fas fa-tag mr-1"></i> ${item['JENIS SATUAN'] || '-'}</p></div>`;
             };
             document.getElementById('tab-rkh').innerHTML = [...appData.RKH].reverse().map(i => renderLaundryCard(i)).join('');
             document.getElementById('tab-rsh').innerHTML = [...appData.RSH].reverse().map(i => renderLaundryCard(i)).join('');
         }
 
+        // --- TAB SWITCHER ---
         function switchTab(tabId, title, subtitle) {
             currentTab = tabId;
             document.getElementById('header-title').innerText = title; document.getElementById('header-subtitle').innerText = subtitle;
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden')); document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-            document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('text-pastel-primary'); btn.classList.add('text-slate-400'); });
-            document.getElementById(`nav-${tabId}`).classList.add('text-pastel-primary'); document.getElementById(`nav-${tabId}`).classList.remove('text-slate-400');
+            document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('text-theme-primary'); btn.classList.add('text-slate-400'); });
+            document.getElementById(`nav-${tabId}`).classList.add('text-theme-primary'); document.getElementById(`nav-${tabId}`).classList.remove('text-slate-400');
             const fab = document.getElementById('fab-btn');
-            if(tabId === 'dashboard') fab.classList.add('hidden'); else fab.classList.remove('hidden');
+            if(tabId === 'dashboard' || tabId === 'ops') {
+                fab.classList.add('hidden');
+                document.getElementById('global-filter').style.display = 'block';
+            } else {
+                fab.classList.remove('hidden');
+                document.getElementById('global-filter').style.display = 'none';
+            }
         }
 
+        // --- FORM MODAL & SUBMIT ---
         function openModal(isEdit = false, itemId = null) {
-            if(currentTab === 'dashboard') return;
+            if(currentTab === 'dashboard' || currentTab === 'ops') return;
             currentEditId = isEdit ? itemId : null; 
             const formFields = document.getElementById('dynamic-form-fields');
             document.getElementById('modal-title').innerText = isEdit ? `Edit Data` : `Tambah Data`;
             let oldData = {}; if(isEdit) oldData = appData[currentTab.toUpperCase()].find(item => item.ID == itemId) || {};
 
+            const inputClass = "w-full mt-1.5 bg-white/70 border border-white shadow-sm rounded-2xl px-4 py-3.5 outline-none focus:border-theme-primary focus:ring-2 focus:ring-theme-primary/20 text-sm font-bold text-theme-text transition-all";
+            const labelClass = "text-[11px] font-bold text-slate-500 ml-1 uppercase tracking-wider";
+
             if(currentTab === 'rchk') {
                 let oldJenis = 'Debit'; let oldNom = '';
                 if(isEdit) { if(oldData.DEBIT) { oldJenis = 'Debit'; oldNom = oldData.DEBIT; } else if(oldData.QRIS) { oldJenis = 'QRIS'; oldNom = oldData.QRIS; } else if(oldData.KREDIT) { oldJenis = 'Kredit'; oldNom = oldData.KREDIT; } else if(oldData.KASBON) { oldJenis = 'Kasbon'; oldNom = oldData.KASBON; } }
-                formFields.innerHTML = `<div><label class="text-xs font-medium text-slate-500 ml-1">Nama / Keterangan</label><input type="text" id="input-nama" value="${oldData.NAMA || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-4 py-3 outline-none focus:border-slate-400 text-slate-700"></div><div class="grid grid-cols-2 gap-4"><div><label class="text-xs font-medium text-slate-500 ml-1">Jenis Transaksi</label><select id="input-jenis" class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-4 py-3 outline-none focus:border-slate-400 text-slate-700"><option value="Debit" ${oldJenis === 'Debit' ? 'selected' : ''}>CASH (Masuk)</option><option value="QRIS" ${oldJenis === 'QRIS' ? 'selected' : ''}>QRIS (Masuk)</option><option value="Kredit" ${oldJenis === 'Kredit' ? 'selected' : ''}>KREDIT (Keluar)</option><option value="Kasbon" ${oldJenis === 'Kasbon' ? 'selected' : ''}>KASBON (Piutang)</option></select></div><div><label class="text-xs font-medium text-slate-500 ml-1">Nominal (Rp)</label><input type="number" id="input-nominal" value="${oldNom}" required class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-4 py-3 outline-none focus:border-slate-400 text-slate-700"></div></div><div><label class="text-xs font-medium text-slate-500 ml-1">Catatan Tambahan</label><input type="text" id="input-ket" value="${oldData.KETERANGAN || ''}" class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-4 py-3 outline-none focus:border-slate-400 text-slate-700" placeholder="-"></div>`;
+                formFields.innerHTML = `<div><label class="${labelClass}">Nama / Keterangan</label><input type="text" id="input-nama" value="${oldData.NAMA || ''}" oninput="this.value = this.value.toUpperCase()" required class="${inputClass}"></div><div class="grid grid-cols-2 gap-4"><div><label class="${labelClass}">Jenis Transaksi</label><select id="input-jenis" class="${inputClass}"><option value="Debit" ${oldJenis === 'Debit' ? 'selected' : ''}>CASH (Masuk)</option><option value="QRIS" ${oldJenis === 'QRIS' ? 'selected' : ''}>QRIS (Masuk)</option><option value="Kredit" ${oldJenis === 'Kredit' ? 'selected' : ''}>KREDIT (Keluar)</option><option value="Kasbon" ${oldJenis === 'Kasbon' ? 'selected' : ''}>KASBON (Piutang)</option></select></div><div><label class="${labelClass}">Nominal (Rp)</label><input type="number" id="input-nominal" value="${oldNom}" required class="${inputClass}"></div></div><div><label class="${labelClass}">Catatan Tambahan</label><input type="text" id="input-ket" value="${oldData.KETERANGAN || ''}" class="${inputClass}" placeholder="-"></div>`;
             } else {
                 const padZero = (num) => String(num).padStart(2, '0');
                 const formatDateForHTMLInput = (dateStr) => { if (!dateStr) return ''; const parts = dateStr.split('/'); return parts.length === 3 ? `${parts[2]}-${padZero(parts[1])}-${padZero(parts[0])}` : ''; };
@@ -416,7 +501,7 @@
                 if (isEdit && oldData['TANGGAL MASUK']) tMasuk = formatDateForHTMLInput(oldData['TANGGAL MASUK']); if (isEdit && oldData['TANGGAL NOTA']) tNota = formatDateForHTMLInput(oldData['TANGGAL NOTA']); if (isEdit && oldData['JAM PENGERJAAN']) jam = oldData['JAM PENGERJAAN'].replace('.', ':').substring(0,5);
                 const sat = oldData['JENIS SATUAN'] || '-';
 
-                formFields.innerHTML = `<div class="grid grid-cols-2 gap-3 mb-2"><div><label class="text-xs font-medium text-slate-500 ml-1">Tgl Masuk</label><input type="date" id="input-tgl-masuk" value="${tMasuk}" required class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-3 py-3 outline-none text-slate-700 text-sm"></div><div><label class="text-xs font-medium text-slate-500 ml-1">Jam Kerja</label><input type="time" id="input-jam" value="${jam}" required class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-3 py-3 outline-none text-slate-700 text-sm"></div></div><div><label class="text-xs font-medium text-slate-500 ml-1">Tgl Nota</label><input type="date" id="input-tgl-nota" value="${tNota}" required class="w-full mt-1 mb-2 bg-pastel-bg border border-blue-50 rounded-xl px-4 py-3 outline-none text-slate-700"></div><div><label class="text-xs font-medium text-slate-500 ml-1">Nama Pelanggan</label><input type="text" id="input-nama" value="${oldData.NAMA || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-4 py-3 outline-none text-slate-700"></div><div class="grid grid-cols-3 gap-3"><div><label class="text-xs font-medium text-slate-500 ml-1">Berat (Kg)</label><input type="number" step="0.1" id="input-kg" value="${oldData.KG || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-3 py-3 outline-none text-center text-slate-700"></div><div><label class="text-xs font-medium text-slate-500 ml-1">Pcs</label><input type="number" id="input-pcs" value="${oldData.PCS || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-3 py-3 outline-none text-center text-slate-700"></div><div><label class="text-xs font-medium text-slate-500 ml-1">Keranjang</label><input type="text" id="input-krj" value="${oldData['NOMOR KERANJANG'] || ''}" required class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-3 py-3 outline-none text-center text-slate-700"></div></div><div class="mt-4"><label class="text-xs font-medium text-slate-500 ml-1">Jenis Satuan</label><select id="input-satuan" class="w-full mt-1 bg-pastel-bg border border-blue-50 rounded-xl px-4 py-3 outline-none text-slate-700"><option value="-" ${sat === '-' ? 'selected' : ''}>Baju / Pcs Bebas (Standar)</option><option value="Karpet Tebal" ${sat === 'Karpet Tebal' ? 'selected' : ''}>Karpet Tebal</option><option value="Karpet Hambal" ${sat === 'Karpet Hambal' ? 'selected' : ''}>Karpet Hambal</option><option value="Karpet Macan" ${sat === 'Karpet Macan' ? 'selected' : ''}>Karpet Macan</option><option value="Kasur Sedang" ${sat === 'Kasur Sedang' ? 'selected' : ''}>Kasur Sedang</option><option value="Taplak Panjang" ${sat === 'Taplak Panjang' ? 'selected' : ''}>Taplak Panjang</option><option value="Karpet Turki Besar" ${sat === 'Karpet Turki Besar' ? 'selected' : ''}>Karpet Turki Besar</option></select></div>`;
+                formFields.innerHTML = `<div class="grid grid-cols-2 gap-3 mb-2"><div><label class="${labelClass}">Tgl Masuk</label><input type="date" id="input-tgl-masuk" value="${tMasuk}" required class="${inputClass} font-medium"></div><div><label class="${labelClass}">Jam Kerja</label><input type="time" id="input-jam" value="${jam}" required class="${inputClass} font-medium"></div></div><div><label class="${labelClass}">Tgl Nota</label><input type="date" id="input-tgl-nota" value="${tNota}" required class="${inputClass} mb-3 font-medium"></div><div><label class="${labelClass}">Nama Pelanggan</label><input type="text" id="input-nama" value="${oldData.NAMA || ''}" oninput="this.value = this.value.toUpperCase()" required class="${inputClass}"></div><div class="grid grid-cols-3 gap-3 mt-3"><div><label class="${labelClass}">Berat (Kg)</label><input type="number" step="0.1" id="input-kg" value="${oldData.KG || ''}" required class="${inputClass} text-center"></div><div><label class="${labelClass}">Pcs</label><input type="number" id="input-pcs" value="${oldData.PCS || ''}" required class="${inputClass} text-center"></div><div><label class="${labelClass}">Keranjang</label><input type="text" id="input-krj" value="${oldData['NOMOR KERANJANG'] || ''}" required class="${inputClass} text-center"></div></div><div class="mt-4"><label class="${labelClass}">Jenis Satuan</label><select id="input-satuan" class="${inputClass}"><option value="-" ${sat === '-' ? 'selected' : ''}>Baju / Pcs Bebas (Standar)</option><option value="Karpet Tebal" ${sat === 'Karpet Tebal' ? 'selected' : ''}>Karpet Tebal</option><option value="Karpet Hambal" ${sat === 'Karpet Hambal' ? 'selected' : ''}>Karpet Hambal</option><option value="Karpet Macan" ${sat === 'Karpet Macan' ? 'selected' : ''}>Karpet Macan</option><option value="Kasur Sedang" ${sat === 'Kasur Sedang' ? 'selected' : ''}>Kasur Sedang</option><option value="Taplak Panjang" ${sat === 'Taplak Panjang' ? 'selected' : ''}>Taplak Panjang</option><option value="Karpet Turki Besar" ${sat === 'Karpet Turki Besar' ? 'selected' : ''}>Karpet Turki Besar</option></select></div>`;
             }
             document.getElementById('overlay').classList.add('open'); document.getElementById('bottom-sheet').classList.add('open');
         }
@@ -436,10 +521,10 @@
             let payloadData = {};
             if (currentTab === 'rchk') {
                 const jenis = document.getElementById('input-jenis').value; const nominal = document.getElementById('input-nominal').value;
-                payloadData = { "id": targetId, "NAMA": document.getElementById('input-nama').value, "KREDIT": jenis === 'Kredit' ? nominal : "", "KASBON": jenis === 'Kasbon' ? nominal : "", "QRIS": jenis === 'QRIS' ? nominal : "", "DEBIT": jenis === 'Debit' ? nominal : "", "KETERANGAN": document.getElementById('input-ket').value };
+                payloadData = { "id": targetId, "NAMA": document.getElementById('input-nama').value.toUpperCase(), "KREDIT": jenis === 'Kredit' ? nominal : "", "KASBON": jenis === 'Kasbon' ? nominal : "", "QRIS": jenis === 'QRIS' ? nominal : "", "DEBIT": jenis === 'Debit' ? nominal : "", "KETERANGAN": document.getElementById('input-ket').value };
             } else {
                 const rMasuk = document.getElementById('input-tgl-masuk').value; const rNota = document.getElementById('input-tgl-nota').value; const rJam = document.getElementById('input-jam').value;
-                payloadData = { "id": targetId, "TANGGAL MASUK": formatDateForSheetSave(rMasuk), "NAMA": document.getElementById('input-nama').value, "TANGGAL NOTA": formatDateForSheetSave(rNota), "JAM PENGERJAAN": rJam.replace(':', '.'), "PCS": document.getElementById('input-pcs').value, "KG": document.getElementById('input-kg').value, "NOMOR KERANJANG": document.getElementById('input-krj').value, "JENIS SATUAN": document.getElementById('input-satuan').value };
+                payloadData = { "id": targetId, "TANGGAL MASUK": formatDateForSheetSave(rMasuk), "NAMA": document.getElementById('input-nama').value.toUpperCase(), "TANGGAL NOTA": formatDateForSheetSave(rNota), "JAM PENGERJAAN": rJam.replace(':', '.'), "PCS": document.getElementById('input-pcs').value, "KG": document.getElementById('input-kg').value, "NOMOR KERANJANG": document.getElementById('input-krj').value, "JENIS SATUAN": document.getElementById('input-satuan').value };
             }
             try { const res = await fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: currentTab, data: payloadData }) }); if(res.ok) { closeModal(); refreshData(); } else alert("Gagal menyambung ke Database."); } catch (err) { alert("Kesalahan jaringan."); } finally { btn.innerHTML = 'Simpan Data'; }
         }
