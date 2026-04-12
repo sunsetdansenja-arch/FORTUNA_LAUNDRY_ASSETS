@@ -191,22 +191,27 @@
                     <p class="text-[10px] font-bold text-slate-500 mt-2 bg-white/50 inline-block px-3 py-1 rounded-lg border border-white" id="pdf-ops-date-range">Periode: -</p>
                 </div>
 
-                <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3">Beban Kerja Mesin</h3>
-                <div class="grid grid-cols-3 gap-3 mb-8">
-                    <div class="bg-white/60 p-3 rounded-2xl border border-white text-center shadow-sm">
-                        <i class="fas fa-weight-scale text-theme-primary mb-2 text-lg"></i>
-                        <h3 class="text-lg font-bold text-theme-text" id="ops-kg">0</h3>
-                        <span class="text-[9px] font-bold text-slate-500">TOTAL KG</span>
+                <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3">Produksi & Beban Kerja</h3>
+                <div class="grid grid-cols-2 gap-3 mb-8">
+                    <div class="bg-white/60 p-4 rounded-2xl border border-white text-center shadow-sm">
+                        <i class="fas fa-tags text-theme-primary mb-2 text-xl"></i>
+                        <h3 class="text-xl font-bold text-theme-text" id="ops-pcs-awal">0</h3>
+                        <span class="text-[9px] font-bold text-slate-500 uppercase">Pcs Awal (Sortir)</span>
                     </div>
-                    <div class="bg-white/60 p-3 rounded-2xl border border-white text-center shadow-sm">
-                        <i class="fas fa-tshirt text-theme-primary mb-2 text-lg"></i>
-                        <h3 class="text-lg font-bold text-theme-text" id="ops-pcs">0</h3>
-                        <span class="text-[9px] font-bold text-slate-500">TOTAL PCS</span>
+                    <div class="bg-white/60 p-4 rounded-2xl border border-white text-center shadow-sm">
+                        <i class="fas fa-tshirt text-theme-primary mb-2 text-xl"></i>
+                        <h3 class="text-xl font-bold text-theme-text" id="ops-pcs-akhir">0</h3>
+                        <span class="text-[9px] font-bold text-slate-500 uppercase">Pcs Akhir (Kiloan)</span>
                     </div>
-                    <div class="bg-white/60 p-3 rounded-2xl border border-white text-center shadow-sm">
-                        <i class="fas fa-shopping-basket text-theme-primary mb-2 text-lg"></i>
-                        <h3 class="text-lg font-bold text-theme-text" id="ops-krj">0</h3>
-                        <span class="text-[9px] font-bold text-slate-500">KERANJANG</span>
+                    <div class="bg-white/60 p-4 rounded-2xl border border-white text-center shadow-sm">
+                        <i class="fas fa-weight-scale text-theme-primary mb-2 text-xl"></i>
+                        <h3 class="text-xl font-bold text-theme-text" id="ops-kg">0</h3>
+                        <span class="text-[9px] font-bold text-slate-500 uppercase">Total Berat (Kg)</span>
+                    </div>
+                    <div class="bg-white/60 p-4 rounded-2xl border border-white text-center shadow-sm">
+                        <i class="fas fa-shopping-basket text-theme-primary mb-2 text-xl"></i>
+                        <h3 class="text-xl font-bold text-theme-text" id="ops-krj">0</h3>
+                        <span class="text-[9px] font-bold text-slate-500 uppercase">Total Keranjang</span>
                     </div>
                 </div>
 
@@ -218,9 +223,9 @@
                     <table class="w-full text-left border-collapse" id="pdf-table-qc">
                         <thead>
                             <tr class="border-b-2 border-slate-200/50 text-[10px] text-slate-400 uppercase tracking-wider">
-                                <th class="pb-2 pt-2 w-1/2">Pelanggan & Krj</th>
-                                <th class="pb-2 pt-2 text-center">RSH (Sortir)</th>
-                                <th class="pb-2 pt-2 text-center">RKH (Timbang)</th>
+                                <th class="pb-2 pt-2 w-2/5">Pelanggan & Krj</th>
+                                <th class="pb-2 pt-2 text-center">Pcs Awal<br><span class="text-[8px] font-medium">(Sortir)</span></th>
+                                <th class="pb-2 pt-2 text-center">Pcs Akhir<br><span class="text-[8px] font-medium">(Kiloan)</span></th>
                                 <th class="pb-2 pt-2 text-right">Status</th>
                             </tr>
                         </thead>
@@ -410,7 +415,6 @@
                 const cQris = parseInt(item.QRIS) || 0; 
                 const cKredit = parseInt(item.KREDIT) || 0;
                 
-                // Petty cash logic includes all past data up to end date
                 if(itemTs <= endTs) { 
                     pettyCashTotal += cDebit; 
                     pettyCashTotal -= cKredit; 
@@ -475,7 +479,7 @@
                 ? `Bulan: ${filterStart.toLocaleString('id-ID', { month: 'long', year: 'numeric' })}` 
                 : `Periode: ${sStr} s/d ${eStr}`;
 
-            let tKg = 0, tPcs = 0, krjSet = new Set();
+            let tKg = 0, tPcsAwal = 0, tPcsAkhir = 0, krjSet = new Set();
             let qcMap = {}; 
             let satuanCounts = {};
 
@@ -485,7 +489,7 @@
                 const itemTs = parseInt(item.ID);
                 
                 if(itemTs >= startTs && itemTs <= endTs) {
-                    tPcs += parseInt(item.PCS) || 0;
+                    tPcsAwal += parseInt(item.PCS) || 0;
                     if(item['NOMOR KERANJANG']) krjSet.add(item['NOMOR KERANJANG']);
                     
                     const key = `${(item.NAMA||'').toUpperCase()}-${item['NOMOR KERANJANG']}`;
@@ -514,14 +518,14 @@
                 
                 if(itemTs >= startTs && itemTs <= endTs) {
                     tKg += parseFloat(item.KG) || 0; 
+                    tPcsAkhir += parseInt(item.PCS) || 0;
+                    if(item['NOMOR KERANJANG']) krjSet.add(item['NOMOR KERANJANG']); // Jika ada keranjang yg lgsg nimbang
                     
                     const key = `${(item.NAMA||'').toUpperCase()}-${item['NOMOR KERANJANG']}`;
                     
                     if(qcMap[key]) { 
-                        // Update RKH count jika sudah ada di Sortir
                         qcMap[key].rkh = parseInt(item.PCS)||0; 
                     } else {
-                        // Jika ada di Timbangan tapi tidak pernah Disortir (Bypass)
                         const dDate = new Date(itemTs);
                         qcMap[key] = { 
                             name: item.NAMA, 
@@ -535,7 +539,8 @@
             });
 
             document.getElementById('ops-kg').innerText = tKg.toFixed(1);
-            document.getElementById('ops-pcs').innerText = tPcs;
+            document.getElementById('ops-pcs-awal').innerText = tPcsAwal;
+            document.getElementById('ops-pcs-akhir').innerText = tPcsAkhir;
             document.getElementById('ops-krj').innerText = krjSet.size;
 
             // C. Render Tabel Radar QC 
@@ -615,7 +620,7 @@
         }
 
         // ==========================================
-        // 4. RENDER EDITOR (FUNGSI EDIT DATA)
+        // 4. RENDER EDITOR (FUNGSI EDIT DATA OWNER)
         // ==========================================
         function renderEditorCards() {
             // Edit Kasir
@@ -775,7 +780,7 @@
                 if (isEdit && oldData['JAM PENGERJAAN']) jam = oldData['JAM PENGERJAAN'].replace('.', ':').substring(0,5);
                 const sat = oldData['JENIS SATUAN'] || '-';
 
-                // Form Edit Owner tidak perlu fitur Queue dropdown (karena owner cuma edit data spesifik)
+                // REVISI: Menggunakan input tipe text + datalist agar Owner bisa edit custom jenis satuan
                 formFields.innerHTML = `
                     <div class="grid grid-cols-2 gap-3 mb-2">
                         <div>
@@ -810,16 +815,17 @@
                         </div>
                     </div>
                     <div class="mt-4">
-                        <label class="${labelClass}">Jenis Satuan</label>
-                        <select id="input-satuan" class="${inputClass}">
-                            <option value="-" ${sat === '-' ? 'selected' : ''}>Baju / Pcs Bebas (Standar)</option>
-                            <option value="Karpet Tebal" ${sat === 'Karpet Tebal' ? 'selected' : ''}>Karpet Tebal</option>
-                            <option value="Karpet Hambal" ${sat === 'Karpet Hambal' ? 'selected' : ''}>Karpet Hambal</option>
-                            <option value="Karpet Macan" ${sat === 'Karpet Macan' ? 'selected' : ''}>Karpet Macan</option>
-                            <option value="Kasur Sedang" ${sat === 'Kasur Sedang' ? 'selected' : ''}>Kasur Sedang</option>
-                            <option value="Taplak Panjang" ${sat === 'Taplak Panjang' ? 'selected' : ''}>Taplak Panjang</option>
-                            <option value="Karpet Turki Besar" ${sat === 'Karpet Turki Besar' ? 'selected' : ''}>Karpet Turki Besar</option>
-                        </select>
+                        <label class="${labelClass}">Jenis Satuan (Bisa Pilih / Ketik Sendiri)</label>
+                        <input type="text" id="input-satuan" list="satuan-list" value="${sat}" class="${inputClass}" placeholder="Ketik atau pilih dari daftar...">
+                        <datalist id="satuan-list">
+                            <option value="-">Baju / Pcs Bebas</option>
+                            <option value="Karpet Tebal">
+                            <option value="Karpet Hambal">
+                            <option value="Karpet Macan">
+                            <option value="Kasur Sedang">
+                            <option value="Taplak Panjang">
+                            <option value="Karpet Turki Besar">
+                        </datalist>
                     </div>`;
             }
             document.getElementById('overlay').classList.add('open'); 
@@ -865,6 +871,11 @@
                 const rMasuk = document.getElementById('input-tgl-masuk').value; 
                 const rNota = document.getElementById('input-tgl-nota').value; 
                 const rJam = document.getElementById('input-jam').value;
+                
+                // Ambil data satuan dari text input, jika kosong paksa jadi "-"
+                let rSatuan = document.getElementById('input-satuan').value.trim();
+                if(rSatuan === "") rSatuan = "-";
+
                 payloadData = { 
                     "id": targetId, 
                     "TANGGAL MASUK": formatDateForSheetSave(rMasuk), 
@@ -874,7 +885,7 @@
                     "PCS": document.getElementById('input-pcs').value, 
                     "KG": document.getElementById('input-kg').value, 
                     "NOMOR KERANJANG": document.getElementById('input-krj').value, 
-                    "JENIS SATUAN": document.getElementById('input-satuan').value 
+                    "JENIS SATUAN": rSatuan 
                 };
             }
             
