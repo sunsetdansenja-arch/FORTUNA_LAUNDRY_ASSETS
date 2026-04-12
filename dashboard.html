@@ -224,8 +224,8 @@
                         <thead>
                             <tr class="border-b-2 border-slate-200/50 text-[10px] text-slate-400 uppercase tracking-wider">
                                 <th class="pb-2 pt-2 w-2/5">Pelanggan & Krj</th>
-                                <th class="pb-2 pt-2 text-center">Pcs Awal<br><span class="text-[8px] font-medium">(Sortir)</span></th>
-                                <th class="pb-2 pt-2 text-center">Pcs Akhir<br><span class="text-[8px] font-medium">(Kiloan)</span></th>
+                                <th class="pb-2 pt-2 text-center">Awal<br><span class="text-[8px] font-medium">(Sortir)</span></th>
+                                <th class="pb-2 pt-2 text-center">Akhir & Kg<br><span class="text-[8px] font-medium">(Kiloan)</span></th>
                                 <th class="pb-2 pt-2 text-right">Status</th>
                             </tr>
                         </thead>
@@ -498,8 +498,9 @@
                     qcMap[key] = { 
                         name: item.NAMA, 
                         krj: item['NOMOR KERANJANG'],
-                        rsh: parseInt(item.PCS)||0, 
-                        rkh: 0, 
+                        rsh_pcs: parseInt(item.PCS)||0, 
+                        rkh_pcs: 0, 
+                        rkh_kg: 0,
                         dateStr: `${String(dDate.getDate()).padStart(2,'0')}/${String(dDate.getMonth()+1).padStart(2,'0')}`
                     };
 
@@ -511,7 +512,7 @@
                 }
             });
 
-            // B. Cocokkan dengan Data RKH (Keluar / Timbang)
+            // B. Cocokkan dengan Data RKH (Keluar / Timbang Akhir)
             appData.RKH.forEach(item => {
                 if(!item.ID) return; 
                 const itemTs = parseInt(item.ID);
@@ -519,19 +520,22 @@
                 if(itemTs >= startTs && itemTs <= endTs) {
                     tKg += parseFloat(item.KG) || 0; 
                     tPcsAkhir += parseInt(item.PCS) || 0;
-                    if(item['NOMOR KERANJANG']) krjSet.add(item['NOMOR KERANJANG']); // Jika ada keranjang yg lgsg nimbang
+                    if(item['NOMOR KERANJANG']) krjSet.add(item['NOMOR KERANJANG']); 
                     
                     const key = `${(item.NAMA||'').toUpperCase()}-${item['NOMOR KERANJANG']}`;
                     
                     if(qcMap[key]) { 
-                        qcMap[key].rkh = parseInt(item.PCS)||0; 
+                        qcMap[key].rkh_pcs = parseInt(item.PCS) || 0; 
+                        qcMap[key].rkh_kg = parseFloat(item.KG) || 0; 
                     } else {
+                        // Jika ada di Timbangan tapi tidak pernah Disortir (Bypass)
                         const dDate = new Date(itemTs);
                         qcMap[key] = { 
                             name: item.NAMA, 
                             krj: item['NOMOR KERANJANG'],
-                            rsh: 0, 
-                            rkh: parseInt(item.PCS)||0, 
+                            rsh_pcs: 0, 
+                            rkh_pcs: parseInt(item.PCS) || 0, 
+                            rkh_kg: parseFloat(item.KG) || 0, 
                             dateStr: `${String(dDate.getDate()).padStart(2,'0')}/${String(dDate.getMonth()+1).padStart(2,'0')}`
                         };
                     }
@@ -549,14 +553,14 @@
                 let statusBadge = ''; 
                 let show = false;
                 
-                if (data.rsh === 0) {
+                if (data.rsh_pcs === 0) {
                     statusBadge = `<span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-[8px] font-bold">TDK DISORTIR</span>`;
                     show = true;
-                } else if (data.rkh === 0) {
+                } else if (data.rkh_pcs === 0) {
                     statusBadge = `<span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-[8px] font-bold">BLM DITIMBANG</span>`;
                     show = true;
-                } else if (data.rsh !== data.rkh) {
-                    statusBadge = `<span class="bg-red-100 text-red-700 px-2 py-1 rounded text-[8px] font-bold">SELISIH</span>`;
+                } else if (data.rsh_pcs !== data.rkh_pcs) {
+                    statusBadge = `<span class="bg-red-100 text-red-700 px-2 py-1 rounded text-[8px] font-bold">SELISIH PCS</span>`;
                     show = true;
                 }
                 
@@ -567,8 +571,13 @@
                             <p class="font-bold text-slate-800">${data.name}</p>
                             <p class="text-[9px] text-slate-400 mt-0.5">Krj: #${data.krj} | In: ${data.dateStr}</p>
                         </td>
-                        <td class="py-2 align-top text-center font-bold ${data.rsh===0 ? 'text-slate-300':'text-slate-700'}">${data.rsh===0 ? '-' : data.rsh}</td>
-                        <td class="py-2 align-top text-center font-bold ${data.rkh===0 ? 'text-slate-300':'text-theme-minus'}">${data.rkh===0 ? '-' : data.rkh}</td>
+                        <td class="py-2 align-top text-center">
+                            <span class="font-bold ${data.rsh_pcs===0 ? 'text-slate-300':'text-slate-700'}">${data.rsh_pcs===0 ? '-' : data.rsh_pcs+' Pcs'}</span>
+                        </td>
+                        <td class="py-2 align-top text-center">
+                            <span class="font-bold ${data.rkh_pcs===0 ? 'text-slate-300': (data.rsh_pcs !== data.rkh_pcs ? 'text-theme-minus' : 'text-slate-700')}">${data.rkh_pcs===0 ? '-' : data.rkh_pcs+' Pcs'}</span>
+                            ${data.rkh_kg > 0 ? `<br><span class="text-[9px] text-slate-500">${data.rkh_kg} Kg</span>` : ''}
+                        </td>
                         <td class="py-2 text-right align-top">${statusBadge}</td>
                     </tr>`;
                 }
@@ -780,7 +789,6 @@
                 if (isEdit && oldData['JAM PENGERJAAN']) jam = oldData['JAM PENGERJAAN'].replace('.', ':').substring(0,5);
                 const sat = oldData['JENIS SATUAN'] || '-';
 
-                // REVISI: Menggunakan input tipe text + datalist agar Owner bisa edit custom jenis satuan
                 formFields.innerHTML = `
                     <div class="grid grid-cols-2 gap-3 mb-2">
                         <div>
