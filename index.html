@@ -9,21 +9,22 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Poppins', 'sans-serif'] },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
                     colors: {
                         theme: { 
-                            bg: '#F5F5F7',         
-                            primary: '#8B1818',    
-                            primary_light: '#FDECEF', 
-                            text: '#1D1D1F',       
-                            plus: '#34C759',       
-                            minus: '#FF3B30'       
+                            bg: '#F4F2EE',         // Warm Cream Background
+                            primary: '#0F5A47',    // Forest Green
+                            primary_light: '#E6EFEA', // Light Green
+                            secondary: '#F6A04D',  // Soft Orange
+                            text: '#2D312E',       // Dark Gray Text
+                            plus: '#10B981',       
+                            minus: '#EF4444'       
                         }
                     }
                 }
@@ -32,105 +33,82 @@
     </script>
 
     <style>
-        body { background-color: #F5F5F7; color: #1D1D1F; padding-bottom: 100px; }
+        body { background-color: #F4F2EE; color: #2D312E; padding-bottom: 100px; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        .glass-panel { 
-            background: rgba(255, 255, 255, 0.75); 
-            backdrop-filter: blur(16px); 
-            -webkit-backdrop-filter: blur(16px); 
-            border: 1px solid rgba(255, 255, 255, 0.4); 
-        }
-        .glass-card { 
-            background: rgba(255, 255, 255, 0.6); 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px); 
-            border: 1px solid rgba(255, 255, 255, 0.8); 
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04); 
-        }
+        /* Tema Soft-3D Neumorphic */
+        .card-3d { background: #FFFFFF; border-radius: 24px; box-shadow: 0 12px 35px -5px rgba(0, 0, 0, 0.05), 0 5px 15px -3px rgba(0, 0, 0, 0.02); border: 1px solid rgba(255,255,255,0.8); }
+        .btn-green { background: #0F5A47; color: white; box-shadow: 0 8px 20px -4px rgba(15, 90, 71, 0.4); }
+        .btn-orange { background: #F6A04D; color: white; box-shadow: 0 8px 20px -4px rgba(246, 160, 77, 0.4); }
         
-        .bottom-sheet { 
-            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1); 
-            transform: translateY(100%); 
-        }
+        .bottom-sheet { transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); transform: translateY(100%); }
         .bottom-sheet.open { transform: translateY(0); }
         .overlay { transition: opacity 0.3s; opacity: 0; pointer-events: none; }
         .overlay.open { opacity: 1; pointer-events: auto; }
         
-        input[type="date"]::-webkit-calendar-picker-indicator, 
-        input[type="time"]::-webkit-calendar-picker-indicator { 
-            background-color: transparent; cursor: pointer; opacity: 0.5; 
-        }
+        input[type="date"]::-webkit-calendar-picker-indicator, input[type="time"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.5; }
     </style>
 </head>
-<body class="antialiased selection:bg-theme-primary selection:text-white">
+<body class="antialiased selection:bg-theme-secondary selection:text-white">
 
     <div id="login-portal" class="fixed inset-0 bg-theme-bg z-50 flex flex-col items-center justify-center p-6 transition-opacity duration-500">
-        <div class="glass-card p-10 rounded-[2.5rem] w-full max-w-sm text-center transform transition-transform duration-700 translate-y-0" id="login-card">
-            <div class="w-24 h-24 bg-gradient-to-br from-theme-primary to-red-900 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-theme-primary/30">
+        <div class="card-3d p-10 w-full max-w-sm text-center transform transition-transform duration-700 translate-y-0" id="login-card">
+            <div class="w-24 h-24 bg-theme-secondary rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-theme-secondary/30">
                 <i class="fas fa-tshirt text-4xl text-white"></i>
             </div>
-            <h1 class="text-2xl font-bold text-theme-text mb-1 tracking-tight">Fortuna OS</h1>
-            <p class="text-xs text-slate-500 mb-10 font-medium">Sistem Kasir & Operasional</p>
-            <button onclick="doLogin()" class="w-full bg-theme-text text-white font-semibold py-4 rounded-2xl shadow-lg active:scale-95 transition-transform flex justify-center items-center">
-                <span>Masuk Shift</span> <i class="fas fa-arrow-right ml-2 text-sm"></i>
+            <h1 class="text-2xl font-extrabold text-theme-text mb-1 tracking-tight">Fortuna OS</h1>
+            <p class="text-xs text-slate-500 mb-10 font-semibold">Sistem Operasional Staf</p>
+            <button onclick="doLogin()" class="w-full btn-green font-bold py-4 rounded-2xl active:scale-95 transition-transform flex justify-center items-center">
+                <span>Mulai Shift</span> <i class="fas fa-arrow-right ml-2 text-sm"></i>
             </button>
         </div>
     </div>
 
-    <header class="glass-panel px-6 py-5 sticky top-0 z-10 rounded-b-[2rem] shadow-sm">
+    <header class="bg-theme-bg/90 backdrop-blur-md px-6 py-5 sticky top-0 z-10 rounded-b-[2rem]">
         <div class="flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold text-theme-text tracking-tight" id="header-title">Kasir (RCHK)</h1>
-                <p class="text-xs text-theme-primary font-medium mt-0.5" id="header-subtitle">Pencatatan Keuangan</p>
+                <h1 class="text-2xl font-extrabold text-theme-text tracking-tight" id="header-title">Kasir (RCHK)</h1>
+                <p class="text-xs text-theme-secondary font-bold mt-0.5" id="header-subtitle">Pencatatan Keuangan</p>
             </div>
-            <button onclick="refreshData()" class="text-slate-500 hover:text-theme-primary transition-colors p-2.5 rounded-full bg-white/50 shadow-sm border border-white">
+            <button onclick="refreshData()" class="text-slate-400 hover:text-theme-primary transition-colors p-3 rounded-2xl bg-white shadow-sm border border-slate-100">
                 <i class="fas fa-sync-alt" id="refresh-icon"></i>
             </button>
         </div>
-        <div class="mt-3 flex items-center gap-2">
-            <span class="text-[9px] bg-white/60 border border-white text-slate-600 px-2.5 py-1 rounded-lg font-medium shadow-sm">
-                <i class="fas fa-history mr-1 text-theme-primary"></i> Tampil H-7
-            </span>
-            <span class="text-[9px] bg-white/60 border border-white text-slate-600 px-2.5 py-1 rounded-lg font-medium shadow-sm">
-                <i class="fas fa-unlock-alt mr-1 text-theme-primary"></i> Edit H-3
-            </span>
-        </div>
     </header>
 
-    <main class="px-5 py-6">
-        <div id="tab-rchk" class="tab-content space-y-5"></div>
-        <div id="tab-rsh" class="tab-content space-y-5 hidden"></div>
-        <div id="tab-rkh" class="tab-content space-y-5 hidden"></div>
+    <main class="px-5 py-4">
+        <div id="tab-rchk" class="tab-content space-y-4"></div>
+        <div id="tab-rsh" class="tab-content space-y-4 hidden"></div>
+        <div id="tab-rkh" class="tab-content space-y-4 hidden"></div>
         <div class="mt-12 mb-8 text-center pb-4">
-            <p class="text-[10px] text-slate-400 font-medium tracking-wide uppercase">cc developed by beuna system | beuna.xyz</p>
+            <p class="text-[10px] text-slate-400 font-bold tracking-wide uppercase">cc developed by beuna system</p>
         </div>
     </main>
 
-    <button onclick="openModal(false)" class="fixed bottom-28 right-6 bg-gradient-to-br from-theme-primary to-red-900 text-white w-14 h-14 rounded-[1.2rem] shadow-xl shadow-theme-primary/30 flex items-center justify-center text-xl z-20 hover:scale-105 active:scale-95 transition-transform" id="fab-btn">
+    <button onclick="openModal(false)" class="fixed bottom-28 right-6 btn-secondary bg-theme-secondary text-white w-14 h-14 rounded-2xl flex items-center justify-center text-xl z-20 hover:scale-105 active:scale-95 transition-transform" id="fab-btn">
         <i class="fas fa-plus"></i>
     </button>
 
-    <nav class="fixed bottom-6 left-6 right-6 glass-panel flex justify-around py-3 px-2 z-10 rounded-3xl shadow-xl">
+    <nav class="fixed bottom-6 left-5 right-5 card-3d flex justify-around py-3 px-2 z-10">
         <button onclick="switchTab('rchk', 'Kasir (RCHK)', 'Pencatatan Keuangan')" id="nav-rchk" class="nav-btn flex flex-col items-center text-theme-primary w-1/3 transition-colors">
-            <i class="fas fa-wallet text-xl mb-1"></i><span class="text-[10px] font-semibold">Kasir</span>
+            <i class="fas fa-wallet text-xl mb-1"></i><span class="text-[10px] font-bold">Kasir</span>
         </button>
-        <button onclick="switchTab('rsh', 'Sortir (RSH)', 'Hitung Pcs Awal')" id="nav-rsh" class="nav-btn flex flex-col items-center text-slate-400 w-1/3 transition-colors">
-            <i class="fas fa-tags text-xl mb-1"></i><span class="text-[10px] font-semibold">Sortir</span>
+        <button onclick="switchTab('rsh', 'Sortir (RSH)', 'Hitung Pcs Awal & Timbang')" id="nav-rsh" class="nav-btn flex flex-col items-center text-slate-400 w-1/3 transition-colors">
+            <i class="fas fa-tags text-xl mb-1"></i><span class="text-[10px] font-bold">Sortir (Awal)</span>
         </button>
         <button onclick="switchTab('rkh', 'Kiloan (RKH)', 'Timbang Kg Akhir')" id="nav-rkh" class="nav-btn flex flex-col items-center text-slate-400 w-1/3 transition-colors">
-            <i class="fas fa-weight-scale text-xl mb-1"></i><span class="text-[10px] font-semibold">Kiloan</span>
+            <i class="fas fa-weight-scale text-xl mb-1"></i><span class="text-[10px] font-bold">Kiloan (Akhir)</span>
         </button>
     </nav>
 
     <div id="overlay" class="overlay fixed inset-0 bg-slate-900/40 z-30 backdrop-blur-sm" onclick="closeModal()"></div>
-    <div id="bottom-sheet" class="bottom-sheet fixed bottom-0 w-full glass-panel rounded-t-[2.5rem] shadow-2xl z-40 p-6 sm:p-8 max-h-[90vh] overflow-y-auto hide-scrollbar border-t border-white/80">
-        <div class="w-12 h-1.5 bg-slate-300/50 rounded-full mx-auto mb-8"></div>
-        <h2 class="text-xl font-bold text-theme-text mb-6 tracking-tight" id="modal-title">Tambah Data</h2>
+    <div id="bottom-sheet" class="bottom-sheet fixed bottom-0 w-full bg-white rounded-t-[2.5rem] shadow-2xl z-40 p-6 sm:p-8 max-h-[90vh] overflow-y-auto hide-scrollbar">
+        <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-8"></div>
+        <h2 class="text-xl font-extrabold text-theme-text mb-6 tracking-tight" id="modal-title">Tambah Data</h2>
         <form id="input-form" onsubmit="submitToWebhook(event)">
             <div id="dynamic-form-fields" class="space-y-4"></div>
-            <button type="submit" id="submit-btn" class="w-full bg-theme-text text-white font-semibold py-4 rounded-2xl mt-8 shadow-xl shadow-slate-900/10 active:scale-95 transition-transform flex justify-center items-center">
+            <button type="submit" id="submit-btn" class="w-full btn-green font-bold py-4 rounded-2xl mt-8 active:scale-95 transition-transform flex justify-center items-center">
                 Simpan Data
             </button>
         </form>
@@ -142,20 +120,12 @@
         let appData = { RCHK: [], RKH: [], RSH: [] };
         let currentEditId = null; 
 
-        // Konstanta Waktu (Umur Transaksi)
         const MS_PER_DAY = 24 * 60 * 60 * 1000;
         const LIMIT_VIEW_MS = 7 * MS_PER_DAY; 
         const LIMIT_EDIT_MS = 3 * MS_PER_DAY; 
 
         const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
         
-        function formatDateForInput(dateObj) { 
-            const y = dateObj.getFullYear(); 
-            const m = String(dateObj.getMonth() + 1).padStart(2, '0'); 
-            const d = String(dateObj.getDate()).padStart(2, '0'); 
-            return `${y}-${m}-${d}`; 
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('isStaffLoggedIn') === 'true') {
                 document.getElementById('login-portal').style.display = 'none';
@@ -173,181 +143,143 @@
         }
 
         async function loadDataFromN8N() {
-            const icon = document.getElementById('refresh-icon'); 
-            icon.classList.add('fa-spin');
+            const icon = document.getElementById('refresh-icon'); icon.classList.add('fa-spin');
             try {
-                const response = await fetch(WEBHOOK_URL, { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ action: "read" }) 
-                });
+                const response = await fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: "read" }) });
                 const result = await response.json();
-                if(result.status === "success") { 
-                    appData = result.data; 
-                    renderAllData(); 
-                }
-            } catch (error) { 
-                alert("Gagal menarik data dari server."); 
-            } finally { 
-                icon.classList.remove('fa-spin'); 
-            }
+                if(result.status === "success") { appData = result.data; renderAllData(); }
+            } catch (error) { alert("Gagal menarik data dari server."); } finally { icon.classList.remove('fa-spin'); }
         }
 
         function refreshData() {
-            document.querySelectorAll('.tab-content').forEach(el => { 
-                el.innerHTML = `<div class="text-center py-10 text-theme-primary text-sm font-medium"><i class="fas fa-spinner fa-spin mr-2"></i>Memuat data...</div>`; 
-            });
+            document.querySelectorAll('.tab-content').forEach(el => { el.innerHTML = `<div class="text-center py-10 text-theme-primary text-sm font-bold"><i class="fas fa-spinner fa-spin mr-2"></i>Memuat data...</div>`; });
             loadDataFromN8N();
         }
 
         function renderAllData() {
             const now = Date.now();
 
-            // 1. RENDER TAB KASIR (RCHK)
+            // 1. RENDER KASIR
             let rchkCards = '';
             [...appData.RCHK].reverse().forEach(item => {
-                if(!item.ID) return; 
-                const itemTs = parseInt(item.ID); 
-                const ageMs = now - itemTs; 
-                
-                // Sabuk Pengaman: H-7 Sembunyi, H-3 Kunci Edit
-                if (ageMs > LIMIT_VIEW_MS) return; 
-                const isEditable = ageMs <= LIMIT_EDIT_MS; 
+                if(!item.ID) return; const itemTs = parseInt(item.ID); const ageMs = now - itemTs; 
+                if (ageMs > LIMIT_VIEW_MS) return; const isEditable = ageMs <= LIMIT_EDIT_MS; 
 
                 let jenis = 'Keterangan'; let nominal = 0; let isMin = false;
-                if(item.DEBIT) { jenis = 'Debit'; nominal = item.DEBIT; } 
-                else if(item.QRIS) { jenis = 'QRIS'; nominal = item.QRIS; } 
-                else if(item.KREDIT) { jenis = 'Kredit'; nominal = item.KREDIT; isMin = true; } 
-                else if(item.KASBON) { jenis = 'Kasbon'; nominal = item.KASBON; isMin = true; }
+                if(item.DEBIT) { jenis = 'Debit'; nominal = item.DEBIT; } else if(item.QRIS) { jenis = 'QRIS'; nominal = item.QRIS; } else if(item.KREDIT) { jenis = 'Kredit'; nominal = item.KREDIT; isMin = true; } else if(item.KASBON) { jenis = 'Kasbon'; nominal = item.KASBON; isMin = true; }
                 
-                let actionBtn = isEditable 
-                    ? `<button onclick="openModal(true, '${item.ID}')" class="text-slate-400 hover:text-theme-primary p-2 bg-white/50 border border-white rounded-xl shadow-sm transition-colors"><i class="fas fa-pen text-sm"></i></button>` 
-                    : `<div class="p-2 text-slate-300" title="Terkunci (H-3)"><i class="fas fa-lock text-sm"></i></div>`;
+                let actionBtn = isEditable ? `<button onclick="openModal(true, '${item.ID}')" class="text-slate-400 hover:text-theme-secondary p-2 bg-theme-bg rounded-xl transition-colors"><i class="fas fa-pen text-sm"></i></button>` : `<div class="p-2 text-slate-300"><i class="fas fa-lock text-sm"></i></div>`;
                 
                 rchkCards += `
-                <div class="glass-card p-5 rounded-3xl relative mb-5">
+                <div class="card-3d p-5 relative mb-4">
                     <div class="flex justify-between items-start mb-2">
-                        <span class="font-bold text-theme-text text-sm">${item.NAMA || '-'}</span>
-                        <span class="text-sm font-bold ${isMin ? 'text-theme-minus' : 'text-theme-plus'}">${isMin ? '-' : '+'} ${formatRp(nominal)}</span>
+                        <span class="font-extrabold text-theme-text text-sm">${item.NAMA || '-'}</span>
+                        <span class="text-sm font-extrabold ${isMin ? 'text-theme-minus' : 'text-theme-primary'}">${isMin ? '-' : '+'} ${formatRp(nominal)}</span>
                     </div>
                     <div class="flex justify-between items-end mt-3">
                         <div>
-                            <span class="text-[10px] font-bold px-2.5 py-1 ${isMin ? 'bg-red-50 text-theme-minus' : 'bg-green-50 text-theme-plus'} rounded-lg">${jenis}</span>
-                            <p class="text-[11px] text-slate-500 font-medium mt-2">${item.KETERANGAN || '-'}</p>
+                            <span class="text-[10px] font-extrabold px-2.5 py-1 ${isMin ? 'bg-red-50 text-theme-minus' : 'bg-theme-primary_light text-theme-primary'} rounded-lg uppercase">${jenis}</span>
+                            <p class="text-[11px] text-slate-500 font-semibold mt-2">${item.KETERANGAN || '-'}</p>
                         </div>
                         ${actionBtn}
                     </div>
                 </div>`;
             });
-            document.getElementById('tab-rchk').innerHTML = rchkCards || `<div class="text-center py-10 text-slate-400 text-sm font-medium">Belum ada data (7 Hari).</div>`;
+            document.getElementById('tab-rchk').innerHTML = rchkCards || `<div class="text-center py-10 text-slate-400 text-sm font-semibold">Belum ada data.</div>`;
 
-            // 2. RENDER TAB KILOAN & SORTIR (RKH & RSH)
+            // 2. RENDER LAUNDRY (RSH & RKH)
             const renderLaundryCard = (item, isRsh = false) => {
-                if(!item.ID) return ''; 
-                const itemTs = parseInt(item.ID); 
-                const ageMs = now - itemTs; 
+                if(!item.ID) return ''; const itemTs = parseInt(item.ID); const ageMs = now - itemTs; 
+                if (ageMs > LIMIT_VIEW_MS) return ''; const isEditable = ageMs <= LIMIT_EDIT_MS; 
                 
-                if (ageMs > LIMIT_VIEW_MS) return ''; 
-                const isEditable = ageMs <= LIMIT_EDIT_MS; 
-                
-                let actionBtn = isEditable 
-                    ? `<button onclick="openModal(true, '${item.ID}')" class="text-slate-400 hover:text-theme-primary p-2 bg-white/50 border border-white rounded-xl shadow-sm"><i class="fas fa-pen text-xs"></i></button>` 
-                    : `<div class="text-slate-300 p-2"><i class="fas fa-lock text-xs"></i></div>`;
-                
-                let satuanBadge = isRsh 
-                    ? `<p class="text-[10px] font-bold text-theme-primary mt-4 border-t border-white/50 pt-3"><i class="fas fa-tag mr-1"></i> ${item['JENIS SATUAN'] || '-'}</p>` 
-                    : '';
+                let actionBtn = isEditable ? `<button onclick="openModal(true, '${item.ID}')" class="text-slate-400 hover:text-theme-secondary p-2 bg-theme-bg rounded-xl"><i class="fas fa-pen text-xs"></i></button>` : `<div class="text-slate-300 p-2"><i class="fas fa-lock text-xs"></i></div>`;
 
                 return `
-                <div class="glass-card p-5 rounded-3xl relative mb-5">
+                <div class="card-3d p-5 relative mb-4 border-l-4 ${isRsh ? 'border-l-theme-secondary' : 'border-l-theme-primary'}">
                     <div class="flex justify-between items-center mb-3">
-                        <span class="font-bold text-theme-text text-sm">${item.NAMA || '-'}</span>
+                        <span class="font-extrabold text-theme-text text-sm">${item.NAMA || '-'}</span>
                         <div class="flex items-center gap-2">
-                            <span class="text-[10px] text-slate-500 bg-white/50 border border-white px-2.5 py-1 rounded-lg font-medium shadow-sm">${item['TANGGAL MASUK'] || '-'}</span>
+                            <span class="text-[10px] text-slate-500 bg-theme-bg px-2.5 py-1 rounded-lg font-bold">${item['TANGGAL MASUK'] || '-'}</span>
                             ${actionBtn}
                         </div>
                     </div>
                     <div class="grid grid-cols-3 gap-3 mt-4">
-                        <div class="bg-theme-primary_light/50 border border-white p-3 rounded-2xl text-center shadow-sm">
-                            <p class="text-[10px] text-theme-primary font-bold mb-0.5">Berat</p>
-                            <p class="font-bold text-theme-text text-sm">${item.KG || 0} Kg</p>
+                        <div class="bg-theme-bg p-3 rounded-2xl text-center">
+                            <p class="text-[9px] text-slate-500 font-extrabold mb-0.5 uppercase">Berat</p>
+                            <p class="font-extrabold text-theme-text text-sm">${item.KG || 0} <span class="text-[10px]">Kg</span></p>
                         </div>
-                        <div class="bg-white/50 border border-white p-3 rounded-2xl text-center shadow-sm">
-                            <p class="text-[10px] text-slate-500 font-bold mb-0.5">Pcs</p>
-                            <p class="font-bold text-theme-text text-sm">${item.PCS || 0}</p>
+                        <div class="bg-theme-bg p-3 rounded-2xl text-center">
+                            <p class="text-[9px] text-slate-500 font-extrabold mb-0.5 uppercase">Fisik</p>
+                            <p class="font-extrabold text-theme-text text-sm">${item.PCS || 0} <span class="text-[10px]">Pcs</span></p>
                         </div>
-                        <div class="bg-white/50 border border-white p-3 rounded-2xl text-center shadow-sm">
-                            <p class="text-[10px] text-slate-500 font-bold mb-0.5">Keranjang</p>
-                            <p class="font-bold text-theme-text text-sm">#${item['NOMOR KERANJANG'] || '-'}</p>
+                        <div class="bg-theme-bg p-3 rounded-2xl text-center">
+                            <p class="text-[9px] text-slate-500 font-extrabold mb-0.5 uppercase">Keranjang</p>
+                            <p class="font-extrabold text-theme-text text-sm">#${item['NOMOR KERANJANG'] || '-'}</p>
                         </div>
                     </div>
-                    ${satuanBadge}
+                    <p class="text-[10px] font-extrabold text-slate-400 mt-4 border-t border-slate-100 pt-3 uppercase tracking-wider">
+                        <i class="fas fa-tag mr-1 ${isRsh ? 'text-theme-secondary' : 'text-theme-primary'}"></i> ${item['JENIS SATUAN'] || '-'}
+                    </p>
                 </div>`;
             };
 
-            document.getElementById('tab-rsh').innerHTML = [...appData.RSH].reverse().map(i => renderLaundryCard(i, true)).join('') || `<div class="text-center py-10 text-slate-400 text-sm font-medium">Belum ada data (7 Hari).</div>`;
-            document.getElementById('tab-rkh').innerHTML = [...appData.RKH].reverse().map(i => renderLaundryCard(i, false)).join('') || `<div class="text-center py-10 text-slate-400 text-sm font-medium">Belum ada data (7 Hari).</div>`;
+            document.getElementById('tab-rsh').innerHTML = [...appData.RSH].reverse().map(i => renderLaundryCard(i, true)).join('') || `<div class="text-center py-10 text-slate-400 text-sm font-semibold">Belum ada data.</div>`;
+            document.getElementById('tab-rkh').innerHTML = [...appData.RKH].reverse().map(i => renderLaundryCard(i, false)).join('') || `<div class="text-center py-10 text-slate-400 text-sm font-semibold">Belum ada data.</div>`;
         }
 
         function switchTab(tabId, title, subtitle) {
             currentTab = tabId;
             document.getElementById('header-title').innerText = title; 
             document.getElementById('header-subtitle').innerText = subtitle;
-            
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden')); 
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
             
             document.querySelectorAll('.nav-btn').forEach(btn => { 
-                btn.classList.remove('text-theme-primary'); 
-                btn.classList.add('text-slate-400'); 
+                btn.classList.remove('text-theme-primary'); btn.classList.add('text-slate-400'); 
             });
             document.getElementById(`nav-${tabId}`).classList.add('text-theme-primary'); 
             document.getElementById(`nav-${tabId}`).classList.remove('text-slate-400');
         }
 
-        // --- PENDING QUEUE LOGIC DENGAN AUTO-FILL SATUAN ---
+        // --- PENDING QUEUE LOGIC (Menarik Nama, Keranjang & Satuan Otomatis) ---
         function handleQueueSelection(sel) {
             const val = sel.value; 
             const namaContainer = document.getElementById('nama-container'); 
             const namaInput = document.getElementById('input-nama'); 
             const krjInput = document.getElementById('input-krj');
-            const satInput = document.getElementById('input-satuan'); // Ambil input satuan
+            const satInput = document.getElementById('input-satuan'); 
             
             if (val === 'NEW') { 
                 namaContainer.style.display = 'block'; 
-                namaInput.value = ''; 
-                krjInput.value = ''; 
-                if(satInput) satInput.value = '-'; // Reset
+                namaInput.value = ''; krjInput.value = ''; 
+                if(satInput) satInput.value = '-'; 
                 namaInput.focus(); 
             } else if (val !== '') { 
                 namaContainer.style.display = 'none'; 
-                // Pecah value menjadi 3 bagian: Nama, Keranjang, Satuan
                 const parts = val.split('|'); 
                 namaInput.value = parts[0]; 
                 krjInput.value = parts[1];   
-                if(satInput && parts[2]) satInput.value = parts[2]; // Isi otomatis satuan
+                if(satInput && parts[2]) satInput.value = parts[2]; 
             } else { 
                 namaContainer.style.display = 'none'; 
-                namaInput.value = ''; 
-                krjInput.value = ''; 
-                if(satInput) satInput.value = '-'; // Reset
+                namaInput.value = ''; krjInput.value = ''; 
+                if(satInput) satInput.value = '-'; 
             }
         }
 
         function openModal(isEdit = false, itemId = null) {
             currentEditId = isEdit ? itemId : null; 
             const formFields = document.getElementById('dynamic-form-fields');
-            document.getElementById('modal-title').innerText = isEdit ? `Edit Data` : `Tambah Data`; 
+            document.getElementById('modal-title').innerText = isEdit ? `Edit Data` : `Tambah Data ${currentTab.toUpperCase()}`; 
             document.getElementById('submit-btn').innerHTML = isEdit ? 'Update Data' : 'Simpan Data';
             
             let oldData = {}; 
             if(isEdit) oldData = appData[currentTab.toUpperCase()].find(item => item.ID == itemId) || {};
             
-            // Kelas CSS untuk Form (Glassmorphism Apple Style)
-            const inputClass = "w-full mt-1.5 bg-white/70 border border-white shadow-sm rounded-2xl px-4 py-3.5 outline-none focus:border-theme-primary focus:ring-2 focus:ring-theme-primary/20 text-sm font-semibold text-theme-text transition-all";
-            const labelClass = "text-[11px] font-bold text-slate-500 ml-1 uppercase tracking-wider";
+            const inputClass = "w-full mt-1.5 bg-theme-bg border border-slate-200 rounded-xl px-4 py-3.5 outline-none focus:border-theme-primary focus:ring-2 focus:ring-theme-primary/20 text-sm font-bold text-theme-text transition-all";
+            const labelClass = "text-[11px] font-extrabold text-slate-500 ml-1 uppercase tracking-wider";
 
-            // --- FORM KASIR (RCHK) ---
+            // --- FORM KASIR ---
             if(currentTab === 'rchk') {
                 let oldJenis = 'Debit'; let oldNom = '';
                 if(isEdit) { 
@@ -356,41 +288,16 @@
                     else if(oldData.KREDIT) { oldJenis = 'Kredit'; oldNom = oldData.KREDIT; } 
                     else if(oldData.KASBON) { oldJenis = 'Kasbon'; oldNom = oldData.KASBON; } 
                 }
-                
                 formFields.innerHTML = `
-                    <div>
-                        <label class="${labelClass}">Nama / Keterangan</label>
-                        <input type="text" id="input-nama" value="${oldData.NAMA || ''}" oninput="this.value = this.value.toUpperCase()" required class="${inputClass}">
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="${labelClass}">Jenis Transaksi</label>
-                            <select id="input-jenis" class="${inputClass}">
-                                <option value="Debit" ${oldJenis === 'Debit' ? 'selected' : ''}>CASH (Masuk)</option>
-                                <option value="QRIS" ${oldJenis === 'QRIS' ? 'selected' : ''}>QRIS (Masuk)</option>
-                                <option value="Kredit" ${oldJenis === 'Kredit' ? 'selected' : ''}>KREDIT (Keluar)</option>
-                                <option value="Kasbon" ${oldJenis === 'Kasbon' ? 'selected' : ''}>KASBON (Piutang)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="${labelClass}">Nominal (Rp)</label>
-                            <input type="number" id="input-nominal" value="${oldNom}" required class="${inputClass}">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="${labelClass}">Catatan Tambahan</label>
-                        <input type="text" id="input-ket" value="${oldData.KETERANGAN || ''}" class="${inputClass}" placeholder="-">
-                    </div>
+                    <div><label class="${labelClass}">Nama / Keterangan</label><input type="text" id="input-nama" value="${oldData.NAMA || ''}" oninput="this.value = this.value.toUpperCase()" required class="${inputClass}"></div>
+                    <div class="grid grid-cols-2 gap-4"><div><label class="${labelClass}">Jenis Transaksi</label><select id="input-jenis" class="${inputClass}"><option value="Debit" ${oldJenis === 'Debit' ? 'selected' : ''}>CASH (Masuk)</option><option value="QRIS" ${oldJenis === 'QRIS' ? 'selected' : ''}>QRIS (Masuk)</option><option value="Kredit" ${oldJenis === 'Kredit' ? 'selected' : ''}>KREDIT (Keluar)</option><option value="Kasbon" ${oldJenis === 'Kasbon' ? 'selected' : ''}>KASBON (Piutang)</option></select></div><div><label class="${labelClass}">Nominal (Rp)</label><input type="number" id="input-nominal" value="${oldNom}" required class="${inputClass}"></div></div>
+                    <div><label class="${labelClass}">Catatan Tambahan</label><input type="text" id="input-ket" value="${oldData.KETERANGAN || ''}" class="${inputClass}" placeholder="-"></div>
                 `;
             } 
-            // --- FORM LAUNDRY (RSH / RKH) ---
+            // --- FORM LAUNDRY (RSH Awal / RKH Akhir) ---
             else {
                 const padZero = (num) => String(num).padStart(2, '0');
-                const formatDateForHTMLInput = (dateStr) => { 
-                    if (!dateStr) return ''; 
-                    const parts = dateStr.split('/'); 
-                    return parts.length === 3 ? `${parts[2]}-${padZero(parts[1])}-${padZero(parts[0])}` : ''; 
-                };
+                const formatDateForHTMLInput = (dateStr) => { if (!dateStr) return ''; const parts = dateStr.split('/'); return parts.length === 3 ? `${parts[2]}-${padZero(parts[1])}-${padZero(parts[0])}` : ''; };
 
                 let tMasuk = formatDateForHTMLInput(new Date().toLocaleDateString('id-ID')); 
                 let tNota = formatDateForHTMLInput(new Date().toLocaleDateString('id-ID')); 
@@ -401,80 +308,34 @@
                 if (isEdit && oldData['JAM PENGERJAAN']) jam = oldData['JAM PENGERJAAN'].replace('.', ':').substring(0,5);
                 const sat = oldData['JENIS SATUAN'] || '-';
 
-                // THE MAGIC: Logika Antrean (Tampil hanya di RKH saat Input Baru)
                 let queueHtml = '';
-                let namaHtml = `
-                    <div>
-                        <label class="${labelClass}">Nama Pelanggan</label>
-                        <input type="text" id="input-nama" value="${oldData.NAMA || ''}" oninput="this.value = this.value.toUpperCase()" required class="${inputClass}">
-                    </div>`;
+                let namaHtml = `<div><label class="${labelClass}">Nama Pelanggan</label><input type="text" id="input-nama" value="${oldData.NAMA || ''}" oninput="this.value = this.value.toUpperCase()" required class="${inputClass}"></div>`;
                 
                 if (currentTab === 'rkh' && !isEdit) {
                     let queueOptions = `<option value="">-- Pilih Cucian (Dari Sortir) --</option><option value="NEW">[+] Input Manual (Pelanggan Baru)</option>`;
-                    
-                    // Ambil daftar yang sudah ditimbang di RKH
                     const completedKeys = appData.RKH.map(i => `${i.NAMA?.toUpperCase()}-${i['NOMOR KERANJANG']}`);
-                    
-                    // Filter RSH yang belum ada di RKH
                     const pendingItems = appData.RSH.filter(i => i.NAMA && !completedKeys.includes(`${i.NAMA.toUpperCase()}-${i['NOMOR KERANJANG']}`));
                     
                     pendingItems.forEach(item => {
-                        const namaCaps = item.NAMA.toUpperCase(); 
-                        const satuanStr = item['JENIS SATUAN'] || '-'; // Ambil data satuan dari Sortir
-                        // Value dropdown sekarang berisi: NAMA|KERANJANG|SATUAN
+                        const namaCaps = item.NAMA.toUpperCase(); const satuanStr = item['JENIS SATUAN'] || '-'; 
                         const val = `${namaCaps}|${item['NOMOR KERANJANG']}|${satuanStr}`; 
-                        queueOptions += `<option value="${val}">${namaCaps} - Krj: #${item['NOMOR KERANJANG']} (${item.PCS} Pcs)</option>`;
+                        queueOptions += `<option value="${val}">${namaCaps} - Krj: #${item['NOMOR KERANJANG']} (${item.PCS} Pcs | ${item.KG} Kg)</option>`;
                     });
 
-                    queueHtml = `
-                        <div>
-                            <label class="${labelClass} text-theme-primary">Antrean Timbang (Dari Sortir)</label>
-                            <select id="input-queue" onchange="handleQueueSelection(this)" class="${inputClass} border-theme-primary/30">
-                                ${queueOptions}
-                            </select>
-                        </div>`;
-                        
-                    namaHtml = `
-                        <div id="nama-container" style="display:none;">
-                            <label class="${labelClass}">Nama Pelanggan Baru</label>
-                            <input type="text" id="input-nama" oninput="this.value = this.value.toUpperCase()" required class="${inputClass}">
-                        </div>`;
+                    queueHtml = `<div><label class="${labelClass} text-theme-secondary">Antrean Timbang (Pilih Data Sortir)</label><select id="input-queue" onchange="handleQueueSelection(this)" class="${inputClass} border-theme-secondary/50 bg-orange-50">${queueOptions}</select></div>`;
+                    namaHtml = `<div id="nama-container" style="display:none;"><label class="${labelClass}">Nama Pelanggan Baru</label><input type="text" id="input-nama" oninput="this.value = this.value.toUpperCase()" required class="${inputClass}"></div>`;
                 }
 
                 formFields.innerHTML = `
-                    <div class="grid grid-cols-2 gap-3 mb-2">
-                        <div>
-                            <label class="${labelClass}">Tgl Masuk</label>
-                            <input type="date" id="input-tgl-masuk" value="${tMasuk}" required class="${inputClass}">
-                        </div>
-                        <div>
-                            <label class="${labelClass}">Jam Kerja</label>
-                            <input type="time" id="input-jam" value="${jam}" required class="${inputClass}">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="${labelClass}">Tgl Nota</label>
-                        <input type="date" id="input-tgl-nota" value="${tNota}" required class="${inputClass} mb-3">
-                    </div>
-                    
+                    <div class="grid grid-cols-2 gap-3 mb-2"><div><label class="${labelClass}">Tgl Masuk</label><input type="date" id="input-tgl-masuk" value="${tMasuk}" required class="${inputClass}"></div><div><label class="${labelClass}">Jam Kerja</label><input type="time" id="input-jam" value="${jam}" required class="${inputClass}"></div></div>
+                    <div><label class="${labelClass}">Tgl Nota</label><input type="date" id="input-tgl-nota" value="${tNota}" required class="${inputClass} mb-3"></div>
                     ${queueHtml}
                     ${namaHtml}
-                    
                     <div class="grid grid-cols-3 gap-3 mt-3">
-                        <div>
-                            <label class="${labelClass}">Berat (Kg)</label>
-                            <input type="number" step="0.1" id="input-kg" value="${oldData.KG || ''}" required class="${inputClass} text-center">
-                        </div>
-                        <div>
-                            <label class="${labelClass}">Pcs Fisik</label>
-                            <input type="number" id="input-pcs" value="${oldData.PCS || ''}" required class="${inputClass} text-center">
-                        </div>
-                        <div>
-                            <label class="${labelClass}">Keranjang</label>
-                            <input type="text" id="input-krj" value="${oldData['NOMOR KERANJANG'] || ''}" required class="${inputClass} text-center">
-                        </div>
+                        <div><label class="${labelClass} text-theme-primary">Berat (Kg)</label><input type="number" step="0.1" id="input-kg" value="${oldData.KG || ''}" required class="${inputClass} text-center"></div>
+                        <div><label class="${labelClass} text-theme-primary">Pcs Fisik</label><input type="number" id="input-pcs" value="${oldData.PCS || ''}" required class="${inputClass} text-center"></div>
+                        <div><label class="${labelClass}">Keranjang</label><input type="text" id="input-krj" value="${oldData['NOMOR KERANJANG'] || ''}" required class="${inputClass} text-center"></div>
                     </div>
-                    
                     <div class="mt-4">
                         <label class="${labelClass}">Jenis Satuan (Bisa Pilih / Ketik Sendiri)</label>
                         <input type="text" id="input-satuan" list="satuan-list" value="${sat}" class="${inputClass}" placeholder="Ketik atau pilih dari daftar...">
@@ -490,92 +351,38 @@
                     </div>
                 `;
             }
-            document.getElementById('overlay').classList.add('open'); 
-            document.getElementById('bottom-sheet').classList.add('open');
+            document.getElementById('overlay').classList.add('open'); document.getElementById('bottom-sheet').classList.add('open');
         }
 
-        function closeModal() { 
-            document.getElementById('overlay').classList.remove('open'); 
-            document.getElementById('bottom-sheet').classList.remove('open'); 
-            currentEditId = null; 
-        }
+        function closeModal() { document.getElementById('overlay').classList.remove('open'); document.getElementById('bottom-sheet').classList.remove('open'); currentEditId = null; }
         
-        function formatDateForSheetSave(dateString) { 
-            if(!dateString) return ''; 
-            const parts = dateString.split('-'); 
-            if(parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`; 
-            return dateString; 
-        }
+        function formatDateForSheetSave(dateString) { if(!dateString) return ''; const parts = dateString.split('-'); if(parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`; return dateString; }
 
         async function submitToWebhook(e) {
-            e.preventDefault(); 
-            const btn = document.getElementById('submit-btn'); 
-            const isEditing = currentEditId !== null;
+            e.preventDefault(); const btn = document.getElementById('submit-btn'); const isEditing = currentEditId !== null;
             
-            // Validasi: Wajib pilih dropdown antrean saat di RKH (Kiloan)
             if (currentTab === 'rkh' && !isEditing) {
                 const qVal = document.getElementById('input-queue')?.value;
-                if(qVal === "") { 
-                    alert("Silakan pilih Antrean Timbang atau pilih Input Manual!"); 
-                    return; 
-                }
+                if(qVal === "") { alert("Silakan pilih Antrean Timbang atau pilih Input Manual!"); return; }
             }
 
             btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${isEditing ? 'Memperbarui...' : 'Menyimpan...'}`;
-            
-            const targetId = isEditing ? currentEditId : Date.now().toString(); 
-            let payloadData = {};
+            const targetId = isEditing ? currentEditId : Date.now().toString(); let payloadData = {};
             
             if (currentTab === 'rchk') {
-                const jenis = document.getElementById('input-jenis').value; 
-                const nominal = document.getElementById('input-nominal').value;
-                payloadData = { 
-                    "id": targetId, 
-                    "NAMA": document.getElementById('input-nama').value.toUpperCase(), 
-                    "KREDIT": jenis === 'Kredit' ? nominal : "", 
-                    "KASBON": jenis === 'Kasbon' ? nominal : "", 
-                    "QRIS": jenis === 'QRIS' ? nominal : "", 
-                    "DEBIT": jenis === 'Debit' ? nominal : "", 
-                    "KETERANGAN": document.getElementById('input-ket').value 
-                };
+                const jenis = document.getElementById('input-jenis').value; const nominal = document.getElementById('input-nominal').value;
+                payloadData = { "id": targetId, "NAMA": document.getElementById('input-nama').value.toUpperCase(), "KREDIT": jenis === 'Kredit' ? nominal : "", "KASBON": jenis === 'Kasbon' ? nominal : "", "QRIS": jenis === 'QRIS' ? nominal : "", "DEBIT": jenis === 'Debit' ? nominal : "", "KETERANGAN": document.getElementById('input-ket').value };
             } else {
-                const rMasuk = document.getElementById('input-tgl-masuk').value; 
-                const rNota = document.getElementById('input-tgl-nota').value; 
-                const rJam = document.getElementById('input-jam').value;
-                // Ambil data satuan dari text input, jika kosong paksa jadi "-"
-                let rSatuan = document.getElementById('input-satuan').value.trim();
-                if(rSatuan === "") rSatuan = "-";
+                const rMasuk = document.getElementById('input-tgl-masuk').value; const rNota = document.getElementById('input-tgl-nota').value; const rJam = document.getElementById('input-jam').value;
+                let rSatuan = document.getElementById('input-satuan').value.trim(); if(rSatuan === "") rSatuan = "-";
 
-                payloadData = { 
-                    "id": targetId, 
-                    "TANGGAL MASUK": formatDateForSheetSave(rMasuk), 
-                    "NAMA": document.getElementById('input-nama').value.toUpperCase(), 
-                    "TANGGAL NOTA": formatDateForSheetSave(rNota), 
-                    "JAM PENGERJAAN": rJam.replace(':', '.'), 
-                    "PCS": document.getElementById('input-pcs').value, 
-                    "KG": document.getElementById('input-kg').value, 
-                    "NOMOR KERANJANG": document.getElementById('input-krj').value, 
-                    "JENIS SATUAN": rSatuan 
-                };
+                payloadData = { "id": targetId, "TANGGAL MASUK": formatDateForSheetSave(rMasuk), "NAMA": document.getElementById('input-nama').value.toUpperCase(), "TANGGAL NOTA": formatDateForSheetSave(rNota), "JAM PENGERJAAN": rJam.replace(':', '.'), "PCS": document.getElementById('input-pcs').value, "KG": document.getElementById('input-kg').value, "NOMOR KERANJANG": document.getElementById('input-krj').value, "JENIS SATUAN": rSatuan };
             }
             
             try { 
-                const res = await fetch(WEBHOOK_URL, { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ action: currentTab, data: payloadData }) 
-                }); 
-                if(res.ok) { 
-                    closeModal(); 
-                    refreshData(); 
-                } else {
-                    alert("Gagal menyambung ke Database."); 
-                }
-            } catch (err) { 
-                alert("Kesalahan jaringan."); 
-            } finally { 
-                btn.innerHTML = 'Simpan Data'; 
-            }
+                const res = await fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: currentTab, data: payloadData }) }); 
+                if(res.ok) { closeModal(); refreshData(); } else { alert("Gagal menyambung ke Database."); }
+            } catch (err) { alert("Kesalahan jaringan."); } finally { btn.innerHTML = 'Simpan Data'; }
         }
     </script>
 </body>
