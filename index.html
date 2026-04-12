@@ -305,27 +305,32 @@
             document.getElementById(`nav-${tabId}`).classList.remove('text-slate-400');
         }
 
-        // --- PENDING QUEUE LOGIC (Sihir Pencocokan Nama otomatis) ---
+        // --- PENDING QUEUE LOGIC DENGAN AUTO-FILL SATUAN ---
         function handleQueueSelection(sel) {
             const val = sel.value; 
             const namaContainer = document.getElementById('nama-container'); 
             const namaInput = document.getElementById('input-nama'); 
             const krjInput = document.getElementById('input-krj');
+            const satInput = document.getElementById('input-satuan'); // Ambil input satuan
             
             if (val === 'NEW') { 
                 namaContainer.style.display = 'block'; 
                 namaInput.value = ''; 
                 krjInput.value = ''; 
+                if(satInput) satInput.value = '-'; // Reset
                 namaInput.focus(); 
             } else if (val !== '') { 
                 namaContainer.style.display = 'none'; 
-                const [nama, krj] = val.split('|'); 
-                namaInput.value = nama; // Otomatis terisi nama (sudah kapital)
-                krjInput.value = krj;   // Otomatis terisi keranjang
+                // Pecah value menjadi 3 bagian: Nama, Keranjang, Satuan
+                const parts = val.split('|'); 
+                namaInput.value = parts[0]; 
+                krjInput.value = parts[1];   
+                if(satInput && parts[2]) satInput.value = parts[2]; // Isi otomatis satuan
             } else { 
                 namaContainer.style.display = 'none'; 
                 namaInput.value = ''; 
                 krjInput.value = ''; 
+                if(satInput) satInput.value = '-'; // Reset
             }
         }
 
@@ -415,7 +420,9 @@
                     
                     pendingItems.forEach(item => {
                         const namaCaps = item.NAMA.toUpperCase(); 
-                        const val = `${namaCaps}|${item['NOMOR KERANJANG']}`;
+                        const satuanStr = item['JENIS SATUAN'] || '-'; // Ambil data satuan dari Sortir
+                        // Value dropdown sekarang berisi: NAMA|KERANJANG|SATUAN
+                        const val = `${namaCaps}|${item['NOMOR KERANJANG']}|${satuanStr}`; 
                         queueOptions += `<option value="${val}">${namaCaps} - Krj: #${item['NOMOR KERANJANG']} (${item.PCS} Pcs)</option>`;
                     });
 
@@ -469,16 +476,17 @@
                     </div>
                     
                     <div class="mt-4">
-                        <label class="${labelClass}">Jenis Satuan (Jika Sortir Karpet)</label>
-                        <select id="input-satuan" class="${inputClass}">
-                            <option value="-" ${sat === '-' ? 'selected' : ''}>Baju / Pcs Bebas (Standar)</option>
-                            <option value="Karpet Tebal" ${sat === 'Karpet Tebal' ? 'selected' : ''}>Karpet Tebal</option>
-                            <option value="Karpet Hambal" ${sat === 'Karpet Hambal' ? 'selected' : ''}>Karpet Hambal</option>
-                            <option value="Karpet Macan" ${sat === 'Karpet Macan' ? 'selected' : ''}>Karpet Macan</option>
-                            <option value="Kasur Sedang" ${sat === 'Kasur Sedang' ? 'selected' : ''}>Kasur Sedang</option>
-                            <option value="Taplak Panjang" ${sat === 'Taplak Panjang' ? 'selected' : ''}>Taplak Panjang</option>
-                            <option value="Karpet Turki Besar" ${sat === 'Karpet Turki Besar' ? 'selected' : ''}>Karpet Turki Besar</option>
-                        </select>
+                        <label class="${labelClass}">Jenis Satuan (Bisa Pilih / Ketik Sendiri)</label>
+                        <input type="text" id="input-satuan" list="satuan-list" value="${sat}" class="${inputClass}" placeholder="Ketik atau pilih dari daftar...">
+                        <datalist id="satuan-list">
+                            <option value="-">Baju / Pcs Bebas</option>
+                            <option value="Karpet Tebal">
+                            <option value="Karpet Hambal">
+                            <option value="Karpet Macan">
+                            <option value="Kasur Sedang">
+                            <option value="Taplak Panjang">
+                            <option value="Karpet Turki Besar">
+                        </datalist>
                     </div>
                 `;
             }
@@ -534,6 +542,10 @@
                 const rMasuk = document.getElementById('input-tgl-masuk').value; 
                 const rNota = document.getElementById('input-tgl-nota').value; 
                 const rJam = document.getElementById('input-jam').value;
+                // Ambil data satuan dari text input, jika kosong paksa jadi "-"
+                let rSatuan = document.getElementById('input-satuan').value.trim();
+                if(rSatuan === "") rSatuan = "-";
+
                 payloadData = { 
                     "id": targetId, 
                     "TANGGAL MASUK": formatDateForSheetSave(rMasuk), 
@@ -543,7 +555,7 @@
                     "PCS": document.getElementById('input-pcs').value, 
                     "KG": document.getElementById('input-kg').value, 
                     "NOMOR KERANJANG": document.getElementById('input-krj').value, 
-                    "JENIS SATUAN": document.getElementById('input-satuan').value 
+                    "JENIS SATUAN": rSatuan 
                 };
             }
             
