@@ -9,7 +9,7 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -19,15 +19,16 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Poppins', 'sans-serif'] },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
                     colors: {
                         theme: { 
-                            bg: '#F5F5F7',         
-                            primary: '#8B1818',    
-                            primary_light: '#FDECEF', 
-                            text: '#1D1D1F',       
-                            plus: '#34C759',       
-                            minus: '#FF3B30'       
+                            bg: '#F4F2EE',         // Warm Cream Background
+                            primary: '#0F5A47',    // Forest Green
+                            primary_light: '#E6EFEA', // Light Green
+                            secondary: '#F6A04D',  // Soft Orange
+                            text: '#2D312E',       // Dark Gray Text
+                            plus: '#10B981',       
+                            minus: '#EF4444'       
                         }
                     }
                 }
@@ -36,25 +37,16 @@
     </script>
 
     <style>
-        body { background-color: #F5F5F7; color: #1D1D1F; padding-bottom: 100px; }
+        body { background-color: #F4F2EE; color: #2D312E; padding-bottom: 100px; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        .glass-panel { 
-            background: rgba(255, 255, 255, 0.75); 
-            backdrop-filter: blur(16px); 
-            -webkit-backdrop-filter: blur(16px); 
-            border: 1px solid rgba(255, 255, 255, 0.4); 
-        }
-        .glass-card { 
-            background: rgba(255, 255, 255, 0.6); 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px); 
-            border: 1px solid rgba(255, 255, 255, 0.8); 
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04); 
-        }
+        /* Tema Soft-3D Neumorphic */
+        .card-3d { background: #FFFFFF; border-radius: 24px; box-shadow: 0 12px 35px -5px rgba(0, 0, 0, 0.05), 0 5px 15px -3px rgba(0, 0, 0, 0.02); border: 1px solid rgba(255,255,255,0.8); }
+        .btn-green { background: #0F5A47; color: white; box-shadow: 0 8px 20px -4px rgba(15, 90, 71, 0.4); }
+        .btn-orange { background: #F6A04D; color: white; box-shadow: 0 8px 20px -4px rgba(246, 160, 77, 0.4); }
         
-        .bottom-sheet { transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1); transform: translateY(100%); }
+        .bottom-sheet { transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); transform: translateY(100%); }
         .bottom-sheet.open { transform: translateY(0); }
         .overlay { transition: opacity 0.3s; opacity: 0; pointer-events: none; }
         .overlay.open { opacity: 1; pointer-events: auto; }
@@ -77,28 +69,28 @@
         }
     </style>
 </head>
-<body class="antialiased selection:bg-theme-primary selection:text-white">
+<body class="antialiased selection:bg-theme-secondary selection:text-white">
 
     <div id="login-portal" class="fixed inset-0 bg-theme-bg z-50 flex flex-col items-center justify-center p-6 transition-opacity duration-500 no-print">
-        <div class="glass-card p-10 rounded-[2.5rem] w-full max-w-sm text-center transform transition-transform duration-700 translate-y-0" id="login-card">
-            <div class="w-24 h-24 bg-gradient-to-br from-theme-primary to-red-900 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-theme-primary/30">
-                <i class="fas fa-chart-line text-4xl text-white"></i>
+        <div class="card-3d p-10 w-full max-w-sm text-center transform transition-transform duration-700 translate-y-0" id="login-card">
+            <div class="w-24 h-24 bg-theme-primary rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-theme-primary/30">
+                <i class="fas fa-chart-pie text-4xl text-white"></i>
             </div>
-            <h1 class="text-2xl font-bold text-theme-text mb-1 tracking-tight">Executive Area</h1>
-            <p class="text-xs text-slate-500 mb-10 font-medium">Dashboard Analitik Fortuna</p>
-            <button onclick="doLogin()" class="w-full bg-theme-text text-white font-semibold py-4 rounded-2xl shadow-lg active:scale-95 transition-transform flex justify-center items-center">
+            <h1 class="text-2xl font-extrabold text-theme-text mb-1 tracking-tight">Executive Area</h1>
+            <p class="text-xs text-slate-500 mb-10 font-bold">Dashboard Analitik Fortuna</p>
+            <button onclick="doLogin()" class="w-full btn-green font-bold py-4 rounded-2xl active:scale-95 transition-transform flex justify-center items-center">
                 <i class="fas fa-lock mr-2 text-sm"></i> <span>Akses Dashboard</span>
             </button>
         </div>
     </div>
 
-    <header class="glass-panel px-6 py-5 sticky top-0 z-10 rounded-b-[2rem] shadow-sm no-print">
+    <header class="bg-theme-bg/90 backdrop-blur-md px-6 py-5 sticky top-0 z-10 rounded-b-[2rem] no-print">
         <div class="flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold text-theme-text tracking-tight" id="header-title">Keuangan</h1>
-                <p class="text-xs text-theme-primary font-medium mt-0.5" id="header-subtitle">Ringkasan Pemasukan</p>
+                <h1 class="text-2xl font-extrabold text-theme-text tracking-tight" id="header-title">Keuangan</h1>
+                <p class="text-xs text-theme-secondary font-bold mt-0.5" id="header-subtitle">Ringkasan Pemasukan</p>
             </div>
-            <button onclick="refreshData()" class="text-slate-500 hover:text-theme-primary transition-colors p-2.5 rounded-full bg-white/50 shadow-sm border border-white">
+            <button onclick="refreshData()" class="text-slate-400 hover:text-theme-primary transition-colors p-3 rounded-2xl bg-white shadow-sm border border-slate-100">
                 <i class="fas fa-sync-alt" id="refresh-icon"></i>
             </button>
         </div>
@@ -106,146 +98,146 @@
 
     <main class="px-5 py-6">
         
-        <div class="glass-card p-4 rounded-3xl no-print mb-6" id="global-filter">
+        <div class="card-3d p-4 no-print mb-6" id="global-filter">
             <div class="flex justify-between items-center mb-3">
-                <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                    <i class="far fa-calendar-alt mr-1 text-theme-primary"></i> Rentang Laporan
+                <h3 class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">
+                    <i class="far fa-calendar-alt mr-1 text-theme-secondary"></i> Rentang Laporan
                 </h3>
-                <button onclick="setMonthly()" class="text-[10px] bg-theme-primary_light text-theme-primary px-3 py-1.5 rounded-lg font-bold active:scale-95 transition-transform">
+                <button onclick="setMonthly()" class="text-[10px] bg-orange-50 text-theme-secondary px-3 py-1.5 rounded-lg font-bold active:scale-95 transition-transform">
                     Bulan Ini
                 </button>
             </div>
             <div class="relative">
-                <i class="fas fa-calendar-day absolute left-4 top-1/2 transform -translate-y-1/2 text-theme-primary"></i>
-                <input type="text" id="date-range-picker" readonly class="w-full bg-white/70 border border-white rounded-2xl pl-10 pr-4 py-3 outline-none text-sm text-theme-text font-bold cursor-pointer shadow-sm" placeholder="Pilih Mulai s/d Akhir...">
+                <i class="fas fa-calendar-day absolute left-4 top-1/2 transform -translate-y-1/2 text-theme-secondary"></i>
+                <input type="text" id="date-range-picker" readonly class="w-full bg-theme-bg border border-slate-200 rounded-xl pl-10 pr-4 py-3 outline-none text-sm text-theme-text font-bold cursor-pointer" placeholder="Pilih Mulai s/d Akhir...">
             </div>
         </div>
 
         <div id="tab-dashboard" class="tab-content space-y-4">
-            <div id="pdf-container" class="glass-card p-5 sm:p-8 rounded-3xl relative">
+            <div id="pdf-container" class="card-3d p-5 sm:p-8 relative">
                 
-                <div class="text-center mb-6 border-b-2 border-slate-200/50 pb-5">
-                    <h2 id="pdf-title" class="text-xl sm:text-2xl font-bold text-theme-text tracking-tight uppercase">LAPORAN KEUANGAN</h2>
+                <div class="text-center mb-6 border-b-2 border-slate-100 pb-5">
+                    <h2 id="pdf-title" class="text-xl sm:text-2xl font-extrabold text-theme-text tracking-tight uppercase">LAPORAN KEUANGAN</h2>
                     <p class="text-sm font-bold text-theme-primary tracking-widest mt-1">FORTUNA LAUNDRY</p>
-                    <p class="text-[10px] font-bold text-slate-500 mt-2 bg-white/50 inline-block px-3 py-1 rounded-lg border border-white" id="pdf-date-range">Periode: -</p>
+                    <p class="text-[10px] font-bold text-slate-500 mt-2 bg-slate-50 inline-block px-3 py-1 rounded-lg border border-slate-100" id="pdf-date-range">Periode: -</p>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3 mb-8">
-                    <div class="bg-green-50/80 p-4 rounded-2xl border border-green-100">
-                        <span class="text-[10px] font-bold text-theme-plus block mb-1">PEMASUKAN KOTOR</span>
-                        <h3 class="text-base font-bold text-theme-text" id="dash-masuk">Rp 0</h3>
-                        <div class="text-[9px] text-slate-500 mt-1 flex justify-between font-medium">
+                    <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
+                        <span class="text-[10px] font-extrabold text-theme-plus block mb-1">PEMASUKAN KOTOR</span>
+                        <h3 class="text-base font-extrabold text-theme-text" id="dash-masuk">Rp 0</h3>
+                        <div class="text-[9px] text-slate-500 mt-1 flex justify-between font-bold">
                             <span id="dash-cash">Cash: 0</span> <span id="dash-qris">QRIS: 0</span>
                         </div>
                     </div>
-                    <div class="bg-red-50/80 p-4 rounded-2xl border border-red-100">
-                        <span class="text-[10px] font-bold text-theme-minus block mb-1">TOTAL PENGELUARAN</span>
-                        <h3 class="text-base font-bold text-theme-text" id="dash-keluar">Rp 0</h3>
-                        <p class="text-[9px] text-slate-500 mt-1 font-medium">Beban & Gaji</p>
+                    <div class="bg-red-50 p-4 rounded-2xl border border-red-100">
+                        <span class="text-[10px] font-extrabold text-theme-minus block mb-1">TOTAL PENGELUARAN</span>
+                        <h3 class="text-base font-extrabold text-theme-text" id="dash-keluar">Rp 0</h3>
+                        <p class="text-[9px] text-slate-500 mt-1 font-bold">Beban & Gaji</p>
                     </div>
-                    <div class="bg-theme-primary_light/80 p-4 rounded-2xl border border-white col-span-2 flex justify-between items-center shadow-sm">
+                    <div class="bg-theme-primary_light p-4 rounded-2xl border border-theme-primary/20 col-span-2 flex justify-between items-center">
                         <div>
-                            <span class="text-[10px] font-bold text-theme-primary uppercase tracking-wider block mb-1">Laba Operasional</span>
-                            <h3 class="text-2xl font-bold text-theme-text" id="dash-laba">Rp 0</h3>
+                            <span class="text-[10px] font-extrabold text-theme-primary uppercase tracking-wider block mb-1">Laba Operasional</span>
+                            <h3 class="text-2xl font-extrabold text-theme-text" id="dash-laba">Rp 0</h3>
                         </div>
                         <i class="fas fa-chart-line text-3xl text-theme-primary opacity-20"></i>
                     </div>
-                    <div class="bg-slate-100/80 p-4 rounded-2xl border border-white col-span-2 flex justify-between items-center shadow-sm">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 col-span-2 flex justify-between items-center">
                         <div>
-                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Petty Cash Fisik Laci</span>
-                            <h3 class="text-base font-bold text-theme-text" id="dash-petty">Rp 0</h3>
+                            <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1">Petty Cash Fisik Laci</span>
+                            <h3 class="text-base font-extrabold text-theme-text" id="dash-petty">Rp 0</h3>
                         </div>
                         <i class="fas fa-cash-register text-2xl text-slate-400 opacity-30"></i>
                     </div>
                 </div>
 
                 <div>
-                    <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3">Rincian Transaksi RCHK</h3>
+                    <h3 class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mb-3">Rincian Transaksi RCHK</h3>
                     <table class="w-full text-left border-collapse" id="pdf-table">
                         <thead>
-                            <tr class="border-b-2 border-slate-200/50 text-[10px] text-slate-400 uppercase tracking-wider">
+                            <tr class="border-b-2 border-slate-100 text-[10px] text-slate-400 uppercase tracking-wider">
                                 <th class="pb-2 pt-2 w-1/4">Waktu</th>
                                 <th class="pb-2 pt-2 w-2/5">Uraian</th>
                                 <th class="pb-2 pt-2 text-center">Tipe</th>
                                 <th class="pb-2 pt-2 text-right">Nominal</th>
                             </tr>
                         </thead>
-                        <tbody id="dashboard-list" class="text-[11px] font-medium text-slate-600">
+                        <tbody id="dashboard-list" class="text-[11px] font-semibold text-slate-600">
                             <tr><td colspan="4" class="text-center py-8 text-slate-400">Memuat...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
             
-            <button onclick="downloadPDF('keuangan')" class="no-print w-full bg-theme-text text-white font-semibold py-4 rounded-2xl shadow-lg mt-2 active:scale-95 transition-transform flex justify-center items-center">
-                <i class="fas fa-print text-theme-primary mr-2 text-lg"></i> Cetak Laporan Keuangan
+            <button onclick="downloadPDF('keuangan')" class="no-print w-full btn-green font-bold py-4 rounded-2xl mt-2 active:scale-95 transition-transform flex justify-center items-center">
+                <i class="fas fa-print mr-2 text-lg"></i> Cetak Laporan Keuangan
             </button>
         </div>
 
         <div id="tab-ops" class="tab-content space-y-4 hidden">
-            <div id="pdf-ops-container" class="glass-card p-5 sm:p-8 rounded-3xl relative">
+            <div id="pdf-ops-container" class="card-3d p-5 sm:p-8 relative">
                 
-                <div class="text-center mb-6 border-b-2 border-slate-200/50 pb-5">
-                    <h2 class="text-xl sm:text-2xl font-bold text-theme-text tracking-tight uppercase">LAPORAN PRODUKSI & QC</h2>
+                <div class="text-center mb-6 border-b-2 border-slate-100 pb-5">
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-theme-text tracking-tight uppercase">LAPORAN PRODUKSI & QC</h2>
                     <p class="text-sm font-bold text-theme-primary tracking-widest mt-1">FORTUNA LAUNDRY</p>
-                    <p class="text-[10px] font-bold text-slate-500 mt-2 bg-white/50 inline-block px-3 py-1 rounded-lg border border-white" id="pdf-ops-date-range">Periode: -</p>
+                    <p class="text-[10px] font-bold text-slate-500 mt-2 bg-slate-50 inline-block px-3 py-1 rounded-lg border border-slate-100" id="pdf-ops-date-range">Periode: -</p>
                 </div>
 
-                <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3">Produksi & Beban Kerja</h3>
+                <h3 class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mb-3">Produksi & Beban Kerja</h3>
                 <div class="grid grid-cols-2 gap-3 mb-8">
-                    <div class="bg-white/60 p-4 rounded-2xl border border-white text-center shadow-sm">
-                        <i class="fas fa-tags text-theme-primary mb-2 text-xl"></i>
-                        <h3 class="text-xl font-bold text-theme-text" id="ops-pcs-awal">0</h3>
-                        <span class="text-[9px] font-bold text-slate-500 uppercase">Pcs Awal (Sortir)</span>
+                    <div class="bg-orange-50 p-4 rounded-2xl text-center">
+                        <i class="fas fa-tags text-theme-secondary mb-2 text-xl"></i>
+                        <h3 class="text-xl font-extrabold text-theme-text" id="ops-pcs-awal">0</h3>
+                        <span class="text-[9px] font-extrabold text-theme-secondary uppercase">Pcs Awal (Sortir)</span>
                     </div>
-                    <div class="bg-white/60 p-4 rounded-2xl border border-white text-center shadow-sm">
+                    <div class="bg-theme-primary_light p-4 rounded-2xl text-center">
                         <i class="fas fa-tshirt text-theme-primary mb-2 text-xl"></i>
-                        <h3 class="text-xl font-bold text-theme-text" id="ops-pcs-akhir">0</h3>
-                        <span class="text-[9px] font-bold text-slate-500 uppercase">Pcs Akhir (Kiloan)</span>
+                        <h3 class="text-xl font-extrabold text-theme-text" id="ops-pcs-akhir">0</h3>
+                        <span class="text-[9px] font-extrabold text-theme-primary uppercase">Pcs Akhir (Kiloan)</span>
                     </div>
-                    <div class="bg-white/60 p-4 rounded-2xl border border-white text-center shadow-sm">
-                        <i class="fas fa-weight-scale text-theme-primary mb-2 text-xl"></i>
-                        <h3 class="text-xl font-bold text-theme-text" id="ops-kg">0</h3>
-                        <span class="text-[9px] font-bold text-slate-500 uppercase">Total Berat (Kg)</span>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
+                        <i class="fas fa-weight-scale text-slate-400 mb-2 text-xl"></i>
+                        <h3 class="text-xl font-extrabold text-theme-text" id="ops-kg">0</h3>
+                        <span class="text-[9px] font-extrabold text-slate-500 uppercase">Berat (Kg Akhir)</span>
                     </div>
-                    <div class="bg-white/60 p-4 rounded-2xl border border-white text-center shadow-sm">
-                        <i class="fas fa-shopping-basket text-theme-primary mb-2 text-xl"></i>
-                        <h3 class="text-xl font-bold text-theme-text" id="ops-krj">0</h3>
-                        <span class="text-[9px] font-bold text-slate-500 uppercase">Total Keranjang</span>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
+                        <i class="fas fa-shopping-basket text-slate-400 mb-2 text-xl"></i>
+                        <h3 class="text-xl font-extrabold text-theme-text" id="ops-krj">0</h3>
+                        <span class="text-[9px] font-extrabold text-slate-500 uppercase">Total Keranjang</span>
                     </div>
                 </div>
 
                 <div>
-                    <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center justify-between">
+                    <h3 class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mb-3 flex items-center justify-between">
                         <span>Radar QC & Kehilangan</span>
-                        <span class="text-[8px] bg-red-100 text-red-700 px-2 py-0.5 rounded border border-red-200">Menampilkan selisih/proses</span>
+                        <span class="text-[8px] bg-red-100 text-red-700 px-2 py-0.5 rounded border border-red-200">Filter: Selisih/Proses</span>
                     </h3>
                     <table class="w-full text-left border-collapse" id="pdf-table-qc">
                         <thead>
-                            <tr class="border-b-2 border-slate-200/50 text-[10px] text-slate-400 uppercase tracking-wider">
-                                <th class="pb-2 pt-2 w-2/5">Pelanggan & Krj</th>
-                                <th class="pb-2 pt-2 text-center">Awal<br><span class="text-[8px] font-medium">(Sortir)</span></th>
-                                <th class="pb-2 pt-2 text-center">Akhir & Kg<br><span class="text-[8px] font-medium">(Kiloan)</span></th>
+                            <tr class="border-b-2 border-slate-100 text-[10px] text-slate-400 uppercase tracking-wider">
+                                <th class="pb-2 pt-2 w-2/5">Pelanggan</th>
+                                <th class="pb-2 pt-2 text-center">Awal<br><span class="text-[8px] font-bold">(Sortir)</span></th>
+                                <th class="pb-2 pt-2 text-center">Akhir<br><span class="text-[8px] font-bold">(Kiloan)</span></th>
                                 <th class="pb-2 pt-2 text-right">Status</th>
                             </tr>
                         </thead>
-                        <tbody id="ops-qc-list" class="text-[11px] font-medium text-slate-600">
+                        <tbody id="ops-qc-list" class="text-[11px] font-semibold text-slate-600">
                             <tr><td colspan="4" class="text-center py-8 text-slate-400">Memuat...</td></tr>
                         </tbody>
                     </table>
                 </div>
 
                 <div class="mt-8">
-                    <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3">Rekap Satuan & Karpet Premium</h3>
-                    <div class="bg-white/50 rounded-2xl border border-white p-4 shadow-sm">
-                        <ul id="ops-satuan-list" class="space-y-2 text-xs font-medium text-slate-600">
+                    <h3 class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mb-3">Rekap Satuan & Karpet Premium</h3>
+                    <div class="bg-slate-50 rounded-2xl border border-slate-100 p-4">
+                        <ul id="ops-satuan-list" class="space-y-2 text-xs font-bold text-slate-600">
                             </ul>
                     </div>
                 </div>
             </div>
             
-            <button onclick="downloadPDF('ops')" class="no-print w-full bg-theme-text text-white font-semibold py-4 rounded-2xl shadow-lg mt-2 active:scale-95 transition-transform flex justify-center items-center">
-                <i class="fas fa-print text-theme-primary mr-2 text-lg"></i> Cetak Laporan QC
+            <button onclick="downloadPDF('ops')" class="no-print w-full btn-green font-bold py-4 rounded-2xl mt-2 active:scale-95 transition-transform flex justify-center items-center">
+                <i class="fas fa-print mr-2 text-lg"></i> Cetak Laporan QC
             </button>
         </div>
 
@@ -254,39 +246,39 @@
         <div id="tab-rkh" class="tab-content space-y-4 hidden"></div>
         
         <div class="mt-8 text-center no-print pb-4">
-            <p class="text-[10px] text-slate-400 font-medium uppercase tracking-widest">cc developed by beuna system | beuna.xyz</p>
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">cc developed by beuna system | beuna.xyz</p>
         </div>
     </main>
 
-    <nav class="no-print fixed bottom-4 left-4 right-4 glass-panel flex justify-around py-3 px-1 z-10 rounded-3xl shadow-xl">
+    <nav class="no-print fixed bottom-6 left-5 right-5 card-3d flex justify-around py-3 px-1 z-10">
         <button onclick="switchTab('dashboard', 'Keuangan', 'Ringkasan Pemasukan')" id="nav-dashboard" class="nav-btn flex flex-col items-center text-theme-primary w-1/5 transition-colors">
-            <i class="fas fa-chart-pie text-xl mb-1"></i><span class="text-[9px] font-bold">Finance</span>
+            <i class="fas fa-chart-pie text-xl mb-1"></i><span class="text-[9px] font-extrabold">Finance</span>
         </button>
         <button onclick="switchTab('ops', 'Produksi & QC', 'Pantau Kinerja Operasional')" id="nav-ops" class="nav-btn flex flex-col items-center text-slate-400 w-1/5 transition-colors">
-            <i class="fas fa-clipboard-check text-xl mb-1"></i><span class="text-[9px] font-bold">Ops/QC</span>
+            <i class="fas fa-clipboard-check text-xl mb-1"></i><span class="text-[9px] font-extrabold">Ops/QC</span>
         </button>
         <button onclick="switchTab('rchk', 'Kasir (RCHK)', 'Edit Data Keuangan')" id="nav-rchk" class="nav-btn flex flex-col items-center text-slate-400 w-1/5 transition-colors">
-            <i class="fas fa-wallet text-xl mb-1"></i><span class="text-[9px] font-bold">Kasir</span>
+            <i class="fas fa-wallet text-xl mb-1"></i><span class="text-[9px] font-extrabold">Kasir</span>
         </button>
         <button onclick="switchTab('rsh', 'Sortir (RSH)', 'Edit Data Sortir')" id="nav-rsh" class="nav-btn flex flex-col items-center text-slate-400 w-1/5 transition-colors">
-            <i class="fas fa-tags text-xl mb-1"></i><span class="text-[9px] font-bold">Sortir</span>
+            <i class="fas fa-tags text-xl mb-1"></i><span class="text-[9px] font-extrabold">Sortir</span>
         </button>
         <button onclick="switchTab('rkh', 'Kiloan (RKH)', 'Edit Data Kiloan')" id="nav-rkh" class="nav-btn flex flex-col items-center text-slate-400 w-1/5 transition-colors">
-            <i class="fas fa-weight-scale text-xl mb-1"></i><span class="text-[9px] font-bold">Kiloan</span>
+            <i class="fas fa-weight-scale text-xl mb-1"></i><span class="text-[9px] font-extrabold">Kiloan</span>
         </button>
     </nav>
 
-    <button onclick="openModal(false)" class="no-print fixed bottom-24 right-6 bg-gradient-to-br from-theme-primary to-red-900 text-white w-14 h-14 rounded-[1.2rem] shadow-xl flex items-center justify-center text-xl z-20 hover:scale-105 active:scale-95 transition-transform hidden" id="fab-btn">
+    <button onclick="openModal(false)" class="no-print fixed bottom-28 right-6 btn-secondary bg-theme-secondary text-white w-14 h-14 rounded-2xl flex items-center justify-center text-xl z-20 hover:scale-105 active:scale-95 transition-transform hidden" id="fab-btn">
         <i class="fas fa-plus"></i>
     </button>
 
     <div id="overlay" class="overlay fixed inset-0 bg-slate-900/40 z-30 backdrop-blur-sm no-print" onclick="closeModal()"></div>
-    <div id="bottom-sheet" class="bottom-sheet no-print fixed bottom-0 w-full glass-panel rounded-t-[2.5rem] shadow-2xl z-40 p-6 sm:p-8 max-h-[90vh] overflow-y-auto hide-scrollbar border-t border-white/80">
-        <div class="w-12 h-1.5 bg-slate-300/50 rounded-full mx-auto mb-8"></div>
-        <h2 class="text-xl font-bold text-theme-text mb-6" id="modal-title">Tambah Data</h2>
+    <div id="bottom-sheet" class="bottom-sheet no-print fixed bottom-0 w-full bg-white rounded-t-[2.5rem] shadow-2xl z-40 p-6 sm:p-8 max-h-[90vh] overflow-y-auto hide-scrollbar">
+        <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-8"></div>
+        <h2 class="text-xl font-extrabold text-theme-text mb-6" id="modal-title">Tambah Data</h2>
         <form id="input-form" onsubmit="submitToWebhook(event)">
             <div id="dynamic-form-fields" class="space-y-4"></div>
-            <button type="submit" id="submit-btn" class="w-full bg-theme-text text-white font-semibold py-4 rounded-2xl mt-8 shadow-xl active:scale-95 transition-transform flex justify-center items-center">
+            <button type="submit" id="submit-btn" class="w-full btn-green font-bold py-4 rounded-2xl mt-8 active:scale-95 transition-transform flex justify-center items-center">
                 Simpan Data
             </button>
         </form>
@@ -427,25 +419,25 @@
                     tMasuk += (cDebit + cQris);
                     
                     let jenis = '', badgeColor = '', badgeText = '', nom = 0;
-                    if(item.DEBIT) { jenis = 'CASH'; badgeColor = 'bg-blue-100 text-blue-700'; badgeText = 'CASH'; nom = cDebit; }
-                    else if(item.QRIS) { jenis = 'QRIS'; badgeColor = 'bg-emerald-100 text-emerald-700'; badgeText = 'QRIS'; nom = cQris; }
-                    else if(item.KREDIT) { jenis = 'KREDIT'; badgeColor = 'bg-red-100 text-red-700'; badgeText = 'KELUAR'; nom = cKredit; }
-                    else if(item.KASBON) { jenis = 'KASBON'; badgeColor = 'bg-amber-100 text-amber-700'; badgeText = 'KASBON'; nom = parseInt(item.KASBON)||0; }
+                    if(item.DEBIT) { jenis = 'CASH'; badgeColor = 'bg-emerald-50 text-theme-plus'; badgeText = 'CASH'; nom = cDebit; }
+                    else if(item.QRIS) { jenis = 'QRIS'; badgeColor = 'bg-emerald-50 text-theme-plus'; badgeText = 'QRIS'; nom = cQris; }
+                    else if(item.KREDIT) { jenis = 'KREDIT'; badgeColor = 'bg-red-50 text-theme-minus'; badgeText = 'KELUAR'; nom = cKredit; }
+                    else if(item.KASBON) { jenis = 'KASBON'; badgeColor = 'bg-orange-50 text-theme-secondary'; badgeText = 'KASBON'; nom = parseInt(item.KASBON)||0; }
 
                     const tsDate = new Date(itemTs); 
                     const dStr = `${String(tsDate.getDate()).padStart(2,'0')}/${String(tsDate.getMonth()+1).padStart(2,'0')}`;
                     
                     listHtml += `
                     <tr class="border-b border-slate-100">
-                        <td class="py-2.5 pr-2 align-top text-slate-500">${dStr}</td>
-                        <td class="py-2.5 pr-2 align-top">
+                        <td class="py-3 pr-2 align-top text-slate-500">${dStr}</td>
+                        <td class="py-3 pr-2 align-top">
                             <p class="font-bold text-slate-800">${item.NAMA || '-'}</p>
                             <p class="text-[9px] text-slate-400 mt-0.5">${item.KETERANGAN || '-'}</p>
                         </td>
-                        <td class="py-2.5 align-top text-center">
-                            <span class="text-[8px] font-bold px-2 py-1 rounded ${badgeColor}">${badgeText}</span>
+                        <td class="py-3 align-top text-center">
+                            <span class="text-[8px] font-extrabold px-2 py-1 rounded ${badgeColor}">${badgeText}</span>
                         </td>
-                        <td class="py-2.5 text-right align-top font-bold ${jenis === 'KREDIT' ? 'text-theme-minus' : 'text-slate-700'}">
+                        <td class="py-3 text-right align-top font-extrabold ${jenis === 'KREDIT' ? 'text-theme-minus' : 'text-slate-700'}">
                             ${jenis === 'KREDIT' ? '-' : ''} ${formatRp(nom)}
                         </td>
                     </tr>`;
@@ -459,7 +451,7 @@
             document.getElementById('dash-keluar').innerText = formatRp(tKeluar); 
             document.getElementById('dash-petty').innerText = formatRp(pettyCashTotal);
             document.getElementById('dash-laba').innerText = formatRp(laba); 
-            document.getElementById('dash-laba').className = `text-2xl font-bold ${laba < 0 ? 'text-theme-minus' : 'text-theme-text'}`;
+            document.getElementById('dash-laba').className = `text-2xl font-extrabold ${laba < 0 ? 'text-theme-minus' : 'text-theme-text'}`;
             document.getElementById('dashboard-list').innerHTML = listHtml || `<tr><td colspan="4" class="text-center py-6 text-slate-400">Tidak ada transaksi.</td></tr>`;
         }
 
@@ -499,6 +491,7 @@
                         name: item.NAMA, 
                         krj: item['NOMOR KERANJANG'],
                         rsh_pcs: parseInt(item.PCS)||0, 
+                        rsh_kg: parseFloat(item.KG)||0,
                         rkh_pcs: 0, 
                         rkh_kg: 0,
                         dateStr: `${String(dDate.getDate()).padStart(2,'0')}/${String(dDate.getMonth()+1).padStart(2,'0')}`
@@ -534,6 +527,7 @@
                             name: item.NAMA, 
                             krj: item['NOMOR KERANJANG'],
                             rsh_pcs: 0, 
+                            rsh_kg: 0,
                             rkh_pcs: parseInt(item.PCS) || 0, 
                             rkh_kg: parseFloat(item.KG) || 0, 
                             dateStr: `${String(dDate.getDate()).padStart(2,'0')}/${String(dDate.getMonth()+1).padStart(2,'0')}`
@@ -554,35 +548,36 @@
                 let show = false;
                 
                 if (data.rsh_pcs === 0) {
-                    statusBadge = `<span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-[8px] font-bold">TDK DISORTIR</span>`;
+                    statusBadge = `<span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-[8px] font-extrabold">TDK DISORTIR</span>`;
                     show = true;
                 } else if (data.rkh_pcs === 0) {
-                    statusBadge = `<span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-[8px] font-bold">BLM DITIMBANG</span>`;
+                    statusBadge = `<span class="bg-orange-50 text-theme-secondary px-2 py-1 rounded border border-orange-200 text-[8px] font-extrabold">BLM DITIMBANG</span>`;
                     show = true;
                 } else if (data.rsh_pcs !== data.rkh_pcs) {
-                    statusBadge = `<span class="bg-red-100 text-red-700 px-2 py-1 rounded text-[8px] font-bold">SELISIH PCS</span>`;
+                    statusBadge = `<span class="bg-red-50 text-theme-minus px-2 py-1 rounded border border-red-200 text-[8px] font-extrabold">SELISIH PCS</span>`;
                     show = true;
                 }
                 
                 if(show) {
                     qcHtml += `
                     <tr class="border-b border-slate-100">
-                        <td class="py-2 pr-2 align-top">
-                            <p class="font-bold text-slate-800">${data.name}</p>
+                        <td class="py-3 pr-2 align-top">
+                            <p class="font-extrabold text-slate-800">${data.name}</p>
                             <p class="text-[9px] text-slate-400 mt-0.5">Krj: #${data.krj} | In: ${data.dateStr}</p>
                         </td>
-                        <td class="py-2 align-top text-center">
-                            <span class="font-bold ${data.rsh_pcs===0 ? 'text-slate-300':'text-slate-700'}">${data.rsh_pcs===0 ? '-' : data.rsh_pcs+' Pcs'}</span>
+                        <td class="py-3 align-top text-center">
+                            <span class="font-extrabold ${data.rsh_pcs===0 ? 'text-slate-300':'text-theme-secondary'}">${data.rsh_pcs===0 ? '-' : data.rsh_pcs+' Pcs'}</span><br>
+                            ${data.rsh_kg > 0 ? `<span class="text-[9px] text-slate-500 font-bold">${data.rsh_kg} Kg</span>` : ''}
                         </td>
-                        <td class="py-2 align-top text-center">
-                            <span class="font-bold ${data.rkh_pcs===0 ? 'text-slate-300': (data.rsh_pcs !== data.rkh_pcs ? 'text-theme-minus' : 'text-slate-700')}">${data.rkh_pcs===0 ? '-' : data.rkh_pcs+' Pcs'}</span>
-                            ${data.rkh_kg > 0 ? `<br><span class="text-[9px] text-slate-500">${data.rkh_kg} Kg</span>` : ''}
+                        <td class="py-3 align-top text-center">
+                            <span class="font-extrabold ${data.rkh_pcs===0 ? 'text-slate-300': (data.rsh_pcs !== data.rkh_pcs ? 'text-theme-minus' : 'text-theme-primary')}">${data.rkh_pcs===0 ? '-' : data.rkh_pcs+' Pcs'}</span><br>
+                            ${data.rkh_kg > 0 ? `<span class="text-[9px] text-slate-500 font-bold">${data.rkh_kg} Kg</span>` : ''}
                         </td>
-                        <td class="py-2 text-right align-top">${statusBadge}</td>
+                        <td class="py-3 text-right align-top">${statusBadge}</td>
                     </tr>`;
                 }
             }
-            document.getElementById('ops-qc-list').innerHTML = qcHtml || `<tr><td colspan="4" class="text-center py-6 text-slate-400">Semua keranjang telah ditimbang & pas. (Aman)</td></tr>`;
+            document.getElementById('ops-qc-list').innerHTML = qcHtml || `<tr><td colspan="4" class="text-center py-6 text-slate-400 font-bold">Semua keranjang telah ditimbang & pas. (Aman)</td></tr>`;
 
             // D. Render Rekap Satuan Premium
             let satuanHtml = '';
@@ -591,9 +586,9 @@
             } else {
                 for (const [namaSatuan, qty] of Object.entries(satuanCounts)) {
                     satuanHtml += `
-                    <li class="flex justify-between items-center border-b border-white pb-2 mb-2 last:border-0 last:mb-0 last:pb-0">
-                        <span class="text-theme-text font-bold"><i class="fas fa-tag text-theme-primary/50 mr-2"></i>${namaSatuan}</span>
-                        <span class="bg-theme-primary_light text-theme-primary px-3 py-1 rounded-lg font-bold text-[10px]">${qty} Item</span>
+                    <li class="flex justify-between items-center border-b border-slate-100 pb-2 mb-2 last:border-0 last:mb-0 last:pb-0">
+                        <span class="text-theme-text font-extrabold"><i class="fas fa-tag text-theme-primary/50 mr-2"></i>${namaSatuan}</span>
+                        <span class="bg-theme-primary_light text-theme-primary px-3 py-1 rounded-lg font-extrabold text-[10px]">${qty} Item</span>
                     </li>`;
                 }
             }
@@ -643,59 +638,59 @@
                 else if(item.KASBON) { jenis = 'Kasbon'; nominal = item.KASBON; isMin = true; }
                 
                 return `
-                <div class="glass-card p-5 rounded-3xl relative mb-5">
+                <div class="card-3d p-5 relative mb-4">
                     <div class="flex justify-between items-start mb-2">
-                        <span class="font-bold text-theme-text text-sm">${item.NAMA || '-'}</span>
-                        <span class="text-sm font-bold ${isMin ? 'text-theme-minus' : 'text-theme-plus'}">${isMin ? '-' : '+'} ${formatRp(nominal)}</span>
+                        <span class="font-extrabold text-theme-text text-sm">${item.NAMA || '-'}</span>
+                        <span class="text-sm font-extrabold ${isMin ? 'text-theme-minus' : 'text-theme-primary'}">${isMin ? '-' : '+'} ${formatRp(nominal)}</span>
                     </div>
                     <div class="flex justify-between items-end mt-3">
                         <div>
-                            <span class="text-[10px] font-bold px-2.5 py-1 ${isMin ? 'bg-red-50 text-theme-minus' : 'bg-green-50 text-theme-plus'} rounded-lg">${jenis}</span>
-                            <p class="text-[11px] text-slate-500 font-medium mt-2">${item.KETERANGAN || '-'}</p>
+                            <span class="text-[10px] font-extrabold px-2.5 py-1 ${isMin ? 'bg-red-50 text-theme-minus' : 'bg-theme-primary_light text-theme-primary'} rounded-lg uppercase">${jenis}</span>
+                            <p class="text-[11px] text-slate-500 font-semibold mt-2">${item.KETERANGAN || '-'}</p>
                         </div>
-                        <button onclick="openModal(true, '${item.ID}')" class="text-slate-400 hover:text-theme-primary p-2 bg-white/50 border border-white rounded-xl shadow-sm transition-colors">
+                        <button onclick="openModal(true, '${item.ID}')" class="text-slate-400 hover:text-theme-secondary p-2 bg-theme-bg rounded-xl transition-colors">
                             <i class="fas fa-pen text-sm"></i>
                         </button>
                     </div>
                 </div>`;
-            }).join('') || `<div class="text-center py-10 text-slate-400 text-sm font-medium">Belum ada data.</div>`;
+            }).join('') || `<div class="text-center py-10 text-slate-400 text-sm font-semibold">Belum ada data.</div>`;
 
             // Edit Laundry (Sortir & Kiloan)
-            const renderLaundryCard = (item) => {
+            const renderLaundryCard = (item, isRsh = false) => {
                 if(!item.ID) return '';
                 return `
-                <div class="glass-card p-5 rounded-3xl relative mb-5">
+                <div class="card-3d p-5 relative mb-4 border-l-4 ${isRsh ? 'border-l-theme-secondary' : 'border-l-theme-primary'}">
                     <div class="flex justify-between items-center mb-3">
-                        <span class="font-bold text-theme-text text-sm">${item.NAMA || '-'}</span>
+                        <span class="font-extrabold text-theme-text text-sm">${item.NAMA || '-'}</span>
                         <div class="flex items-center gap-2">
-                            <span class="text-[10px] text-slate-500 bg-white/50 border border-white px-2.5 py-1 rounded-lg font-medium shadow-sm">${item['TANGGAL MASUK'] || '-'}</span>
-                            <button onclick="openModal(true, '${item.ID}')" class="text-slate-400 hover:text-theme-primary p-2 bg-white/50 border border-white rounded-xl shadow-sm">
+                            <span class="text-[10px] text-slate-500 bg-theme-bg px-2.5 py-1 rounded-lg font-bold">${item['TANGGAL MASUK'] || '-'}</span>
+                            <button onclick="openModal(true, '${item.ID}')" class="text-slate-400 hover:text-theme-secondary p-2 bg-theme-bg rounded-xl">
                                 <i class="fas fa-pen text-xs"></i>
                             </button>
                         </div>
                     </div>
                     <div class="grid grid-cols-3 gap-3 mt-4">
-                        <div class="bg-theme-primary_light/50 border border-white p-3 rounded-2xl text-center shadow-sm">
-                            <p class="text-[10px] text-theme-primary font-bold mb-0.5">Berat</p>
-                            <p class="font-bold text-theme-text text-sm">${item.KG || 0} Kg</p>
+                        <div class="bg-theme-bg p-3 rounded-2xl text-center">
+                            <p class="text-[9px] text-slate-500 font-extrabold mb-0.5 uppercase">Berat</p>
+                            <p class="font-extrabold text-theme-text text-sm">${item.KG || 0} <span class="text-[10px]">Kg</span></p>
                         </div>
-                        <div class="bg-white/50 border border-white p-3 rounded-2xl text-center shadow-sm">
-                            <p class="text-[10px] text-slate-500 font-bold mb-0.5">Pcs</p>
-                            <p class="font-bold text-theme-text text-sm">${item.PCS || 0}</p>
+                        <div class="bg-theme-bg p-3 rounded-2xl text-center">
+                            <p class="text-[9px] text-slate-500 font-extrabold mb-0.5 uppercase">Fisik</p>
+                            <p class="font-extrabold text-theme-text text-sm">${item.PCS || 0} <span class="text-[10px]">Pcs</span></p>
                         </div>
-                        <div class="bg-white/50 border border-white p-3 rounded-2xl text-center shadow-sm">
-                            <p class="text-[10px] text-slate-500 font-bold mb-0.5">Keranjang</p>
-                            <p class="font-bold text-theme-text text-sm">#${item['NOMOR KERANJANG'] || '-'}</p>
+                        <div class="bg-theme-bg p-3 rounded-2xl text-center">
+                            <p class="text-[9px] text-slate-500 font-extrabold mb-0.5 uppercase">Keranjang</p>
+                            <p class="font-extrabold text-theme-text text-sm">#${item['NOMOR KERANJANG'] || '-'}</p>
                         </div>
                     </div>
-                    <p class="text-[10px] font-bold text-theme-primary mt-4 border-t border-white/50 pt-3">
-                        <i class="fas fa-tag mr-1"></i> ${item['JENIS SATUAN'] || '-'}
+                    <p class="text-[10px] font-extrabold text-slate-400 mt-4 border-t border-slate-100 pt-3 uppercase tracking-wider">
+                        <i class="fas fa-tag mr-1 ${isRsh ? 'text-theme-secondary' : 'text-theme-primary'}"></i> ${item['JENIS SATUAN'] || '-'}
                     </p>
                 </div>`;
             };
             
-            document.getElementById('tab-rsh').innerHTML = [...appData.RSH].reverse().map(i => renderLaundryCard(i)).join('');
-            document.getElementById('tab-rkh').innerHTML = [...appData.RKH].reverse().map(i => renderLaundryCard(i)).join('');
+            document.getElementById('tab-rsh').innerHTML = [...appData.RSH].reverse().map(i => renderLaundryCard(i, true)).join('');
+            document.getElementById('tab-rkh').innerHTML = [...appData.RKH].reverse().map(i => renderLaundryCard(i, false)).join('');
         }
 
         // ==========================================
@@ -736,8 +731,8 @@
             let oldData = {}; 
             if(isEdit) oldData = appData[currentTab.toUpperCase()].find(item => item.ID == itemId) || {};
 
-            const inputClass = "w-full mt-1.5 bg-white/70 border border-white shadow-sm rounded-2xl px-4 py-3.5 outline-none focus:border-theme-primary focus:ring-2 focus:ring-theme-primary/20 text-sm font-bold text-theme-text transition-all";
-            const labelClass = "text-[11px] font-bold text-slate-500 ml-1 uppercase tracking-wider";
+            const inputClass = "w-full mt-1.5 bg-theme-bg border border-slate-200 rounded-xl px-4 py-3.5 outline-none focus:border-theme-primary focus:ring-2 focus:ring-theme-primary/20 text-sm font-bold text-theme-text transition-all";
+            const labelClass = "text-[11px] font-extrabold text-slate-500 ml-1 uppercase tracking-wider";
 
             if(currentTab === 'rchk') {
                 let oldJenis = 'Debit'; let oldNom = '';
@@ -793,16 +788,16 @@
                     <div class="grid grid-cols-2 gap-3 mb-2">
                         <div>
                             <label class="${labelClass}">Tgl Masuk</label>
-                            <input type="date" id="input-tgl-masuk" value="${tMasuk}" required class="${inputClass} font-medium">
+                            <input type="date" id="input-tgl-masuk" value="${tMasuk}" required class="${inputClass} font-semibold">
                         </div>
                         <div>
                             <label class="${labelClass}">Jam Kerja</label>
-                            <input type="time" id="input-jam" value="${jam}" required class="${inputClass} font-medium">
+                            <input type="time" id="input-jam" value="${jam}" required class="${inputClass} font-semibold">
                         </div>
                     </div>
                     <div>
                         <label class="${labelClass}">Tgl Nota</label>
-                        <input type="date" id="input-tgl-nota" value="${tNota}" required class="${inputClass} mb-3 font-medium">
+                        <input type="date" id="input-tgl-nota" value="${tNota}" required class="${inputClass} mb-3 font-semibold">
                     </div>
                     <div>
                         <label class="${labelClass}">Nama Pelanggan</label>
@@ -810,11 +805,11 @@
                     </div>
                     <div class="grid grid-cols-3 gap-3 mt-3">
                         <div>
-                            <label class="${labelClass}">Berat (Kg)</label>
+                            <label class="${labelClass} text-theme-primary">Berat (Kg)</label>
                             <input type="number" step="0.1" id="input-kg" value="${oldData.KG || ''}" required class="${inputClass} text-center">
                         </div>
                         <div>
-                            <label class="${labelClass}">Pcs Fisik</label>
+                            <label class="${labelClass} text-theme-primary">Pcs Fisik</label>
                             <input type="number" id="input-pcs" value="${oldData.PCS || ''}" required class="${inputClass} text-center">
                         </div>
                         <div>
@@ -880,7 +875,6 @@
                 const rNota = document.getElementById('input-tgl-nota').value; 
                 const rJam = document.getElementById('input-jam').value;
                 
-                // Ambil data satuan dari text input, jika kosong paksa jadi "-"
                 let rSatuan = document.getElementById('input-satuan').value.trim();
                 if(rSatuan === "") rSatuan = "-";
 
