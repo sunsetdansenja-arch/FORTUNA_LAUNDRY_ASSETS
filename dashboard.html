@@ -1,914 +1,113 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Owner Dashboard - Fortuna Laundry</title>
-    
-    <link rel="icon" href="https://raw.githubusercontent.com/sunsetdansenja-arch/beuna-agency/main/beuna%20logo%20v2.png" type="image/png">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
-                    colors: {
-                        theme: { 
-                            bg: '#F4F2EE',         // Warm Cream Background
-                            primary: '#0F5A47',    // Forest Green
-                            primary_light: '#E6EFEA', // Light Green
-                            secondary: '#F6A04D',  // Soft Orange
-                            text: '#2D312E',       // Dark Gray Text
-                            plus: '#10B981',       
-                            minus: '#EF4444'       
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
-    <style>
-        body { background-color: #F4F2EE; color: #2D312E; padding-bottom: 100px; }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Tema Soft-3D Neumorphic */
-        .card-3d { background: #FFFFFF; border-radius: 24px; box-shadow: 0 12px 35px -5px rgba(0, 0, 0, 0.05), 0 5px 15px -3px rgba(0, 0, 0, 0.02); border: 1px solid rgba(255,255,255,0.8); }
-        .btn-green { background: #0F5A47; color: white; box-shadow: 0 8px 20px -4px rgba(15, 90, 71, 0.4); }
-        .btn-orange { background: #F6A04D; color: white; box-shadow: 0 8px 20px -4px rgba(246, 160, 77, 0.4); }
-        
-        .bottom-sheet { transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); transform: translateY(100%); }
-        .bottom-sheet.open { transform: translateY(0); }
-        .overlay { transition: opacity 0.3s; opacity: 0; pointer-events: none; }
-        .overlay.open { opacity: 1; pointer-events: auto; }
-        
-        /* CSS NATIVE PRINT (Rapi di Kertas A4) */
-        @media print {
-            @page { size: A4 portrait; margin: 1cm; }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            body { background-color: white !important; padding-bottom: 0 !important; }
-            .no-print, header, nav, button, #login-portal, .bottom-sheet, .overlay { display: none !important; }
-            main { padding: 0 !important; margin: 0 !important; }
-            #pdf-container, #pdf-ops-container { 
-                padding: 0 !important; margin: 0 !important; 
-                width: 100% !important; box-shadow: none !important; border: none !important; 
-            }
-            table { page-break-inside: auto; width: 100%; border-collapse: collapse; }
-            tr { page-break-inside: avoid; page-break-after: auto; }
-            thead { display: table-header-group; }
-            tfoot { display: table-footer-group; }
-        }
-    </style>
-</head>
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>Owner Dashboard - Fortuna Laundry</title><link rel="icon" href="https://raw.githubusercontent.com/sunsetdansenja-arch/beuna-agency/main/beuna%20logo%20v2.png" type="image/png"><script src="https://cdn.tailwindcss.com"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"><script src="https://cdn.jsdelivr.net/npm/flatpickr"></script><script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
+<script>tailwind.config={theme:{extend:{fontFamily:{sans:['Plus Jakarta Sans','sans-serif']},colors:{theme:{bg:'#F4F2EE',primary:'#0F5A47',primary_light:'#E6EFEA',secondary:'#F6A04D',text:'#2D312E',plus:'#10B981',minus:'#EF4444'}}}}}</script>
+<style>body{background-color:#F4F2EE;color:#2D312E;padding-bottom:100px}.hide-scrollbar::-webkit-scrollbar{display:none}.hide-scrollbar{-ms-overflow-style:none;scrollbar-width:none}.card-3d{background:#FFF;border-radius:24px;box-shadow:0 12px 35px -5px rgba(0,0,0,0.05),0 5px 15px -3px rgba(0,0,0,0.02);border:1px solid rgba(255,255,255,0.8)}.btn-green{background:#0F5A47;color:#FFF;box-shadow:0 8px 20px -4px rgba(15,90,71,0.4)}.bottom-sheet{transition:transform .4s cubic-bezier(.25,1,.5,1);transform:translateY(100%)}.bottom-sheet.open{transform:translateY(0)}.overlay{transition:opacity .3s;opacity:0;pointer-events:none}.overlay.open{opacity:1;pointer-events:auto}@media print{@page{size:A4 portrait;margin:1cm}*{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}body{background-color:#FFF !important;padding-bottom:0 !important}.no-print,header,nav,button,#login-portal,.bottom-sheet,.overlay{display:none !important}main{padding:0 !important;margin:0 !important}#pdf-container,#pdf-ops-container{padding:0 !important;margin:0 !important;width:100% !important;box-shadow:none !important;border:none !important}table{page-break-inside:auto;width:100%;border-collapse:collapse}tr{page-break-inside:avoid;page-break-after:auto}thead{display:table-header-group}tfoot{display:table-footer-group}}</style></head>
 <body class="antialiased selection:bg-theme-secondary selection:text-white">
+<div id="login-portal" class="fixed inset-0 bg-theme-bg z-50 flex flex-col items-center justify-center p-6 transition-opacity duration-500 no-print"><div class="card-3d p-10 w-full max-w-sm text-center transform transition-transform duration-700 translate-y-0" id="login-card"><div class="w-24 h-24 bg-theme-primary rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-theme-primary/30"><i class="fas fa-chart-pie text-4xl text-white"></i></div><h1 class="text-2xl font-extrabold text-theme-text mb-1 tracking-tight">Executive Area</h1><p class="text-xs text-slate-500 mb-10 font-bold">Dashboard Analitik Fortuna</p><button onclick="doLogin()" class="w-full btn-green font-bold py-4 rounded-2xl active:scale-95 transition-transform flex justify-center items-center"><i class="fas fa-lock mr-2 text-sm"></i> <span>Akses Dashboard</span></button></div></div>
+<header class="bg-theme-bg/90 backdrop-blur-md px-6 py-5 sticky top-0 z-10 rounded-b-[2rem] no-print"><div class="flex justify-between items-center"><div><h1 class="text-2xl font-extrabold text-theme-text tracking-tight" id="header-title">Keuangan</h1><p class="text-xs text-theme-secondary font-bold mt-0.5" id="header-subtitle">Ringkasan Pemasukan</p></div><button onclick="refreshData()" class="text-slate-400 hover:text-theme-primary transition-colors p-3 rounded-2xl bg-white shadow-sm border border-slate-100"><i class="fas fa-sync-alt" id="refresh-icon"></i></button></div></header>
+<main class="px-5 py-6">
+<div class="card-3d p-4 no-print mb-6" id="global-filter"><div class="flex justify-between items-center mb-3"><h3 class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider"><i class="far fa-calendar-alt mr-1 text-theme-secondary"></i> Rentang Laporan</h3><button onclick="setMonthly()" class="text-[10px] bg-orange-50 text-theme-secondary px-3 py-1.5 rounded-lg font-bold active:scale-95 transition-transform">Bulan Ini</button></div><div class="relative"><i class="fas fa-calendar-day absolute left-4 top-1/2 transform -translate-y-1/2 text-theme-secondary"></i><input type="text" id="date-range-picker" readonly class="w-full bg-theme-bg border border-slate-200 rounded-xl pl-10 pr-4 py-3 outline-none text-sm text-theme-text font-bold cursor-pointer" placeholder="Pilih Mulai s/d Akhir..."></div></div>
+<div id="tab-dashboard" class="tab-content space-y-4"><div id="pdf-container" class="card-3d p-5 sm:p-8 relative"><div class="text-center mb-6 border-b-2 border-slate-100 pb-5"><h2 id="pdf-title" class="text-xl sm:text-2xl font-extrabold text-theme-text tracking-tight uppercase">LAPORAN KEUANGAN</h2><p class="text-sm font-bold text-theme-primary tracking-widest mt-1">FORTUNA LAUNDRY</p><p class="text-[10px] font-bold text-slate-500 mt-2 bg-slate-50 inline-block px-3 py-1 rounded-lg border border-slate-100" id="pdf-date-range">Periode: -</p></div><div class="grid grid-cols-2 gap-3 mb-8"><div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100"><span class="text-[10px] font-extrabold text-theme-plus block mb-1">PEMASUKAN KOTOR</span><h3 class="text-base font-extrabold text-theme-text" id="dash-masuk">Rp 0</h3><div class="text-[9px] text-slate-500 mt-1 flex justify-between font-bold"><span id="dash-cash">Cash: 0</span> <span id="dash-qris">QRIS: 0</span></div></div><div class="bg-red-50 p-4 rounded-2xl border border-red-100"><span class="text-[10px] font-extrabold text-theme-minus block mb-1">TOTAL PENGELUARAN</span><h3 class="text-base font-extrabold text-theme-text" id="dash-keluar">Rp 0</h3><p class="text-[9px] text-slate-500 mt-1 font-bold">Beban & Gaji</p></div><div class="bg-theme-primary_light p-4 rounded-2xl border border-theme-primary/20 col-span-2 flex justify-between items-center"><div><span class="text-[10px] font-extrabold text-theme-primary uppercase tracking-wider block mb-1">Laba Operasional</span><h3 class="text-2xl font-extrabold text-theme-text" id="dash-laba">Rp 0</h3></div><i class="fas fa-chart-line text-3xl text-theme-primary opacity-20"></i></div><div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 col-span-2 flex justify-between items-center"><div><span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1">Petty Cash Fisik Laci</span><h3 class="text-base font-extrabold text-theme-text" id="dash-petty">Rp 0</h3></div><i class="fas fa-cash-register text-2xl text-slate-400 opacity-30"></i></div></div><div><h3 class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mb-3">Rincian Transaksi RCHK</h3><table class="w-full text-left border-collapse" id="pdf-table"><thead><tr class="border-b-2 border-slate-100 text-[10px] text-slate-400 uppercase tracking-wider"><th class="pb-2 pt-2 w-1/4">Waktu</th><th class="pb-2 pt-2 w-2/5">Uraian</th><th class="pb-2 pt-2 text-center">Tipe</th><th class="pb-2 pt-2 text-right">Nominal</th></tr></thead><tbody id="dashboard-list" class="text-[11px] font-semibold text-slate-600"><tr><td colspan="4" class="text-center py-8 text-slate-400">Memuat...</td></tr></tbody></table></div></div><button onclick="downloadPDF('keuangan')" class="no-print w-full btn-green font-bold py-4 rounded-2xl mt-2 active:scale-95 transition-transform flex justify-center items-center"><i class="fas fa-print mr-2 text-lg"></i> Cetak Laporan Keuangan</button></div>
+<div id="tab-ops" class="tab-content space-y-4 hidden"><div id="pdf-ops-container" class="card-3d p-5 sm:p-8 relative"><div class="text-center mb-6 border-b-2 border-slate-100 pb-5"><h2 class="text-xl sm:text-2xl font-extrabold text-theme-text tracking-tight uppercase">LAPORAN PRODUKSI & QC</h2><p class="text-sm font-bold text-theme-primary tracking-widest mt-1">FORTUNA LAUNDRY</p><p class="text-[10px] font-bold text-slate-500 mt-2 bg-slate-50 inline-block px-3 py-1 rounded-lg border border-slate-100" id="pdf-ops-date-range">Periode: -</p></div><h3 class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mb-3">Produksi & Beban Kerja</h3><div class="grid grid-cols-2 gap-3 mb-8"><div class="bg-orange-50 p-4 rounded-2xl text-center"><i class="fas fa-tags text-theme-secondary mb-2 text-xl"></i><h3 class="text-xl font-extrabold text-theme-text" id="ops-pcs-awal">0</h3><span class="text-[9px] font-extrabold text-theme-secondary uppercase">Pcs Awal (Sortir)</span></div><div class="bg-theme-primary_light p-4 rounded-2xl text-center"><i class="fas fa-tshirt text-theme-primary mb-2 text-xl"></i><h3 class="text-xl font-extrabold text-theme-text" id="ops-pcs-akhir">0</h3><span class="text-[9px] font-extrabold text-theme-primary uppercase">Pcs Akhir (Kiloan)</span></div><div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center"><i class="fas fa-weight-scale text-slate-400 mb-2 text-xl"></i><h3 class="text-xl font-extrabold text-theme-text" id="ops-kg">0</h3><span class="text-[9px] font-extrabold text-slate-500 uppercase">Berat (Kg Akhir)</span></div><div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center"><i class="fas fa-shopping-basket text-slate-400 mb-2 text-xl"></i><h3 class="text-xl font-extrabold text-theme-text" id="ops-krj">0</h3><span class="text-[9px] font-extrabold text-slate-500 uppercase">Total Keranjang</span></div></div><div><h3 class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mb-3 flex items-center justify-between"><span>Radar QC & Kehilangan</span><span class="text-[8px] bg-red-100 text-red-700 px-2 py-0.5 rounded border border-red-200">Filter: Selisih/Proses</span></h3><table class="w-full text-left border-collapse" id="pdf-table-qc"><thead><tr class="border-b-2 border-slate-100 text-[10px] text-slate-400 uppercase tracking-wider"><th class="pb-2 pt-2 w-2/5">Pelanggan</th><th class="pb-2 pt-2 text-center">Awal<br><span class="text-[8px] font-bold">(Sortir)</span></th><th class="pb-2 pt-2 text-center">Akhir<br><span class="text-[8px] font-bold">(Kiloan)</span></th><th class="pb-2 pt-2 text-right">Status</th></tr></thead><tbody id="ops-qc-list" class="text-[11px] font-semibold text-slate-600"><tr><td colspan="4" class="text-center py-8 text-slate-400">Memuat...</td></tr></tbody></table></div><div class="mt-8"><h3 class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mb-3">Rekap Satuan & Karpet Premium</h3><div class="bg-slate-50 rounded-2xl border border-slate-100 p-4"><ul id="ops-satuan-list" class="space-y-2 text-xs font-bold text-slate-600"></ul></div></div></div><button onclick="downloadPDF('ops')" class="no-print w-full btn-green font-bold py-4 rounded-2xl mt-2 active:scale-95 transition-transform flex justify-center items-center"><i class="fas fa-print mr-2 text-lg"></i> Cetak Laporan QC</button></div>
+<div id="tab-rchk" class="tab-content space-y-4 hidden"></div><div id="tab-rsh" class="tab-content space-y-4 hidden"></div><div id="tab-rkh" class="tab-content space-y-4 hidden"></div>
+<div class="mt-8 text-center no-print pb-4"><p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">cc developed by beuna system | beuna.xyz</p></div></main>
+<nav class="no-print fixed bottom-6 left-5 right-5 card-3d flex justify-around py-3 px-1 z-10">
+<button onclick="switchTab('dashboard','Keuangan','Ringkasan Pemasukan')" id="nav-dashboard" class="nav-btn flex flex-col items-center text-theme-primary w-1/5 transition-colors"><i class="fas fa-chart-pie text-xl mb-1"></i><span class="text-[9px] font-extrabold">Finance</span></button>
+<button onclick="switchTab('ops','Produksi & QC','Pantau Kinerja Operasional')" id="nav-ops" class="nav-btn flex flex-col items-center text-slate-400 w-1/5 transition-colors"><i class="fas fa-clipboard-check text-xl mb-1"></i><span class="text-[9px] font-extrabold">Ops/QC</span></button>
+<button onclick="switchTab('rchk','Kasir (RCHK)','Edit Data Keuangan')" id="nav-rchk" class="nav-btn flex flex-col items-center text-slate-400 w-1/5 transition-colors"><i class="fas fa-wallet text-xl mb-1"></i><span class="text-[9px] font-extrabold">Kasir</span></button>
+<button onclick="switchTab('rsh','Sortir (RSH)','Edit Data Sortir')" id="nav-rsh" class="nav-btn flex flex-col items-center text-slate-400 w-1/5 transition-colors"><i class="fas fa-tags text-xl mb-1"></i><span class="text-[9px] font-extrabold">Sortir</span></button>
+<button onclick="switchTab('rkh','Kiloan (RKH)','Edit Data Kiloan')" id="nav-rkh" class="nav-btn flex flex-col items-center text-slate-400 w-1/5 transition-colors"><i class="fas fa-weight-scale text-xl mb-1"></i><span class="text-[9px] font-extrabold">Kiloan</span></button></nav>
+<button onclick="openModal(false)" class="no-print fixed bottom-28 right-6 bg-theme-secondary text-white w-14 h-14 rounded-2xl flex items-center justify-center text-xl z-20 hover:scale-105 active:scale-95 transition-transform shadow-lg shadow-theme-secondary/40 hidden" id="fab-btn"><i class="fas fa-plus"></i></button>
+<div id="overlay" class="overlay fixed inset-0 bg-slate-900/40 z-30 backdrop-blur-sm no-print" onclick="closeModal()"></div>
+<div id="bottom-sheet" class="bottom-sheet no-print fixed bottom-0 w-full bg-white rounded-t-[2.5rem] shadow-2xl z-40 p-6 sm:p-8 max-h-[90vh] overflow-y-auto hide-scrollbar"><div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-8"></div><h2 class="text-xl font-extrabold text-theme-text mb-6" id="modal-title">Tambah Data</h2><form id="input-form" onsubmit="submitToWebhook(event)"><div id="dynamic-form-fields" class="space-y-4"></div><button type="submit" id="submit-btn" class="w-full btn-green font-bold py-4 rounded-2xl mt-8 active:scale-95 transition-transform flex justify-center items-center">Simpan Data</button></form></div>
+<script>
+const WEBHOOK_URL='https://n8n-mzbmiib3etk4.kangkung.sumopod.my.id/webhook/fortuna-webhook';let currentTab='dashboard',appData={RCHK:[],RKH:[],RSH:[]},currentEditId=null,isMonthlyReport=true,filterStart=null,filterEnd=null;
+const fRp=a=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',minimumFractionDigits:0}).format(a);
+const fp=flatpickr("#date-range-picker",{mode:"range",dateFormat:"Y-m-d",altInput:true,altFormat:"d M Y",locale:"id",onChange:function(sD){if(sD.length===2){isMonthlyReport=false;filterStart=sD[0];filterEnd=new Date(sD[1].setHours(23,59,59,999));if(appData.RCHK.length>0){calculateDashboard();calculateOpsDashboard();}}}});
+function setMonthly(){isMonthlyReport=true;const n=new Date(),fD=new Date(n.getFullYear(),n.getMonth(),1),lD=new Date(n.getFullYear(),n.getMonth()+1,0,23,59,59,999);fp.setDate([fD,lD]);filterStart=fD;filterEnd=lD;if(appData.RCHK.length>0){calculateDashboard();calculateOpsDashboard();}}
+document.addEventListener('DOMContentLoaded',()=>{if(localStorage.getItem('isOwnerLoggedIn')==='true'){document.getElementById('login-portal').style.display='none';setMonthly();loadDataFromN8N();}});
+function doLogin(){localStorage.setItem('isOwnerLoggedIn','true');const p=document.getElementById('login-portal');document.getElementById('login-card').style.transform='translateY(20px)';p.style.opacity='0';setTimeout(()=>p.style.display='none',500);setMonthly();loadDataFromN8N();}
+async function loadDataFromN8N(){const i=document.getElementById('refresh-icon');i.classList.add('fa-spin');try{const r=await fetch(WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:"read"})}),res=await r.json();if(res.status==="success"){appData=res.data;calculateDashboard();calculateOpsDashboard();renderEditorCards();}}catch(e){alert("Gagal menarik data.");}finally{i.classList.remove('fa-spin');}}
+function refreshData(){loadDataFromN8N();}
+function calculateDashboard(){
+    if(!filterStart||!filterEnd)return;const sT=filterStart.getTime(),eT=filterEnd.getTime();
+    document.getElementById('pdf-date-range').innerText=isMonthlyReport?`Bulan: ${filterStart.toLocaleString('id-ID',{month:'long',year:'numeric'})}`:`Periode: ${filterStart.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})} s/d ${filterEnd.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})}`;
+    let tM=0,tC=0,tQ=0,tK=0,pC=0,lH='';
+    [...appData.RCHK].reverse().forEach(i=>{
+        if(!i.ID)return;const iT=parseInt(i.ID),iD=(iT>=sT&&iT<=eT),cD=parseInt(i.DEBIT)||0,cQ=parseInt(i.QRIS)||0,cK=parseInt(i.KREDIT)||0;
+        if(iT<=eT){pC+=cD;pC-=cK;}
+        if(iD){tC+=cD;tQ+=cQ;tK+=cK;tM+=(cD+cQ);let j='',bC='',bT='',n=0;if(i.DEBIT){j='CASH';bC='bg-emerald-50 text-theme-plus';bT='CASH';n=cD;}else if(i.QRIS){j='QRIS';bC='bg-emerald-50 text-theme-plus';bT='QRIS';n=cQ;}else if(i.KREDIT){j='KREDIT';bC='bg-red-50 text-theme-minus';bT='KELUAR';n=cK;}else if(i.KASBON){j='KASBON';bC='bg-orange-50 text-theme-secondary';bT='KASBON';n=parseInt(i.KASBON)||0;}const d=new Date(iT),dS=`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;lH+=`<tr class="border-b border-slate-100"><td class="py-3 pr-2 align-top text-slate-500">${dS}</td><td class="py-3 pr-2 align-top"><p class="font-bold text-slate-800">${i.NAMA||'-'}</p><p class="text-[9px] text-slate-400 mt-0.5">${i.KETERANGAN||'-'}</p></td><td class="py-3 align-top text-center"><span class="text-[8px] font-extrabold px-2 py-1 rounded ${bC}">${bT}</span></td><td class="py-3 text-right align-top font-extrabold ${j==='KREDIT'?'text-theme-minus':'text-slate-700'}">${j==='KREDIT'?'-':''} ${fRp(n)}</td></tr>`;}
+    });
+    let l=tM-tK;document.getElementById('dash-masuk').innerText=fRp(tM);document.getElementById('dash-cash').innerText=`Cash: ${fRp(tC)}`;document.getElementById('dash-qris').innerText=`QRIS: ${fRp(tQ)}`;document.getElementById('dash-keluar').innerText=fRp(tK);document.getElementById('dash-petty').innerText=fRp(pC);document.getElementById('dash-laba').innerText=fRp(l);document.getElementById('dash-laba').className=`text-2xl font-extrabold ${l<0?'text-theme-minus':'text-theme-text'}`;document.getElementById('dashboard-list').innerHTML=lH||`<tr><td colspan="4" class="text-center py-6 text-slate-400">Tidak ada transaksi.</td></tr>`;
+}
+function calculateOpsDashboard(){
+    if(!filterStart||!filterEnd)return;const sT=filterStart.getTime(),eT=filterEnd.getTime();
+    document.getElementById('pdf-ops-date-range').innerText=isMonthlyReport?`Bulan: ${filterStart.toLocaleString('id-ID',{month:'long',year:'numeric'})}`:`Periode: ${filterStart.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})} s/d ${filterEnd.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})}`;
+    let tK=0,tPa=0,tPk=0,kS=new Set(),qM={},sC={};
+    appData.RSH.forEach(i=>{
+        if(!i.ID)return;const iT=parseInt(i.ID);
+        if(iT>=sT&&iT<=eT){tPa+=parseInt(i.PCS)||0;if(i['NOMOR KERANJANG'])kS.add(i['NOMOR KERANJANG']);const k=`${(i.NAMA||'').toUpperCase()}-${i['NOMOR KERANJANG']}`,d=new Date(iT);qM[k]={name:i.NAMA,krj:i['NOMOR KERANJANG'],rsh_pcs:parseInt(i.PCS)||0,rsh_kg:parseFloat(i.KG)||0,rkh_pcs:0,rkh_kg:0,satuan:i['JENIS SATUAN']||'-',dateStr:`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`};const s=i['JENIS SATUAN']||'-';if(s!=='-'&&s!=='')sC[s]=(sC[s]||0)+1;}
+    });
+    appData.RKH.forEach(i=>{
+        if(!i.ID)return;const iT=parseInt(i.ID);
+        if(iT>=sT&&iT<=eT){tK+=parseFloat(i.KG)||0;tPk+=parseInt(i.PCS)||0;if(i['NOMOR KERANJANG'])kS.add(i['NOMOR KERANJANG']);const k=`${(i.NAMA||'').toUpperCase()}-${i['NOMOR KERANJANG']}`;if(qM[k]){qM[k].rkh_pcs=parseInt(i.PCS)||0;qM[k].rkh_kg=parseFloat(i.KG)||0;}else{const d=new Date(iT);qM[k]={name:i.NAMA,krj:i['NOMOR KERANJANG'],rsh_pcs:0,rsh_kg:0,rkh_pcs:parseInt(i.PCS)||0,rkh_kg:parseFloat(i.KG)||0,satuan:'-',dateStr:`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`};}}
+    });
+    document.getElementById('ops-kg').innerText=tK.toFixed(1);document.getElementById('ops-pcs-awal').innerText=tPa;document.getElementById('ops-pcs-akhir').innerText=tPk;document.getElementById('ops-krj').innerText=kS.size;
+    let qH='';for(const[k,d]of Object.entries(qM)){
+        let sB='',sh=false;
+        if(d.rsh_pcs===0){sB=`<span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-[8px] font-extrabold">TDK DISORTIR</span>`;sh=true;}else if(d.rkh_pcs===0){sB=`<span class="bg-orange-50 text-theme-secondary px-2 py-1 rounded border border-orange-200 text-[8px] font-extrabold">BLM DITIMBANG</span>`;sh=true;}else if(d.rsh_pcs!==d.rkh_pcs){sB=`<span class="bg-red-50 text-theme-minus px-2 py-1 rounded border border-red-200 text-[8px] font-extrabold">SELISIH PCS</span>`;sh=true;}
+        if(sh)qH+=`<tr class="border-b border-slate-100"><td class="py-3 pr-2 align-top"><p class="font-extrabold text-slate-800">${d.name}</p><p class="text-[9px] text-slate-400 mt-0.5">Krj: #${d.krj} | In: ${d.dateStr}</p></td><td class="py-3 align-top text-center"><span class="font-extrabold ${d.rsh_pcs===0?'text-slate-300':'text-theme-secondary'}">${d.rsh_pcs===0?'-':d.rsh_pcs+' Pcs'}</span><br>${d.rsh_kg>0?`<span class="text-[9px] text-slate-500 font-bold">${d.rsh_kg} Kg</span>`:''}</td><td class="py-3 align-top text-center"><span class="font-extrabold ${d.rkh_pcs===0?'text-slate-300':(d.rsh_pcs!==d.rkh_pcs?'text-theme-minus':'text-theme-primary')}">${d.rkh_pcs===0?'-':d.rkh_pcs+' Pcs'}</span><br>${d.rkh_kg>0?`<span class="text-[9px] text-slate-500 font-bold">${d.rkh_kg} Kg</span>`:''}</td><td class="py-3 text-right align-top">${sB}${d.satuan!=='-'?`<div class="text-[8px] font-extrabold text-theme-secondary mt-1 uppercase">${d.satuan}</div>`:''}</td></tr>`;
+    }
+    document.getElementById('ops-qc-list').innerHTML=qH||`<tr><td colspan="4" class="text-center py-6 text-slate-400 font-bold">Semua keranjang telah ditimbang & pas. (Aman)</td></tr>`;
+    let sH='';if(Object.keys(sC).length===0)sH=`<li class="text-slate-400 text-center py-2">Tidak ada item karpet/satuan di periode ini.</li>`;else{for(const[n,q]of Object.entries(sC))sH+=`<li class="flex justify-between items-center border-b border-slate-100 pb-2 mb-2 last:border-0 last:mb-0 last:pb-0"><span class="text-theme-text font-extrabold"><i class="fas fa-tag text-theme-primary/50 mr-2"></i>${n}</span><span class="bg-theme-primary_light text-theme-primary px-3 py-1 rounded-lg font-extrabold text-[10px]">${q} Item</span></li>`;}
+    document.getElementById('ops-satuan-list').innerHTML=sH;
+}
+function downloadPDF(t){
+    let f=t==='keuangan'?'Fortuna_Keuangan':'Fortuna_Ops_QC';if(isMonthlyReport)f+=`_${filterStart.toLocaleString('id-ID',{month:'long',year:'numeric'}).replace(/ /g,'_')}`;else f+=`_${filterStart.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}).replace(/ /g,'_')}_sd_${filterEnd.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}).replace(/ /g,'_')}`;
+    document.getElementById('global-filter').classList.add('no-print');const o=document.title;document.title=f;window.print();setTimeout(()=>{document.title=o;document.getElementById('global-filter').classList.remove('no-print');},500);
+}
+function renderEditorCards(){
+    document.getElementById('tab-rchk').innerHTML=[...appData.RCHK].reverse().map(i=>{
+        if(!i.ID)return'';let j='Ket',n=0,m=false;if(i.DEBIT){j='Debit';n=i.DEBIT;}else if(i.QRIS){j='QRIS';n=i.QRIS;}else if(i.KREDIT){j='Kredit';n=i.KREDIT;m=true;}else if(i.KASBON){j='Kasbon';n=i.KASBON;m=true;}
+        return `<div class="card-3d p-5 relative mb-4"><div class="flex justify-between items-start mb-2"><span class="font-extrabold text-theme-text text-sm">${i.NAMA||'-'}</span><span class="text-sm font-extrabold ${m?'text-theme-minus':'text-theme-primary'}">${m?'-':'+'} ${fRp(n)}</span></div><div class="flex justify-between items-end mt-3"><div><span class="text-[10px] font-extrabold px-2.5 py-1 ${m?'bg-red-50 text-theme-minus':'bg-theme-primary_light text-theme-primary'} rounded-lg uppercase">${j}</span><p class="text-[11px] text-slate-500 font-semibold mt-2">${i.KETERANGAN||'-'}</p></div><button onclick="openModal(true,'${i.ID}')" class="text-slate-400 hover:text-theme-secondary p-2 bg-theme-bg rounded-xl transition-colors"><i class="fas fa-pen text-sm"></i></button></div></div>`;
+    }).join('')||`<div class="text-center py-10 text-slate-400 text-sm font-semibold">Belum ada data.</div>`;
+    const rLC=(i,isRsh)=>{
+        if(!i.ID)return'';return `<div class="card-3d p-5 relative mb-4 border-l-4 ${isRsh?'border-l-theme-secondary':'border-l-theme-primary'}"><div class="flex justify-between items-center mb-3"><span class="font-extrabold text-theme-text text-sm">${i.NAMA||'-'}</span><div class="flex items-center gap-2"><span class="text-[10px] text-slate-500 bg-theme-bg px-2.5 py-1 rounded-lg font-bold">${i['TANGGAL MASUK']||'-'}</span><button onclick="openModal(true,'${i.ID}')" class="text-slate-400 hover:text-theme-secondary p-2 bg-theme-bg rounded-xl"><i class="fas fa-pen text-xs"></i></button></div></div><div class="grid grid-cols-3 gap-3 mt-4"><div class="bg-theme-bg p-3 rounded-2xl text-center"><p class="text-[9px] text-slate-500 font-extrabold mb-0.5 uppercase">Berat</p><p class="font-extrabold text-theme-text text-sm">${i.KG||0} <span class="text-[10px]">Kg</span></p></div><div class="bg-theme-bg p-3 rounded-2xl text-center"><p class="text-[9px] text-slate-500 font-extrabold mb-0.5 uppercase">Fisik</p><p class="font-extrabold text-theme-text text-sm">${i.PCS||0} <span class="text-[10px]">Pcs</span></p></div><div class="bg-theme-bg p-3 rounded-2xl text-center"><p class="text-[9px] text-slate-500 font-extrabold mb-0.5 uppercase">Keranjang</p><p class="font-extrabold text-theme-text text-sm">#${i['NOMOR KERANJANG']||'-'}</p></div></div>${isRsh?`<p class="text-[10px] font-extrabold text-slate-400 mt-4 border-t border-slate-100 pt-3 uppercase tracking-wider"><i class="fas fa-tag mr-1 text-theme-secondary"></i> ${i['JENIS SATUAN']||'-'}</p>`:''}</div>`;
+    };
+    document.getElementById('tab-rsh').innerHTML=[...appData.RSH].reverse().map(i=>rLC(i,true)).join('');document.getElementById('tab-rkh').innerHTML=[...appData.RKH].reverse().map(i=>rLC(i,false)).join('');
+}
+function switchTab(t,title,sub){currentTab=t;document.getElementById('header-title').innerText=title;document.getElementById('header-subtitle').innerText=sub;document.querySelectorAll('.tab-content').forEach(e=>e.classList.add('hidden'));document.getElementById(`tab-${t}`).classList.remove('hidden');document.querySelectorAll('.nav-btn').forEach(b=>{b.classList.remove('text-theme-primary');b.classList.add('text-slate-400');});document.getElementById(`nav-${t}`).classList.add('text-theme-primary');document.getElementById(`nav-${t}`).classList.remove('text-slate-400');const f=document.getElementById('fab-btn');if(t==='dashboard'||t==='ops'){f.classList.add('hidden');document.getElementById('global-filter').style.display='block';}else{f.classList.remove('hidden');document.getElementById('global-filter').style.display='none';}}
+function openModal(isEdit=false,id=null){
+    if(currentTab==='dashboard'||currentTab==='ops')return;currentEditId=isEdit?id:null;const fF=document.getElementById('dynamic-form-fields'),oD=isEdit?(appData[currentTab.toUpperCase()].find(i=>i.ID==id)||{}):{};document.getElementById('modal-title').innerText=isEdit?`Edit Data`:`Tambah Data`;
+    const iC="w-full mt-1.5 bg-theme-bg border border-slate-200 rounded-xl px-4 py-3.5 outline-none focus:border-theme-primary focus:ring-2 focus:ring-theme-primary/20 text-sm font-bold text-theme-text transition-all",lC="text-[11px] font-extrabold text-slate-500 ml-1 uppercase tracking-wider";
+    
+    const pZ=n=>String(n).padStart(2,'0'),fD=d=>{if(!d)return'';const p=d.split('/');return p.length===3?`${p[2]}-${pZ(p[1])}-${pZ(p[0])}`:d;};
+    const nD=new Date(),tStr=`${nD.getFullYear()}-${pZ(nD.getMonth()+1)}-${pZ(nD.getDate())}`;
 
-    <div id="login-portal" class="fixed inset-0 bg-theme-bg z-50 flex flex-col items-center justify-center p-6 transition-opacity duration-500 no-print">
-        <div class="card-3d p-10 w-full max-w-sm text-center transform transition-transform duration-700 translate-y-0" id="login-card">
-            <div class="w-24 h-24 bg-theme-primary rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-theme-primary/30">
-                <i class="fas fa-chart-pie text-4xl text-white"></i>
-            </div>
-            <h1 class="text-2xl font-extrabold text-theme-text mb-1 tracking-tight">Executive Area</h1>
-            <p class="text-xs text-slate-500 mb-10 font-bold">Dashboard Analitik Fortuna</p>
-            <button onclick="doLogin()" class="w-full btn-green font-bold py-4 rounded-2xl active:scale-95 transition-transform flex justify-center items-center">
-                <i class="fas fa-lock mr-2 text-sm"></i> <span>Akses Dashboard</span>
-            </button>
-        </div>
-    </div>
-
-    <header class="bg-theme-bg/90 backdrop-blur-md px-6 py-5 sticky top-0 z-10 rounded-b-[2rem] no-print">
-        <div class="flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-extrabold text-theme-text tracking-tight" id="header-title">Keuangan</h1>
-                <p class="text-xs text-theme-secondary font-bold mt-0.5" id="header-subtitle">Ringkasan Pemasukan</p>
-            </div>
-            <button onclick="refreshData()" class="text-slate-400 hover:text-theme-primary transition-colors p-3 rounded-2xl bg-white shadow-sm border border-slate-100">
-                <i class="fas fa-sync-alt" id="refresh-icon"></i>
-            </button>
-        </div>
-    </header>
-
-    <main class="px-5 py-6">
-        
-        <div class="card-3d p-4 no-print mb-6" id="global-filter">
-            <div class="flex justify-between items-center mb-3">
-                <h3 class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">
-                    <i class="far fa-calendar-alt mr-1 text-theme-secondary"></i> Rentang Laporan
-                </h3>
-                <button onclick="setMonthly()" class="text-[10px] bg-orange-50 text-theme-secondary px-3 py-1.5 rounded-lg font-bold active:scale-95 transition-transform">
-                    Bulan Ini
-                </button>
-            </div>
-            <div class="relative">
-                <i class="fas fa-calendar-day absolute left-4 top-1/2 transform -translate-y-1/2 text-theme-secondary"></i>
-                <input type="text" id="date-range-picker" readonly class="w-full bg-theme-bg border border-slate-200 rounded-xl pl-10 pr-4 py-3 outline-none text-sm text-theme-text font-bold cursor-pointer" placeholder="Pilih Mulai s/d Akhir...">
-            </div>
-        </div>
-
-        <div id="tab-dashboard" class="tab-content space-y-4">
-            <div id="pdf-container" class="card-3d p-5 sm:p-8 relative">
-                
-                <div class="text-center mb-6 border-b-2 border-slate-100 pb-5">
-                    <h2 id="pdf-title" class="text-xl sm:text-2xl font-extrabold text-theme-text tracking-tight uppercase">LAPORAN KEUANGAN</h2>
-                    <p class="text-sm font-bold text-theme-primary tracking-widest mt-1">FORTUNA LAUNDRY</p>
-                    <p class="text-[10px] font-bold text-slate-500 mt-2 bg-slate-50 inline-block px-3 py-1 rounded-lg border border-slate-100" id="pdf-date-range">Periode: -</p>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3 mb-8">
-                    <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
-                        <span class="text-[10px] font-extrabold text-theme-plus block mb-1">PEMASUKAN KOTOR</span>
-                        <h3 class="text-base font-extrabold text-theme-text" id="dash-masuk">Rp 0</h3>
-                        <div class="text-[9px] text-slate-500 mt-1 flex justify-between font-bold">
-                            <span id="dash-cash">Cash: 0</span> <span id="dash-qris">QRIS: 0</span>
-                        </div>
-                    </div>
-                    <div class="bg-red-50 p-4 rounded-2xl border border-red-100">
-                        <span class="text-[10px] font-extrabold text-theme-minus block mb-1">TOTAL PENGELUARAN</span>
-                        <h3 class="text-base font-extrabold text-theme-text" id="dash-keluar">Rp 0</h3>
-                        <p class="text-[9px] text-slate-500 mt-1 font-bold">Beban & Gaji</p>
-                    </div>
-                    <div class="bg-theme-primary_light p-4 rounded-2xl border border-theme-primary/20 col-span-2 flex justify-between items-center">
-                        <div>
-                            <span class="text-[10px] font-extrabold text-theme-primary uppercase tracking-wider block mb-1">Laba Operasional</span>
-                            <h3 class="text-2xl font-extrabold text-theme-text" id="dash-laba">Rp 0</h3>
-                        </div>
-                        <i class="fas fa-chart-line text-3xl text-theme-primary opacity-20"></i>
-                    </div>
-                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 col-span-2 flex justify-between items-center">
-                        <div>
-                            <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1">Petty Cash Fisik Laci</span>
-                            <h3 class="text-base font-extrabold text-theme-text" id="dash-petty">Rp 0</h3>
-                        </div>
-                        <i class="fas fa-cash-register text-2xl text-slate-400 opacity-30"></i>
-                    </div>
-                </div>
-
-                <div>
-                    <h3 class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mb-3">Rincian Transaksi RCHK</h3>
-                    <table class="w-full text-left border-collapse" id="pdf-table">
-                        <thead>
-                            <tr class="border-b-2 border-slate-100 text-[10px] text-slate-400 uppercase tracking-wider">
-                                <th class="pb-2 pt-2 w-1/4">Waktu</th>
-                                <th class="pb-2 pt-2 w-2/5">Uraian</th>
-                                <th class="pb-2 pt-2 text-center">Tipe</th>
-                                <th class="pb-2 pt-2 text-right">Nominal</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dashboard-list" class="text-[11px] font-semibold text-slate-600">
-                            <tr><td colspan="4" class="text-center py-8 text-slate-400">Memuat...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <button onclick="downloadPDF('keuangan')" class="no-print w-full btn-green font-bold py-4 rounded-2xl mt-2 active:scale-95 transition-transform flex justify-center items-center">
-                <i class="fas fa-print mr-2 text-lg"></i> Cetak Laporan Keuangan
-            </button>
-        </div>
-
-        <div id="tab-ops" class="tab-content space-y-4 hidden">
-            <div id="pdf-ops-container" class="card-3d p-5 sm:p-8 relative">
-                
-                <div class="text-center mb-6 border-b-2 border-slate-100 pb-5">
-                    <h2 class="text-xl sm:text-2xl font-extrabold text-theme-text tracking-tight uppercase">LAPORAN PRODUKSI & QC</h2>
-                    <p class="text-sm font-bold text-theme-primary tracking-widest mt-1">FORTUNA LAUNDRY</p>
-                    <p class="text-[10px] font-bold text-slate-500 mt-2 bg-slate-50 inline-block px-3 py-1 rounded-lg border border-slate-100" id="pdf-ops-date-range">Periode: -</p>
-                </div>
-
-                <h3 class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mb-3">Produksi & Beban Kerja</h3>
-                <div class="grid grid-cols-2 gap-3 mb-8">
-                    <div class="bg-orange-50 p-4 rounded-2xl text-center">
-                        <i class="fas fa-tags text-theme-secondary mb-2 text-xl"></i>
-                        <h3 class="text-xl font-extrabold text-theme-text" id="ops-pcs-awal">0</h3>
-                        <span class="text-[9px] font-extrabold text-theme-secondary uppercase">Pcs Awal (Sortir)</span>
-                    </div>
-                    <div class="bg-theme-primary_light p-4 rounded-2xl text-center">
-                        <i class="fas fa-tshirt text-theme-primary mb-2 text-xl"></i>
-                        <h3 class="text-xl font-extrabold text-theme-text" id="ops-pcs-akhir">0</h3>
-                        <span class="text-[9px] font-extrabold text-theme-primary uppercase">Pcs Akhir (Kiloan)</span>
-                    </div>
-                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
-                        <i class="fas fa-weight-scale text-slate-400 mb-2 text-xl"></i>
-                        <h3 class="text-xl font-extrabold text-theme-text" id="ops-kg">0</h3>
-                        <span class="text-[9px] font-extrabold text-slate-500 uppercase">Berat (Kg Akhir)</span>
-                    </div>
-                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
-                        <i class="fas fa-shopping-basket text-slate-400 mb-2 text-xl"></i>
-                        <h3 class="text-xl font-extrabold text-theme-text" id="ops-krj">0</h3>
-                        <span class="text-[9px] font-extrabold text-slate-500 uppercase">Total Keranjang</span>
-                    </div>
-                </div>
-
-                <div>
-                    <h3 class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mb-3 flex items-center justify-between">
-                        <span>Radar QC & Kehilangan</span>
-                        <span class="text-[8px] bg-red-100 text-red-700 px-2 py-0.5 rounded border border-red-200">Filter: Selisih/Proses</span>
-                    </h3>
-                    <table class="w-full text-left border-collapse" id="pdf-table-qc">
-                        <thead>
-                            <tr class="border-b-2 border-slate-100 text-[10px] text-slate-400 uppercase tracking-wider">
-                                <th class="pb-2 pt-2 w-2/5">Pelanggan</th>
-                                <th class="pb-2 pt-2 text-center">Awal<br><span class="text-[8px] font-bold">(Sortir)</span></th>
-                                <th class="pb-2 pt-2 text-center">Akhir<br><span class="text-[8px] font-bold">(Kiloan)</span></th>
-                                <th class="pb-2 pt-2 text-right">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ops-qc-list" class="text-[11px] font-semibold text-slate-600">
-                            <tr><td colspan="4" class="text-center py-8 text-slate-400">Memuat...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="mt-8">
-                    <h3 class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mb-3">Rekap Satuan & Karpet Premium</h3>
-                    <div class="bg-slate-50 rounded-2xl border border-slate-100 p-4">
-                        <ul id="ops-satuan-list" class="space-y-2 text-xs font-bold text-slate-600">
-                            </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <button onclick="downloadPDF('ops')" class="no-print w-full btn-green font-bold py-4 rounded-2xl mt-2 active:scale-95 transition-transform flex justify-center items-center">
-                <i class="fas fa-print mr-2 text-lg"></i> Cetak Laporan QC
-            </button>
-        </div>
-
-        <div id="tab-rchk" class="tab-content space-y-4 hidden"></div>
-        <div id="tab-rsh" class="tab-content space-y-4 hidden"></div>
-        <div id="tab-rkh" class="tab-content space-y-4 hidden"></div>
-        
-        <div class="mt-8 text-center no-print pb-4">
-            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">cc developed by beuna system | beuna.xyz</p>
-        </div>
-    </main>
-
-    <nav class="no-print fixed bottom-6 left-5 right-5 card-3d flex justify-around py-3 px-1 z-10">
-        <button onclick="switchTab('dashboard', 'Keuangan', 'Ringkasan Pemasukan')" id="nav-dashboard" class="nav-btn flex flex-col items-center text-theme-primary w-1/5 transition-colors">
-            <i class="fas fa-chart-pie text-xl mb-1"></i><span class="text-[9px] font-extrabold">Finance</span>
-        </button>
-        <button onclick="switchTab('ops', 'Produksi & QC', 'Pantau Kinerja Operasional')" id="nav-ops" class="nav-btn flex flex-col items-center text-slate-400 w-1/5 transition-colors">
-            <i class="fas fa-clipboard-check text-xl mb-1"></i><span class="text-[9px] font-extrabold">Ops/QC</span>
-        </button>
-        <button onclick="switchTab('rchk', 'Kasir (RCHK)', 'Edit Data Keuangan')" id="nav-rchk" class="nav-btn flex flex-col items-center text-slate-400 w-1/5 transition-colors">
-            <i class="fas fa-wallet text-xl mb-1"></i><span class="text-[9px] font-extrabold">Kasir</span>
-        </button>
-        <button onclick="switchTab('rsh', 'Sortir (RSH)', 'Edit Data Sortir')" id="nav-rsh" class="nav-btn flex flex-col items-center text-slate-400 w-1/5 transition-colors">
-            <i class="fas fa-tags text-xl mb-1"></i><span class="text-[9px] font-extrabold">Sortir</span>
-        </button>
-        <button onclick="switchTab('rkh', 'Kiloan (RKH)', 'Edit Data Kiloan')" id="nav-rkh" class="nav-btn flex flex-col items-center text-slate-400 w-1/5 transition-colors">
-            <i class="fas fa-weight-scale text-xl mb-1"></i><span class="text-[9px] font-extrabold">Kiloan</span>
-        </button>
-    </nav>
-
-    <button onclick="openModal(false)" class="no-print fixed bottom-28 right-6 btn-secondary bg-theme-secondary text-white w-14 h-14 rounded-2xl flex items-center justify-center text-xl z-20 hover:scale-105 active:scale-95 transition-transform hidden" id="fab-btn">
-        <i class="fas fa-plus"></i>
-    </button>
-
-    <div id="overlay" class="overlay fixed inset-0 bg-slate-900/40 z-30 backdrop-blur-sm no-print" onclick="closeModal()"></div>
-    <div id="bottom-sheet" class="bottom-sheet no-print fixed bottom-0 w-full bg-white rounded-t-[2.5rem] shadow-2xl z-40 p-6 sm:p-8 max-h-[90vh] overflow-y-auto hide-scrollbar">
-        <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-8"></div>
-        <h2 class="text-xl font-extrabold text-theme-text mb-6" id="modal-title">Tambah Data</h2>
-        <form id="input-form" onsubmit="submitToWebhook(event)">
-            <div id="dynamic-form-fields" class="space-y-4"></div>
-            <button type="submit" id="submit-btn" class="w-full btn-green font-bold py-4 rounded-2xl mt-8 active:scale-95 transition-transform flex justify-center items-center">
-                Simpan Data
-            </button>
-        </form>
-    </div>
-
-    <script>
-        const WEBHOOK_URL = 'https://n8n-mzbmiib3etk4.kangkung.sumopod.my.id/webhook/fortuna-webhook';
-        let currentTab = 'dashboard';
-        let appData = { RCHK: [], RKH: [], RSH: [] };
-        let currentEditId = null; 
-        let isMonthlyReport = true; 
-        let filterStart = null; 
-        let filterEnd = null;
-
-        const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
-        
-        // Flatpickr setup
-        const fp = flatpickr("#date-range-picker", {
-            mode: "range", 
-            dateFormat: "Y-m-d", 
-            altInput: true, 
-            altFormat: "d M Y", 
-            locale: "id", 
-            onChange: function(selectedDates) {
-                if(selectedDates.length === 2) {
-                    isMonthlyReport = false; 
-                    filterStart = selectedDates[0]; 
-                    filterEnd = new Date(selectedDates[1].setHours(23, 59, 59, 999));
-                    if(appData.RCHK.length > 0) { 
-                        calculateDashboard(); 
-                        calculateOpsDashboard(); 
-                    }
-                }
-            }
-        });
-
-        function setMonthly() {
-            isMonthlyReport = true; 
-            const now = new Date();
-            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1); 
-            const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
-            
-            fp.setDate([firstDay, lastDay]); 
-            filterStart = firstDay; 
-            filterEnd = lastDay;
-            
-            if(appData.RCHK.length > 0) { 
-                calculateDashboard(); 
-                calculateOpsDashboard(); 
-            }
+    if(currentTab==='rchk'){
+        let oJ='Debit',oN='',tKasir=tStr;
+        if(isEdit){
+            if(oD.DEBIT){oJ='Debit';oN=oD.DEBIT;}else if(oD.QRIS){oJ='QRIS';oN=oD.QRIS;}else if(oD.KREDIT){oJ='Kredit';oN=oD.KREDIT;}else if(oD.KASBON){oJ='Kasbon';oN=oD.KASBON;}
+            if(oD.TANGGAL||oD.tanggal)tKasir=fD(oD.TANGGAL||oD.tanggal);else if(oD.ID){const d=new Date(parseInt(oD.ID));tKasir=`${d.getFullYear()}-${pZ(d.getMonth()+1)}-${pZ(d.getDate())}`;}
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('isOwnerLoggedIn') === 'true') {
-                document.getElementById('login-portal').style.display = 'none';
-                setMonthly(); 
-                loadDataFromN8N();
-            }
-        });
-
-        function doLogin() {
-            localStorage.setItem('isOwnerLoggedIn', 'true'); 
-            const portal = document.getElementById('login-portal');
-            document.getElementById('login-card').style.transform = 'translateY(20px)'; 
-            portal.style.opacity = '0';
-            setTimeout(() => { portal.style.display = 'none'; }, 500);
-            
-            setMonthly(); 
-            loadDataFromN8N();
-        }
-
-        async function loadDataFromN8N() {
-            const icon = document.getElementById('refresh-icon'); 
-            icon.classList.add('fa-spin');
-            try {
-                const response = await fetch(WEBHOOK_URL, { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ action: "read" }) 
-                });
-                const result = await response.json();
-                if(result.status === "success") { 
-                    appData = result.data; 
-                    calculateDashboard(); 
-                    calculateOpsDashboard(); 
-                    renderEditorCards(); 
-                }
-            } catch (error) { 
-                alert("Gagal menarik data dari server."); 
-            } finally { 
-                icon.classList.remove('fa-spin'); 
-            }
-        }
-
-        function refreshData() { 
-            loadDataFromN8N(); 
-        }
-
-        // ==========================================
-        // 1. KALKULASI TAB KEUANGAN
-        // ==========================================
-        function calculateDashboard() {
-            if(!filterStart || !filterEnd) return;
-            const startTs = filterStart.getTime(); 
-            const endTs = filterEnd.getTime();
-            
-            const sStr = filterStart.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-            const eStr = filterEnd.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-            
-            document.getElementById('pdf-date-range').innerText = isMonthlyReport 
-                ? `Bulan: ${filterStart.toLocaleString('id-ID', { month: 'long', year: 'numeric' })}` 
-                : `Periode: ${sStr} s/d ${eStr}`;
-
-            let tMasuk = 0, tCash = 0, tQris = 0, tKeluar = 0; 
-            let pettyCashTotal = 0; 
-            let listHtml = '';
-            
-            const sortedRCHK = [...appData.RCHK].reverse();
-
-            sortedRCHK.forEach(item => {
-                if(!item.ID) return; 
-                const itemTs = parseInt(item.ID); 
-                const isInDataRange = (itemTs >= startTs && itemTs <= endTs);
-                
-                const cDebit = parseInt(item.DEBIT) || 0; 
-                const cQris = parseInt(item.QRIS) || 0; 
-                const cKredit = parseInt(item.KREDIT) || 0;
-                
-                if(itemTs <= endTs) { 
-                    pettyCashTotal += cDebit; 
-                    pettyCashTotal -= cKredit; 
-                }
-                
-                if(isInDataRange) {
-                    tCash += cDebit; 
-                    tQris += cQris; 
-                    tKeluar += cKredit; 
-                    tMasuk += (cDebit + cQris);
-                    
-                    let jenis = '', badgeColor = '', badgeText = '', nom = 0;
-                    if(item.DEBIT) { jenis = 'CASH'; badgeColor = 'bg-emerald-50 text-theme-plus'; badgeText = 'CASH'; nom = cDebit; }
-                    else if(item.QRIS) { jenis = 'QRIS'; badgeColor = 'bg-emerald-50 text-theme-plus'; badgeText = 'QRIS'; nom = cQris; }
-                    else if(item.KREDIT) { jenis = 'KREDIT'; badgeColor = 'bg-red-50 text-theme-minus'; badgeText = 'KELUAR'; nom = cKredit; }
-                    else if(item.KASBON) { jenis = 'KASBON'; badgeColor = 'bg-orange-50 text-theme-secondary'; badgeText = 'KASBON'; nom = parseInt(item.KASBON)||0; }
-
-                    const tsDate = new Date(itemTs); 
-                    const dStr = `${String(tsDate.getDate()).padStart(2,'0')}/${String(tsDate.getMonth()+1).padStart(2,'0')}`;
-                    
-                    listHtml += `
-                    <tr class="border-b border-slate-100">
-                        <td class="py-3 pr-2 align-top text-slate-500">${dStr}</td>
-                        <td class="py-3 pr-2 align-top">
-                            <p class="font-bold text-slate-800">${item.NAMA || '-'}</p>
-                            <p class="text-[9px] text-slate-400 mt-0.5">${item.KETERANGAN || '-'}</p>
-                        </td>
-                        <td class="py-3 align-top text-center">
-                            <span class="text-[8px] font-extrabold px-2 py-1 rounded ${badgeColor}">${badgeText}</span>
-                        </td>
-                        <td class="py-3 text-right align-top font-extrabold ${jenis === 'KREDIT' ? 'text-theme-minus' : 'text-slate-700'}">
-                            ${jenis === 'KREDIT' ? '-' : ''} ${formatRp(nom)}
-                        </td>
-                    </tr>`;
-                }
-            });
-
-            let laba = tMasuk - tKeluar;
-            document.getElementById('dash-masuk').innerText = formatRp(tMasuk); 
-            document.getElementById('dash-cash').innerText = `Cash: ${formatRp(tCash)}`; 
-            document.getElementById('dash-qris').innerText = `QRIS: ${formatRp(tQris)}`;
-            document.getElementById('dash-keluar').innerText = formatRp(tKeluar); 
-            document.getElementById('dash-petty').innerText = formatRp(pettyCashTotal);
-            document.getElementById('dash-laba').innerText = formatRp(laba); 
-            document.getElementById('dash-laba').className = `text-2xl font-extrabold ${laba < 0 ? 'text-theme-minus' : 'text-theme-text'}`;
-            document.getElementById('dashboard-list').innerHTML = listHtml || `<tr><td colspan="4" class="text-center py-6 text-slate-400">Tidak ada transaksi.</td></tr>`;
-        }
-
-        // ==========================================
-        // 2. KALKULASI TAB OPERASIONAL & QC (RSH -> RKH)
-        // ==========================================
-        function calculateOpsDashboard() {
-            if(!filterStart || !filterEnd) return;
-            
-            const startTs = filterStart.getTime(); 
-            const endTs = filterEnd.getTime();
-            
-            const sStr = filterStart.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-            const eStr = filterEnd.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-            
-            document.getElementById('pdf-ops-date-range').innerText = isMonthlyReport 
-                ? `Bulan: ${filterStart.toLocaleString('id-ID', { month: 'long', year: 'numeric' })}` 
-                : `Periode: ${sStr} s/d ${eStr}`;
-
-            let tKg = 0, tPcsAwal = 0, tPcsAkhir = 0, krjSet = new Set();
-            let qcMap = {}; 
-            let satuanCounts = {};
-
-            // A. Kumpulkan Data RSH (Masuk / Sortir Awal)
-            appData.RSH.forEach(item => {
-                if(!item.ID) return; 
-                const itemTs = parseInt(item.ID);
-                
-                if(itemTs >= startTs && itemTs <= endTs) {
-                    tPcsAwal += parseInt(item.PCS) || 0;
-                    if(item['NOMOR KERANJANG']) krjSet.add(item['NOMOR KERANJANG']);
-                    
-                    const key = `${(item.NAMA||'').toUpperCase()}-${item['NOMOR KERANJANG']}`;
-                    const dDate = new Date(itemTs);
-                    
-                    qcMap[key] = { 
-                        name: item.NAMA, 
-                        krj: item['NOMOR KERANJANG'],
-                        rsh_pcs: parseInt(item.PCS)||0, 
-                        rsh_kg: parseFloat(item.KG)||0,
-                        rkh_pcs: 0, 
-                        rkh_kg: 0,
-                        dateStr: `${String(dDate.getDate()).padStart(2,'0')}/${String(dDate.getMonth()+1).padStart(2,'0')}`
-                    };
-
-                    // Rekap Satuan
-                    const satuan = item['JENIS SATUAN'] || '-';
-                    if(satuan !== '-' && satuan !== '') {
-                        satuanCounts[satuan] = (satuanCounts[satuan] || 0) + 1;
-                    }
-                }
-            });
-
-            // B. Cocokkan dengan Data RKH (Keluar / Timbang Akhir)
-            appData.RKH.forEach(item => {
-                if(!item.ID) return; 
-                const itemTs = parseInt(item.ID);
-                
-                if(itemTs >= startTs && itemTs <= endTs) {
-                    tKg += parseFloat(item.KG) || 0; 
-                    tPcsAkhir += parseInt(item.PCS) || 0;
-                    if(item['NOMOR KERANJANG']) krjSet.add(item['NOMOR KERANJANG']); 
-                    
-                    const key = `${(item.NAMA||'').toUpperCase()}-${item['NOMOR KERANJANG']}`;
-                    
-                    if(qcMap[key]) { 
-                        qcMap[key].rkh_pcs = parseInt(item.PCS) || 0; 
-                        qcMap[key].rkh_kg = parseFloat(item.KG) || 0; 
-                    } else {
-                        // Jika ada di Timbangan tapi tidak pernah Disortir (Bypass)
-                        const dDate = new Date(itemTs);
-                        qcMap[key] = { 
-                            name: item.NAMA, 
-                            krj: item['NOMOR KERANJANG'],
-                            rsh_pcs: 0, 
-                            rsh_kg: 0,
-                            rkh_pcs: parseInt(item.PCS) || 0, 
-                            rkh_kg: parseFloat(item.KG) || 0, 
-                            dateStr: `${String(dDate.getDate()).padStart(2,'0')}/${String(dDate.getMonth()+1).padStart(2,'0')}`
-                        };
-                    }
-                }
-            });
-
-            document.getElementById('ops-kg').innerText = tKg.toFixed(1);
-            document.getElementById('ops-pcs-awal').innerText = tPcsAwal;
-            document.getElementById('ops-pcs-akhir').innerText = tPcsAkhir;
-            document.getElementById('ops-krj').innerText = krjSet.size;
-
-            // C. Render Tabel Radar QC 
-            let qcHtml = '';
-            for (const [key, data] of Object.entries(qcMap)) {
-                let statusBadge = ''; 
-                let show = false;
-                
-                if (data.rsh_pcs === 0) {
-                    statusBadge = `<span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-[8px] font-extrabold">TDK DISORTIR</span>`;
-                    show = true;
-                } else if (data.rkh_pcs === 0) {
-                    statusBadge = `<span class="bg-orange-50 text-theme-secondary px-2 py-1 rounded border border-orange-200 text-[8px] font-extrabold">BLM DITIMBANG</span>`;
-                    show = true;
-                } else if (data.rsh_pcs !== data.rkh_pcs) {
-                    statusBadge = `<span class="bg-red-50 text-theme-minus px-2 py-1 rounded border border-red-200 text-[8px] font-extrabold">SELISIH PCS</span>`;
-                    show = true;
-                }
-                
-                if(show) {
-                    qcHtml += `
-                    <tr class="border-b border-slate-100">
-                        <td class="py-3 pr-2 align-top">
-                            <p class="font-extrabold text-slate-800">${data.name}</p>
-                            <p class="text-[9px] text-slate-400 mt-0.5">Krj: #${data.krj} | In: ${data.dateStr}</p>
-                        </td>
-                        <td class="py-3 align-top text-center">
-                            <span class="font-extrabold ${data.rsh_pcs===0 ? 'text-slate-300':'text-theme-secondary'}">${data.rsh_pcs===0 ? '-' : data.rsh_pcs+' Pcs'}</span><br>
-                            ${data.rsh_kg > 0 ? `<span class="text-[9px] text-slate-500 font-bold">${data.rsh_kg} Kg</span>` : ''}
-                        </td>
-                        <td class="py-3 align-top text-center">
-                            <span class="font-extrabold ${data.rkh_pcs===0 ? 'text-slate-300': (data.rsh_pcs !== data.rkh_pcs ? 'text-theme-minus' : 'text-theme-primary')}">${data.rkh_pcs===0 ? '-' : data.rkh_pcs+' Pcs'}</span><br>
-                            ${data.rkh_kg > 0 ? `<span class="text-[9px] text-slate-500 font-bold">${data.rkh_kg} Kg</span>` : ''}
-                        </td>
-                        <td class="py-3 text-right align-top">${statusBadge}</td>
-                    </tr>`;
-                }
-            }
-            document.getElementById('ops-qc-list').innerHTML = qcHtml || `<tr><td colspan="4" class="text-center py-6 text-slate-400 font-bold">Semua keranjang telah ditimbang & pas. (Aman)</td></tr>`;
-
-            // D. Render Rekap Satuan Premium
-            let satuanHtml = '';
-            if(Object.keys(satuanCounts).length === 0) {
-                satuanHtml = `<li class="text-slate-400 text-center py-2">Tidak ada item karpet/satuan di periode ini.</li>`;
-            } else {
-                for (const [namaSatuan, qty] of Object.entries(satuanCounts)) {
-                    satuanHtml += `
-                    <li class="flex justify-between items-center border-b border-slate-100 pb-2 mb-2 last:border-0 last:mb-0 last:pb-0">
-                        <span class="text-theme-text font-extrabold"><i class="fas fa-tag text-theme-primary/50 mr-2"></i>${namaSatuan}</span>
-                        <span class="bg-theme-primary_light text-theme-primary px-3 py-1 rounded-lg font-extrabold text-[10px]">${qty} Item</span>
-                    </li>`;
-                }
-            }
-            document.getElementById('ops-satuan-list').innerHTML = satuanHtml;
-        }
-
-        // ==========================================
-        // 3. NATIVE OS PRINT (A4 PDF)
-        // ==========================================
-        function downloadPDF(type) {
-            let filenameStr = type === 'keuangan' ? 'Fortuna_Keuangan' : 'Fortuna_Ops_QC';
-            
-            if(isMonthlyReport) {
-                const monthName = filterStart.toLocaleString('id-ID', { month: 'long', year: 'numeric' }).replace(/ /g, '_');
-                filenameStr += `_${monthName}`;
-            } else {
-                const sStr = filterStart.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '_');
-                const eStr = filterEnd.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '_');
-                filenameStr += `_${sStr}_sd_${eStr}`;
-            }
-
-            document.getElementById('global-filter').classList.add('no-print');
-            
-            const originalTitle = document.title;
-            document.title = filenameStr;
-            
-            window.print();
-            
-            setTimeout(() => { 
-                document.title = originalTitle; 
-                document.getElementById('global-filter').classList.remove('no-print');
-            }, 500);
-        }
-
-        // ==========================================
-        // 4. RENDER EDITOR (FUNGSI EDIT DATA OWNER)
-        // ==========================================
-        function renderEditorCards() {
-            // Edit Kasir
-            document.getElementById('tab-rchk').innerHTML = [...appData.RCHK].reverse().map(item => {
-                if(!item.ID) return ''; 
-                let jenis = 'Keterangan'; let nominal = 0; let isMin = false;
-                
-                if(item.DEBIT) { jenis = 'Debit'; nominal = item.DEBIT; } 
-                else if(item.QRIS) { jenis = 'QRIS'; nominal = item.QRIS; } 
-                else if(item.KREDIT) { jenis = 'Kredit'; nominal = item.KREDIT; isMin = true; } 
-                else if(item.KASBON) { jenis = 'Kasbon'; nominal = item.KASBON; isMin = true; }
-                
-                return `
-                <div class="card-3d p-5 relative mb-4">
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="font-extrabold text-theme-text text-sm">${item.NAMA || '-'}</span>
-                        <span class="text-sm font-extrabold ${isMin ? 'text-theme-minus' : 'text-theme-primary'}">${isMin ? '-' : '+'} ${formatRp(nominal)}</span>
-                    </div>
-                    <div class="flex justify-between items-end mt-3">
-                        <div>
-                            <span class="text-[10px] font-extrabold px-2.5 py-1 ${isMin ? 'bg-red-50 text-theme-minus' : 'bg-theme-primary_light text-theme-primary'} rounded-lg uppercase">${jenis}</span>
-                            <p class="text-[11px] text-slate-500 font-semibold mt-2">${item.KETERANGAN || '-'}</p>
-                        </div>
-                        <button onclick="openModal(true, '${item.ID}')" class="text-slate-400 hover:text-theme-secondary p-2 bg-theme-bg rounded-xl transition-colors">
-                            <i class="fas fa-pen text-sm"></i>
-                        </button>
-                    </div>
-                </div>`;
-            }).join('') || `<div class="text-center py-10 text-slate-400 text-sm font-semibold">Belum ada data.</div>`;
-
-            // Edit Laundry (Sortir & Kiloan)
-            const renderLaundryCard = (item, isRsh = false) => {
-                if(!item.ID) return '';
-                return `
-                <div class="card-3d p-5 relative mb-4 border-l-4 ${isRsh ? 'border-l-theme-secondary' : 'border-l-theme-primary'}">
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="font-extrabold text-theme-text text-sm">${item.NAMA || '-'}</span>
-                        <div class="flex items-center gap-2">
-                            <span class="text-[10px] text-slate-500 bg-theme-bg px-2.5 py-1 rounded-lg font-bold">${item['TANGGAL MASUK'] || '-'}</span>
-                            <button onclick="openModal(true, '${item.ID}')" class="text-slate-400 hover:text-theme-secondary p-2 bg-theme-bg rounded-xl">
-                                <i class="fas fa-pen text-xs"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-3 gap-3 mt-4">
-                        <div class="bg-theme-bg p-3 rounded-2xl text-center">
-                            <p class="text-[9px] text-slate-500 font-extrabold mb-0.5 uppercase">Berat</p>
-                            <p class="font-extrabold text-theme-text text-sm">${item.KG || 0} <span class="text-[10px]">Kg</span></p>
-                        </div>
-                        <div class="bg-theme-bg p-3 rounded-2xl text-center">
-                            <p class="text-[9px] text-slate-500 font-extrabold mb-0.5 uppercase">Fisik</p>
-                            <p class="font-extrabold text-theme-text text-sm">${item.PCS || 0} <span class="text-[10px]">Pcs</span></p>
-                        </div>
-                        <div class="bg-theme-bg p-3 rounded-2xl text-center">
-                            <p class="text-[9px] text-slate-500 font-extrabold mb-0.5 uppercase">Keranjang</p>
-                            <p class="font-extrabold text-theme-text text-sm">#${item['NOMOR KERANJANG'] || '-'}</p>
-                        </div>
-                    </div>
-                    <p class="text-[10px] font-extrabold text-slate-400 mt-4 border-t border-slate-100 pt-3 uppercase tracking-wider">
-                        <i class="fas fa-tag mr-1 ${isRsh ? 'text-theme-secondary' : 'text-theme-primary'}"></i> ${item['JENIS SATUAN'] || '-'}
-                    </p>
-                </div>`;
-            };
-            
-            document.getElementById('tab-rsh').innerHTML = [...appData.RSH].reverse().map(i => renderLaundryCard(i, true)).join('');
-            document.getElementById('tab-rkh').innerHTML = [...appData.RKH].reverse().map(i => renderLaundryCard(i, false)).join('');
-        }
-
-        // ==========================================
-        // 5. NAVIGASI & MODAL FORM
-        // ==========================================
-        function switchTab(tabId, title, subtitle) {
-            currentTab = tabId;
-            document.getElementById('header-title').innerText = title; 
-            document.getElementById('header-subtitle').innerText = subtitle;
-            
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden')); 
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-            
-            document.querySelectorAll('.nav-btn').forEach(btn => { 
-                btn.classList.remove('text-theme-primary'); 
-                btn.classList.add('text-slate-400'); 
-            });
-            document.getElementById(`nav-${tabId}`).classList.add('text-theme-primary'); 
-            document.getElementById(`nav-${tabId}`).classList.remove('text-slate-400');
-            
-            const fab = document.getElementById('fab-btn');
-            if(tabId === 'dashboard' || tabId === 'ops') {
-                fab.classList.add('hidden');
-                document.getElementById('global-filter').style.display = 'block';
-            } else {
-                fab.classList.remove('hidden');
-                document.getElementById('global-filter').style.display = 'none';
-            }
-        }
-
-        function openModal(isEdit = false, itemId = null) {
-            if(currentTab === 'dashboard' || currentTab === 'ops') return;
-            currentEditId = isEdit ? itemId : null; 
-            
-            const formFields = document.getElementById('dynamic-form-fields');
-            document.getElementById('modal-title').innerText = isEdit ? `Edit Data` : `Tambah Data`;
-            
-            let oldData = {}; 
-            if(isEdit) oldData = appData[currentTab.toUpperCase()].find(item => item.ID == itemId) || {};
-
-            const inputClass = "w-full mt-1.5 bg-theme-bg border border-slate-200 rounded-xl px-4 py-3.5 outline-none focus:border-theme-primary focus:ring-2 focus:ring-theme-primary/20 text-sm font-bold text-theme-text transition-all";
-            const labelClass = "text-[11px] font-extrabold text-slate-500 ml-1 uppercase tracking-wider";
-
-            if(currentTab === 'rchk') {
-                let oldJenis = 'Debit'; let oldNom = '';
-                if(isEdit) { 
-                    if(oldData.DEBIT) { oldJenis = 'Debit'; oldNom = oldData.DEBIT; } 
-                    else if(oldData.QRIS) { oldJenis = 'QRIS'; oldNom = oldData.QRIS; } 
-                    else if(oldData.KREDIT) { oldJenis = 'Kredit'; oldNom = oldData.KREDIT; } 
-                    else if(oldData.KASBON) { oldJenis = 'Kasbon'; oldNom = oldData.KASBON; } 
-                }
-                
-                formFields.innerHTML = `
-                    <div>
-                        <label class="${labelClass}">Nama / Keterangan</label>
-                        <input type="text" id="input-nama" value="${oldData.NAMA || ''}" oninput="this.value = this.value.toUpperCase()" required class="${inputClass}">
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="${labelClass}">Jenis Transaksi</label>
-                            <select id="input-jenis" class="${inputClass}">
-                                <option value="Debit" ${oldJenis === 'Debit' ? 'selected' : ''}>CASH (Masuk)</option>
-                                <option value="QRIS" ${oldJenis === 'QRIS' ? 'selected' : ''}>QRIS (Masuk)</option>
-                                <option value="Kredit" ${oldJenis === 'Kredit' ? 'selected' : ''}>KREDIT (Keluar)</option>
-                                <option value="Kasbon" ${oldJenis === 'Kasbon' ? 'selected' : ''}>KASBON (Piutang)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="${labelClass}">Nominal (Rp)</label>
-                            <input type="number" id="input-nominal" value="${oldNom}" required class="${inputClass}">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="${labelClass}">Catatan Tambahan</label>
-                        <input type="text" id="input-ket" value="${oldData.KETERANGAN || ''}" class="${inputClass}" placeholder="-">
-                    </div>`;
-            } else {
-                const padZero = (num) => String(num).padStart(2, '0');
-                const formatDateForHTMLInput = (dateStr) => { 
-                    if (!dateStr) return ''; 
-                    const parts = dateStr.split('/'); 
-                    return parts.length === 3 ? `${parts[2]}-${padZero(parts[1])}-${padZero(parts[0])}` : ''; 
-                };
-
-                let tMasuk = formatDateForHTMLInput(new Date().toLocaleDateString('id-ID')); 
-                let tNota = formatDateForHTMLInput(new Date().toLocaleDateString('id-ID')); 
-                let jam = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-                
-                if (isEdit && oldData['TANGGAL MASUK']) tMasuk = formatDateForHTMLInput(oldData['TANGGAL MASUK']); 
-                if (isEdit && oldData['TANGGAL NOTA']) tNota = formatDateForHTMLInput(oldData['TANGGAL NOTA']); 
-                if (isEdit && oldData['JAM PENGERJAAN']) jam = oldData['JAM PENGERJAAN'].replace('.', ':').substring(0,5);
-                const sat = oldData['JENIS SATUAN'] || '-';
-
-                formFields.innerHTML = `
-                    <div class="grid grid-cols-2 gap-3 mb-2">
-                        <div>
-                            <label class="${labelClass}">Tgl Masuk</label>
-                            <input type="date" id="input-tgl-masuk" value="${tMasuk}" required class="${inputClass} font-semibold">
-                        </div>
-                        <div>
-                            <label class="${labelClass}">Jam Kerja</label>
-                            <input type="time" id="input-jam" value="${jam}" required class="${inputClass} font-semibold">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="${labelClass}">Tgl Nota</label>
-                        <input type="date" id="input-tgl-nota" value="${tNota}" required class="${inputClass} mb-3 font-semibold">
-                    </div>
-                    <div>
-                        <label class="${labelClass}">Nama Pelanggan</label>
-                        <input type="text" id="input-nama" value="${oldData.NAMA || ''}" oninput="this.value = this.value.toUpperCase()" required class="${inputClass}">
-                    </div>
-                    <div class="grid grid-cols-3 gap-3 mt-3">
-                        <div>
-                            <label class="${labelClass} text-theme-primary">Berat (Kg)</label>
-                            <input type="number" step="0.1" id="input-kg" value="${oldData.KG || ''}" required class="${inputClass} text-center">
-                        </div>
-                        <div>
-                            <label class="${labelClass} text-theme-primary">Pcs Fisik</label>
-                            <input type="number" id="input-pcs" value="${oldData.PCS || ''}" required class="${inputClass} text-center">
-                        </div>
-                        <div>
-                            <label class="${labelClass}">Keranjang</label>
-                            <input type="text" id="input-krj" value="${oldData['NOMOR KERANJANG'] || ''}" required class="${inputClass} text-center">
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <label class="${labelClass}">Jenis Satuan (Bisa Pilih / Ketik Sendiri)</label>
-                        <input type="text" id="input-satuan" list="satuan-list" value="${sat}" class="${inputClass}" placeholder="Ketik atau pilih dari daftar...">
-                        <datalist id="satuan-list">
-                            <option value="-">Baju / Pcs Bebas</option>
-                            <option value="Karpet Tebal">
-                            <option value="Karpet Hambal">
-                            <option value="Karpet Macan">
-                            <option value="Kasur Sedang">
-                            <option value="Taplak Panjang">
-                            <option value="Karpet Turki Besar">
-                        </datalist>
-                    </div>`;
-            }
-            document.getElementById('overlay').classList.add('open'); 
-            document.getElementById('bottom-sheet').classList.add('open');
-        }
-
-        function closeModal() { 
-            document.getElementById('overlay').classList.remove('open'); 
-            document.getElementById('bottom-sheet').classList.remove('open'); 
-            currentEditId = null; 
-        }
-
-        function formatDateForSheetSave(dateString) {
-            if(!dateString) return ''; 
-            const parts = dateString.split('-'); 
-            if(parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`; 
-            return dateString; 
-        }
-
-        async function submitToWebhook(e) {
-            e.preventDefault(); 
-            const btn = document.getElementById('submit-btn'); 
-            const isEditing = currentEditId !== null;
-            
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${isEditing ? 'Memperbarui...' : 'Menyimpan...'}`;
-
-            const targetId = isEditing ? currentEditId : Date.now().toString(); 
-            let payloadData = {};
-            
-            if (currentTab === 'rchk') {
-                const jenis = document.getElementById('input-jenis').value; 
-                const nominal = document.getElementById('input-nominal').value;
-                payloadData = { 
-                    "id": targetId, 
-                    "NAMA": document.getElementById('input-nama').value.toUpperCase(), 
-                    "KREDIT": jenis === 'Kredit' ? nominal : "", 
-                    "KASBON": jenis === 'Kasbon' ? nominal : "", 
-                    "QRIS": jenis === 'QRIS' ? nominal : "", 
-                    "DEBIT": jenis === 'Debit' ? nominal : "", 
-                    "KETERANGAN": document.getElementById('input-ket').value 
-                };
-            } else {
-                const rMasuk = document.getElementById('input-tgl-masuk').value; 
-                const rNota = document.getElementById('input-tgl-nota').value; 
-                const rJam = document.getElementById('input-jam').value;
-                
-                let rSatuan = document.getElementById('input-satuan').value.trim();
-                if(rSatuan === "") rSatuan = "-";
-
-                payloadData = { 
-                    "id": targetId, 
-                    "TANGGAL MASUK": formatDateForSheetSave(rMasuk), 
-                    "NAMA": document.getElementById('input-nama').value.toUpperCase(), 
-                    "TANGGAL NOTA": formatDateForSheetSave(rNota), 
-                    "JAM PENGERJAAN": rJam.replace(':', '.'), 
-                    "PCS": document.getElementById('input-pcs').value, 
-                    "KG": document.getElementById('input-kg').value, 
-                    "NOMOR KERANJANG": document.getElementById('input-krj').value, 
-                    "JENIS SATUAN": rSatuan 
-                };
-            }
-            
-            try { 
-                const res = await fetch(WEBHOOK_URL, { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ action: currentTab, data: payloadData }) 
-                }); 
-                if(res.ok) { 
-                    closeModal(); 
-                    refreshData(); 
-                } else {
-                    alert("Gagal menyambung ke Database."); 
-                }
-            } catch (err) { 
-                alert("Kesalahan jaringan."); 
-            } finally { 
-                btn.innerHTML = 'Simpan Data'; 
-            }
-        }
-    </script>
-</body>
-</html>
+        fF.innerHTML=`<div class="mb-3"><label class="${lC} text-theme-primary">Tanggal Transaksi</label><input type="date" id="input-tgl-kasir" value="${tKasir}" required class="${iC} bg-theme-primary_light/20"></div><div><label class="${lC}">Nama/Ket</label><input type="text" id="input-nama" value="${oD.NAMA||''}" oninput="this.value=this.value.toUpperCase()" required class="${iC}"></div><div class="grid grid-cols-2 gap-4 mt-3"><div><label class="${lC}">Jenis</label><select id="input-jenis" class="${iC}"><option value="Debit" ${oJ==='Debit'?'selected':''}>CASH</option><option value="QRIS" ${oJ==='QRIS'?'selected':''}>QRIS</option><option value="Kredit" ${oJ==='Kredit'?'selected':''}>KELUAR</option><option value="Kasbon" ${oJ==='Kasbon'?'selected':''}>KASBON</option></select></div><div><label class="${lC}">Nominal</label><input type="number" id="input-nominal" value="${oN}" required class="${iC}"></div></div><div class="mt-3"><label class="${lC}">Catatan Tambahan</label><input type="text" id="input-ket" value="${oD.KETERANGAN||''}" class="${iC}" placeholder="-"></div>`;
+    }else{
+        let tM=tStr,tN=tStr,jam=pZ(nD.getHours())+':'+pZ(nD.getMinutes());
+        if(isEdit&&oD['TANGGAL MASUK'])tM=fD(oD['TANGGAL MASUK']);if(isEdit&&oD['TANGGAL NOTA'])tN=fD(oD['TANGGAL NOTA']);if(isEdit&&oD['JAM PENGERJAAN'])jam=oD['JAM PENGERJAAN'].replace('.',':').substring(0,5);
+        fF.innerHTML=`<div class="grid grid-cols-2 gap-3 mb-2"><div><label class="${lC}">Tgl Masuk</label><input type="date" id="input-tgl-masuk" value="${tM}" required class="${iC}"></div><div><label class="${lC}">Jam Kerja</label><input type="time" id="input-jam" value="${jam}" required class="${iC}"></div></div><div><label class="${lC}">Tgl Nota</label><input type="date" id="input-tgl-nota" value="${tN}" required class="${iC} mb-3"></div><div><label class="${lC}">Nama Pelanggan</label><input type="text" id="input-nama" value="${oD.NAMA||''}" oninput="this.value=this.value.toUpperCase()" required class="${iC}"></div><div class="grid grid-cols-3 gap-3 mt-3"><div><label class="${lC} text-theme-primary">Berat (Kg)</label><input type="number" step="0.1" id="input-kg" value="${oD.KG||''}" required class="${iC} text-center"></div><div><label class="${lC} text-theme-primary">Pcs Fisik</label><input type="number" id="input-pcs" value="${oD.PCS||''}" required class="${iC} text-center"></div><div><label class="${lC}">Keranjang</label><input type="text" id="input-krj" value="${oD['NOMOR KERANJANG']||''}" required class="${iC} text-center"></div></div><div class="mt-4"><label class="${lC}">Jenis Satuan (Bisa Ketik)</label><input type="text" id="input-satuan" list="satuan-list" value="${oD['JENIS SATUAN']||'-'}" class="${iC}" placeholder="Ketik/pilih..."><datalist id="satuan-list"><option value="-">Baju / Pcs Bebas</option><option value="Karpet Tebal"><option value="Karpet Hambal"><option value="Karpet Macan"><option value="Kasur Sedang"><option value="Taplak Panjang"><option value="Karpet Turki Besar"></datalist></div>`;
+    }
+    document.getElementById('overlay').classList.add('open');document.getElementById('bottom-sheet').classList.add('open');
+}
+function closeModal(){document.getElementById('overlay').classList.remove('open');document.getElementById('bottom-sheet').classList.remove('open');currentEditId=null;}
+async function submitToWebhook(e){
+    e.preventDefault();const b=document.getElementById('submit-btn'),iE=currentEditId!==null;b.innerHTML=`<i class="fas fa-spinner fa-spin mr-2"></i> ${iE?'Memperbarui...':'Menyimpan...'}`;
+    const tId=iE?currentEditId:Date.now().toString();let pD={};
+    const fS=d=>{if(!d)return'';const p=d.split('-');return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:d;};
+    if(currentTab==='rchk'){
+        const j=document.getElementById('input-jenis').value,n=document.getElementById('input-nominal').value;
+        pD={"id":tId,"tanggal":fS(document.getElementById('input-tgl-kasir').value),"NAMA":document.getElementById('input-nama').value.toUpperCase(),"KREDIT":j==='Kredit'?n:"","KASBON":j==='Kasbon'?n:"","QRIS":j==='QRIS'?n:"","DEBIT":j==='Debit'?n:"","KETERANGAN":document.getElementById('input-ket').value};
+    }else{
+        pD={"id":tId,"TANGGAL MASUK":fS(document.getElementById('input-tgl-masuk').value),"NAMA":document.getElementById('input-nama').value.toUpperCase(),"TANGGAL NOTA":fS(document.getElementById('input-tgl-nota').value),"JAM PENGERJAAN":document.getElementById('input-jam').value.replace(':','.'),"PCS":document.getElementById('input-pcs').value,"KG":document.getElementById('input-kg').value,"NOMOR KERANJANG":document.getElementById('input-krj').value,"JENIS SATUAN":document.getElementById('input-satuan').value.trim()||'-'};
+    }
+    try{const r=await fetch(WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:currentTab,data:pD})});if(r.ok){closeModal();refreshData();}else alert("Gagal menyambung.");}catch(err){alert("Kesalahan jaringan.");}finally{b.innerHTML='Simpan Data';}
+}
+</script></body></html>
