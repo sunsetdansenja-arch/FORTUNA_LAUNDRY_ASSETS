@@ -10,15 +10,12 @@
     
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F4F2EE; }
-        
-        /* Toggle Switch CSS Ala iOS */
         .toggle-checkbox:checked { right: 0; border-color: #10B981; }
         .toggle-checkbox:checked + .toggle-label { background-color: #10B981; }
         .toggle-checkbox { right: 0; z-index: 1; border-color: #e2e8f0; transition: all 0.3s; }
         .toggle-label { width: 4rem; height: 2rem; background-color: #cbd5e1; border-radius: 9999px; transition: all 0.3s; cursor: pointer; }
         .toggle-dot { width: 1.6rem; height: 1.6rem; background-color: white; border-radius: 50%; position: absolute; top: 0.2rem; left: 0.2rem; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         .toggle-checkbox:checked + .toggle-label .toggle-dot { transform: translateX(2rem); }
-        
         .card-3d { background: #FFFFFF; border-radius: 24px; box-shadow: 0 12px 35px -5px rgba(0, 0, 0, 0.05), 0 5px 15px -3px rgba(0, 0, 0, 0.02); }
     </style>
 </head>
@@ -34,30 +31,29 @@
             </div>
             
             <h1 class="text-xl font-extrabold text-gray-800 mb-2">Notifikasi WhatsApp</h1>
-            <p class="text-sm text-gray-500 mb-8 font-medium">Hidupkan atau matikan status whatsapp otomatis.</p>
+            <p class="text-sm text-gray-500 mb-8 font-medium">Hidupkan atau matikan pesan notifikasi otomatis ke pelanggan.</p>
 
             <div class="flex items-center justify-between bg-slate-50 p-4 rounded-2xl border border-slate-100">
                 <div class="text-left">
-                    <p class="font-bold text-gray-800" id="status-text">Status: MATI</p>
-                    <p class="text-[10px] text-gray-400 mt-0.5" id="status-desc">Pesan tidak akan dikirim.</p>
+                    <p class="font-bold text-gray-800" id="status-text">Memuat Data...</p>
+                    <p class="text-[10px] text-gray-400 mt-0.5" id="status-desc">Menyinkronkan dengan server.</p>
                 </div>
                 
                 <div class="relative inline-block w-16 align-middle select-none">
-                    <input type="checkbox" name="toggle" id="wa-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer opacity-0"/>
+                    <input type="checkbox" name="toggle" id="wa-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer opacity-0" disabled/>
                     <label for="wa-toggle" class="toggle-label block overflow-hidden">
                         <div class="toggle-dot"></div>
                     </label>
                 </div>
             </div>
 
-            <div id="loading-msg" class="mt-4 text-xs font-bold text-orange-400 hidden">
-                <i class="fas fa-spinner fa-spin mr-1"></i> Menyimpan pengaturan...
+            <div id="loading-msg" class="mt-4 text-xs font-bold text-orange-400">
+                <i class="fas fa-spinner fa-spin mr-1"></i> Menyinkronkan status...
             </div>
         </div>
     </div>
 
     <script>
-        // Sesuaikan dengan URL Webhook n8n Anda
         const WEBHOOK_URL = 'https://n8n-mzbmiib3etk4.kangkung.sumopod.my.id/webhook/3330183a-e28c-4268-b5bf-c63b5ef4b075';
         
         const toggleSwitch = document.getElementById('wa-toggle');
@@ -65,12 +61,47 @@
         const statusDesc = document.getElementById('status-desc');
         const loadingMsg = document.getElementById('loading-msg');
 
+        // FUNGSI UPDATE UI
+        function updateUI(status) {
+            if(status === "ON") {
+                toggleSwitch.checked = true;
+                statusText.innerText = "Status: MENYALA";
+                statusText.className = "font-bold text-[#10B981]";
+                statusDesc.innerText = "Pesan otomatis akan dikirim.";
+            } else {
+                toggleSwitch.checked = false;
+                statusText.innerText = "Status: MATI";
+                statusText.className = "font-bold text-gray-800";
+                statusDesc.innerText = "Pesan otomatis tidak dikirim.";
+            }
+        }
+
+        // 1. MENGAMBIL STATUS SAAT HALAMAN DIBUKA (GET)
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch(WEBHOOK_URL, { method: 'GET' });
+                const data = await response.json();
+                
+                // Menangkap output status dari Data Table n8n
+                const currentStatus = data.status || "OFF"; 
+                updateUI(currentStatus);
+            } catch (error) {
+                console.error("Gagal memuat status:", error);
+                statusText.innerText = "Gagal Memuat";
+                statusDesc.innerText = "Cek koneksi internet/server.";
+            } finally {
+                // Setelah selesai memuat, aktifkan saklar
+                toggleSwitch.disabled = false;
+                loadingMsg.classList.add('hidden');
+            }
+        });
+
+        // 2. MENGIRIM PERUBAHAN STATUS (POST)
         toggleSwitch.addEventListener('change', async function() {
-            // Ambil status dari switch (jika dicentang = ON, jika tidak = OFF)
             const newStatus = this.checked ? "ON" : "OFF";
             
-            // Kunci switch saat sedang loading agar tidak di-spam klik
             toggleSwitch.disabled = true;
+            loadingMsg.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Menyimpan pengaturan...';
             loadingMsg.classList.remove('hidden');
 
             try {
@@ -81,25 +112,14 @@
                 });
 
                 if (response.ok) {
-                    // Berhasil Update UI
-                    if(newStatus === "ON") {
-                        statusText.innerText = "Status: MENYALA";
-                        statusText.className = "font-bold text-[#10B981]";
-                        statusDesc.innerText = "Pesan otomatis akan dikirim.";
-                    } else {
-                        statusText.innerText = "Status: MATI";
-                        statusText.className = "font-bold text-gray-800";
-                        statusDesc.innerText = "Pesan otomatis tidak dikirim.";
-                    }
+                    updateUI(newStatus);
                 } else {
-                    throw new Error("Gagal update ke server");
+                    throw new Error("Gagal update");
                 }
             } catch (error) {
-                alert("Terjadi kesalahan jaringan! Gagal mengubah status.");
-                // Kembalikan saklar ke posisi semula jika gagal
-                this.checked = !this.checked; 
+                alert("Gagal mengubah status!");
+                this.checked = !this.checked; // Kembalikan ke posisi awal
             } finally {
-                // Matikan loading
                 toggleSwitch.disabled = false;
                 loadingMsg.classList.add('hidden');
             }
