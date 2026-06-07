@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Manual Order - Fortuna Laundry</title>
+    
+    <link rel="icon" href="https://raw.githubusercontent.com/sunsetdansenja-arch/beuna-agency/main/beuna%20logo%20v2.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                    colors: {
+                        theme: { 
+                            bg: '#F4F2EE', primary: '#0F5A47', primary_light: '#E6EFEA', secondary: '#F6A04D', text: '#2D312E', plus: '#10B981', minus: '#EF4444' 
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #F4F2EE; color: #2D312E; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .card-3d { background: #FFFFFF; border-radius: 24px; box-shadow: 0 12px 35px -5px rgba(0, 0, 0, 0.05), 0 5px 15px -3px rgba(0, 0, 0, 0.02); border: 1px solid rgba(255,255,255,0.8); }
+        .btn-green { background: #0F5A47; color: white; box-shadow: 0 8px 20px -4px rgba(15, 90, 71, 0.4); transition: transform 0.1s, box-shadow 0.1s; }
+        .btn-green:active { transform: scale(0.96); box-shadow: 0 2px 10px -2px rgba(15, 90, 71, 0.4); }
+        .input-field { width: 100%; margin-top: 6px; background-color: #F4F2EE; border: 1px solid #E2E8F0; border-radius: 16px; padding: 14px 16px; outline: none; font-size: 14px; font-weight: 700; color: #2D312E; transition: all 0.2s; }
+        .input-field:focus { border-color: #0F5A47; box-shadow: 0 0 0 3px rgba(15, 90, 71, 0.1); }
+        .label-text { font-size: 11px; font-weight: 800; color: #64748B; margin-left: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+    </style>
+</head>
+<body class="antialiased selection:bg-theme-secondary selection:text-white min-h-screen flex flex-col items-center justify-center p-5">
+
+    <div class="w-full max-w-md">
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 bg-theme-primary rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-theme-primary/30">
+                <i class="fas fa-keyboard text-3xl text-white"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold text-theme-text tracking-tight">Order Manual</h1>
+            <p class="text-sm font-bold text-theme-secondary mt-1">Sistem Input Alternatif (Bypass WA)</p>
+        </div>
+
+        <div class="card-3d p-6 sm:p-8 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-24 h-24 bg-theme-secondary/10 rounded-full blur-xl pointer-events-none"></div>
+            
+            <form id="manual-order-form" onsubmit="submitManualOrder(event)" class="space-y-4 relative z-10">
+                
+                <div>
+                    <label class="label-text">Nama Pelanggan</label>
+                    <input type="text" id="input-nama" class="input-field" placeholder="Masukkan nama..." oninput="this.value = this.value.toUpperCase()" required>
+                </div>
+
+                <div>
+                    <label class="label-text">Nomor WhatsApp (Opsional)</label>
+                    <input type="tel" id="input-nowa" class="input-field" placeholder="081234567890">
+                </div>
+
+                <div>
+                    <label class="label-text text-theme-primary">Paket / Layanan</label>
+                    <select id="input-paket" class="input-field border-theme-primary/30 bg-theme-primary_light/20" required>
+                        <option value="CUCI KOMPLIT REGULER">Cuci Komplit Reguler (3 Hari)</option>
+                        <option value="CUCI REGULER">Cuci Reguler (3 Hari)</option>
+                        <option value="SETRIKA REGULER">Setrika Reguler (2 Hari)</option>
+                        <option value="EXPRESS 1 HARI">Express 1 Hari (24 Jam)</option>
+                        <option value="CUCI EXPRESS 1 HARI">Cuci Express 1 Hari</option>
+                        <option value="SETRIKA EXPRESS 1 HARI">Setrika Express 1 Hari</option>
+                        <option value="EXPRESS 6 JAM">Express 6 Jam</option>
+                        <option value="EXPRESS 3 JAM">Express 3 Jam (Kilat)</option>
+                        <option value="FLEKSIBEL">Fleksibel (Karpet/Satuan)</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="label-text">Berat (Kg)</label>
+                        <input type="number" step="0.1" id="input-berat" class="input-field text-center" placeholder="0.0" required>
+                    </div>
+                    <div>
+                        <label class="label-text">Tagihan (Rp)</label>
+                        <input type="number" id="input-harga" class="input-field text-center" placeholder="0" required>
+                    </div>
+                </div>
+
+                <button type="submit" id="submit-btn" class="w-full btn-green font-bold text-lg py-4 rounded-2xl mt-6 flex justify-center items-center">
+                    <i class="fas fa-paper-plane mr-2"></i> Buat Orderan
+                </button>
+            </form>
+        </div>
+
+        <div id="success-popup" class="hidden mt-6 card-3d p-6 bg-emerald-50 border-emerald-200 text-center animate-bounce">
+            <div class="w-12 h-12 bg-theme-plus rounded-full flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-check text-white text-xl"></i>
+            </div>
+            <h3 class="text-sm font-bold text-slate-500 uppercase">Order Berhasil Dibuat!</h3>
+            <p class="text-xs text-slate-500 mt-1">Silakan tulis kode ini di nota/keranjang:</p>
+            <div class="text-4xl font-extrabold text-theme-primary tracking-widest mt-2" id="generated-code">---</div>
+            <button onclick="document.getElementById('success-popup').classList.add('hidden')" class="mt-4 text-xs font-bold text-theme-secondary hover:underline">Tutup</button>
+        </div>
+
+        <div class="mt-10 text-center">
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">cc developed by beuna system</p>
+        </div>
+    </div>
+
+    <script>
+        const WEBHOOK_URL = 'https://n8n-mzbmiib3etk4.kangkung.sumopod.my.id/webhook/fortuna-webhook';
+
+        async function submitManualOrder(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('submit-btn');
+            const popup = document.getElementById('success-popup');
+            
+            // Sembunyikan popup sukses jika sedang tampil
+            popup.classList.add('hidden');
+            
+            // Ubah tombol jadi loading
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Memproses...`;
+            btn.disabled = true;
+
+            // Menyusun Payload
+            const payloadData = {
+                action: "order_manual",
+                data: {
+                    NAMA: document.getElementById('input-nama').value,
+                    NO_WA: document.getElementById('input-nowa').value,
+                    PAKET: document.getElementById('input-paket').value,
+                    BERAT: document.getElementById('input-berat').value,
+                    TAGIHAN: document.getElementById('input-harga').value
+                }
+            };
+
+            try {
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payloadData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.status === "success") {
+                    // Tampilkan Kode di Popup
+                    document.getElementById('generated-code').innerText = result.kode;
+                    popup.classList.remove('hidden');
+                    
+                    // Reset Form
+                    document.getElementById('manual-order-form').reset();
+                    document.getElementById('input-nama').focus();
+                } else {
+                    alert("Gagal memproses orderan. Silakan coba lagi.");
+                }
+            } catch (error) {
+                alert("Kesalahan Jaringan! Pastikan server n8n aktif.");
+                console.error(error);
+            } finally {
+                // Kembalikan tombol ke semula
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
