@@ -24,7 +24,7 @@ body{background:#F4F2EE;color:#202522;font-family:'Plus Jakarta Sans',sans-serif
 .toast{transform:translateY(-12px);opacity:0;pointer-events:none;transition:.22s ease}.toast.show{transform:translateY(0);opacity:1;pointer-events:auto}
 .modal{opacity:0;pointer-events:none;transition:.2s}.modal.show{opacity:1;pointer-events:auto}
 .modal-box{transform:translateY(15px);transition:.2s}.modal.show .modal-box{transform:translateY(0)}
-.package-row{border:1px solid #e2e8f0;background:#f8fafc;border-radius:14px;padding:10px}.package-row select,.package-row input{min-width:0}
+.package-row{border:1px solid #e2e8f0;background:#f8fafc;border-radius:14px;padding:10px}.package-row select,.package-row input{min-width:0}.payment-unpaid{background:#fff1f2!important;color:#b91c1c!important;border-color:#fecdd3!important}.order-filter-active{box-shadow:0 0 0 2px #0F5A47 inset}
 @media(max-width:768px){.table-wrap{max-height:none}.desktop-only{display:none}}
 </style>
 </head>
@@ -50,12 +50,12 @@ body{background:#F4F2EE;color:#202522;font-family:'Plus Jakarta Sans',sans-serif
 <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-5">
 
   <section class="grid grid-cols-2 lg:grid-cols-6 gap-3">
-    <div class="card p-4"><div class="text-xs text-slate-500 font-bold">TOTAL</div><div id="sum-total" class="text-2xl font-extrabold mt-1">0</div></div>
-    <div class="card p-4"><div class="text-xs text-slate-500 font-bold">DITERIMA</div><div id="sum-diterima" class="text-2xl font-extrabold mt-1">0</div></div>
-    <div class="card p-4"><div class="text-xs text-slate-500 font-bold">DIPROSES</div><div id="sum-diproses" class="text-2xl font-extrabold mt-1">0</div></div>
-    <div class="card p-4"><div class="text-xs text-slate-500 font-bold">QC</div><div id="sum-qc" class="text-2xl font-extrabold mt-1">0</div></div>
-    <div class="card p-4"><div class="text-xs text-slate-500 font-bold">SIAP</div><div id="sum-siap" class="text-2xl font-extrabold mt-1 text-[#0F5A47]">0</div></div>
-    <div class="card p-4"><div class="text-xs text-slate-500 font-bold">SELESAI</div><div id="sum-selesai" class="text-2xl font-extrabold mt-1">0</div></div>
+    <button onclick="filterStatus('ALL')" class="card p-4 text-left hover:ring-2 hover:ring-slate-200 transition"><div class="text-xs text-slate-500 font-bold">TOTAL</div><div id="sum-total" class="text-2xl font-extrabold mt-1">0</div></button>
+    <button onclick="filterStatus('DITERIMA')" class="card p-4 text-left hover:ring-2 hover:ring-indigo-200 transition"><div class="text-xs text-indigo-500 font-bold">DITERIMA</div><div id="sum-diterima" class="text-2xl font-extrabold mt-1 text-indigo-600">0</div></button>
+    <button onclick="filterStatus('DIPROSES')" class="card p-4 text-left hover:ring-2 hover:ring-orange-200 transition"><div class="text-xs text-orange-500 font-bold">DIPROSES</div><div id="sum-diproses" class="text-2xl font-extrabold mt-1 text-orange-600">0</div></button>
+    <button onclick="filterStatus('QC')" class="card p-4 text-left hover:ring-2 hover:ring-violet-200 transition"><div class="text-xs text-violet-500 font-bold">QC</div><div id="sum-qc" class="text-2xl font-extrabold mt-1 text-violet-600">0</div></button>
+    <button onclick="filterStatus('SIAP')" class="card p-4 text-left hover:ring-2 hover:ring-emerald-200 transition"><div class="text-xs text-emerald-500 font-bold">SIAP</div><div id="sum-siap" class="text-2xl font-extrabold mt-1 text-emerald-600">0</div></button>
+    <button onclick="filterStatus('SELESAI')" class="card p-4 text-left hover:ring-2 hover:ring-slate-200 transition"><div class="text-xs text-slate-500 font-bold">SELESAI</div><div id="sum-selesai" class="text-2xl font-extrabold mt-1 text-slate-600">0</div></button>
   </section>
 
   <section class="grid lg:grid-cols-[360px_1fr] gap-5">
@@ -78,12 +78,24 @@ body{background:#F4F2EE;color:#202522;font-family:'Plus Jakarta Sans',sans-serif
           </button>
         </div>
         <div id="packageRows" class="space-y-2"></div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><label class="text-[10px] font-extrabold text-slate-500">METODE TRANSAKSI</label>
+            <select id="f-payment-method" required class="w-full mt-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 outline-none">
+              <option value="CASH">CASH</option><option value="QRIS">QRIS</option><option value="TRANSFER">TRANSFER</option>
+            </select>
+          </div>
+          <div><label class="text-[10px] font-extrabold text-slate-500">STATUS PEMBAYARAN</label>
+            <select id="f-payment-status" required class="w-full mt-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 outline-none">
+              <option value="LUNAS">LUNAS</option><option value="BELUM LUNAS" selected>BELUM LUNAS</option>
+            </select>
+          </div>
+        </div>
         <div class="rounded-xl bg-slate-50 border border-slate-100 px-3 py-2.5 flex items-center justify-between">
           <span class="text-[10px] font-extrabold text-slate-500">TOTAL TAGIHAN</span>
           <strong id="orderTotal" class="text-sm text-[#0F5A47]">Rp 0</strong>
         </div>
         <button id="saveBtn" class="btn w-full bg-[#0F5A47] text-white rounded-xl py-3.5 font-extrabold">
-          <i class="fa-solid fa-floppy-disk mr-2"></i>Simpan Order • Auto Cetak
+          <i class="fa-solid fa-floppy-disk mr-2"></i>Lanjutkan • Preview Struk
         </button>
       </form>
     </div>
@@ -129,6 +141,23 @@ body{background:#F4F2EE;color:#202522;font-family:'Plus Jakarta Sans',sans-serif
 
 <div id="toast" class="toast fixed top-5 right-5 z-50 max-w-sm bg-[#202522] text-white rounded-xl px-4 py-3 shadow-xl text-sm font-bold"></div>
 
+<div id="receiptPreviewModal" class="modal fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3" onclick="if(event.target===this)closeReceiptPreview()">
+  <div class="modal-box bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden">
+    <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+      <div><div class="text-xs font-extrabold text-[#0F5A47]">KONFIRMASI ORDER</div><h3 class="text-xl font-extrabold mt-1">Preview Struk</h3><p class="text-xs text-slate-500 mt-1">Order belum disimpan. Pilih tindakan di bawah.</p></div>
+      <button onclick="closeReceiptPreview()" class="w-9 h-9 rounded-xl bg-slate-100"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="p-5 bg-slate-100 max-h-[65vh] overflow-auto">
+      <div id="receiptPreviewPaper" class="bg-white mx-auto shadow-sm p-5 w-[58mm] min-h-[120mm] text-[10px] leading-tight text-black font-mono"></div>
+    </div>
+    <div class="p-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-2">
+      <button onclick="closeReceiptPreview()" class="btn rounded-xl py-3 bg-slate-100 text-slate-700 font-extrabold"><i class="fa-solid fa-xmark mr-1"></i>Cancel</button>
+      <button onclick="confirmOrderAction('print_save')" class="btn rounded-xl py-3 bg-[#0F5A47] text-white font-extrabold"><i class="fa-solid fa-print mr-1"></i>Cetak Struk & Simpan</button>
+      <button onclick="confirmOrderAction('print_wa')" class="btn rounded-xl py-3 bg-emerald-600 text-white font-extrabold"><i class="fa-brands fa-whatsapp mr-1"></i>Cetak & Kirim WA</button>
+    </div>
+  </div>
+</div>
+
 <div id="modal" class="modal fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-3" onclick="if(event.target===this)closeModal()">
   <div class="modal-box bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl">
     <div class="flex justify-between items-start">
@@ -148,163 +177,34 @@ body{background:#F4F2EE;color:#202522;font-family:'Plus Jakarta Sans',sans-serif
 
 <script>
 const WEBHOOK_URL='https://n8n-mzbmiib3etk4.kangkung.sumopod.my.id/webhook/fortuna-v5';
-let orders=[], summary={}, selectedOrder=null, busy=false;
+let orders=[], summary={}, selectedOrder=null, busy=false, activeFilter='ALL', pendingOrder=null;
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const rupiah=v=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',minimumFractionDigits:0}).format(Number(v)||0);
+function toast(msg,ok=true){const el=document.getElementById('toast');el.textContent=msg;el.className='toast show fixed top-5 right-5 z-50 max-w-sm rounded-xl px-4 py-3 shadow-xl text-sm font-bold '+(ok?'bg-[#0F5A47] text-white':'bg-red-600 text-white');clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove('show'),3000)}
+async function api(action,data={}){const r=await fetch(WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,data})});const text=await r.text();let j;try{j=JSON.parse(text)}catch{throw new Error('Response backend bukan JSON: '+text.slice(0,180))}if(!r.ok)throw new Error(j.message||j.error||('HTTP '+r.status));if(j.status&&j.status!=='success')throw new Error(j.message||'Backend gagal');return j}
+async function loadDashboard(silent=false){if(busy)return;const icon=document.getElementById('refreshIcon');if(icon)icon.classList.add('fa-spin');try{const j=await api('read');const d=j.data||{};orders=Array.isArray(d.orders)?d.orders:[];summary=d.summary||{};renderSummary();renderOrders();renderActionCenter();if(!silent)toast('Data berhasil diperbarui')}catch(e){console.error(e);toast('Gagal memuat data: '+e.message,false)}finally{if(icon)icon.classList.remove('fa-spin')}}
+function renderSummary(){['total','diterima','diproses','qc','siap','selesai'].forEach(k=>{const el=document.getElementById('sum-'+k);if(el)el.textContent=summary[k]??0});const map={total:'ALL',diterima:'DITERIMA',diproses:'DIPROSES',qc:'QC',siap:'SIAP',selesai:'SELESAI'};Object.entries(map).forEach(([k,f])=>{const el=document.getElementById('sum-'+k);const btn=el?.closest('button');if(btn)btn.classList.toggle('order-filter-active',activeFilter===f)})}
+function normalizeOrder(o){return {...o,CODE:o.CODE||o.KODE||o.ID||'-',ID:o.ID||o.ORDER_ID||o.CODE||o.KODE||'',ORDER_ID:o.ORDER_ID||'',NAMA:o.NAMA||'-',PAKET:o.PAKET||o['PAKET/CUCIAN']||'-',BERAT:o.BERAT||'0',TAGIHAN:o.TAGIHAN||'0',STATUS:String(o.STATUS||'DITERIMA').toUpperCase(),NO_WA:o.NO_WA||o['NO WA']||'',LINK_WA:o['LINK WA']||o.LINK_WA||'',DEADLINE:o.DEADLINE||'-',METODE_TRANSAKSI:o.METODE_TRANSAKSI||'CASH',STATUS_PEMBAYARAN:String(o.STATUS_PEMBAYARAN||'BELUM LUNAS').toUpperCase(),items:Array.isArray(o.items)?o.items:[]}}
+function orderMatchesFilter(o){if(activeFilter==='ALL')return true;if(activeFilter==='OVERDUE')return o.items?.some(i=>['DITERIMA','DIPROSES','QC','SIAP'].includes(String(i.STATUS||o.STATUS).toUpperCase())&&i.DEADLINE&&String(i.DEADLINE).toUpperCase()!=='FLEKSIBEL'&&Date.parse(i.DEADLINE)<Date.now());return o.STATUS===activeFilter||(o.items||[]).some(i=>String(i.STATUS||'').toUpperCase()===activeFilter)}
+function renderOrders(){const q=document.getElementById('search').value.trim().toLowerCase();let list=orders.map(normalizeOrder).filter(orderMatchesFilter).filter(o=>(o.NAMA+' '+o.CODE+' '+o.PAKET+' '+o.STATUS+' '+(o.items||[]).map(i=>i.PAKET).join(' ')).toLowerCase().includes(q));document.getElementById('orderCountText').textContent=list.length+' order'+(activeFilter!=='ALL'?' • '+activeFilter:'');document.getElementById('emptyState').classList.toggle('hidden',list.length!==0);document.getElementById('orderRows').innerHTML=list.map(rowHTML).join('')}
+function rowHTML(o){const unpaid=o.STATUS_PEMBAYARAN!=='LUNAS';const items=o.items?.length?o.items:[{PAKET:o.PAKET,BERAT:o.BERAT,TAGIHAN:o.TAGIHAN,STATUS:o.STATUS,DEADLINE:o.DEADLINE}];const pkg=items.map(i=>`<div class="font-bold">${esc(i.PAKET||'-')}</div><div class="text-[10px] text-slate-400">${esc(i.BERAT||'0')} kg • ${rupiah(i.TAGIHAN)}</div>`).join('');return `<tr class="border-t border-slate-100 hover:bg-slate-50/70 ${unpaid?'bg-red-50/60':''}"><td class="px-4 py-3 align-top"><div class="font-extrabold">#${esc(o.CODE)}</div><div class="text-[10px] text-slate-400">${esc(o.START||'')}</div></td><td class="px-4 py-3 align-top"><div class="font-bold">${esc(o.NAMA)}</div><div class="text-[10px] text-slate-400">${esc(o.NO_WA)}</div></td><td class="px-4 py-3 align-top max-w-[230px]">${pkg}</td><td class="px-4 py-3 align-top font-bold">${esc(o.TOTAL_BERAT??o.BERAT??'0')} kg</td><td class="px-4 py-3 align-top"><div class="font-extrabold ${unpaid?'text-red-600':'text-slate-800'}">${rupiah(o.TOTAL_TAGIHAN??o.TAGIHAN)}</div><div class="text-[10px] font-extrabold ${unpaid?'text-red-600':'text-emerald-700'}">${esc(o.STATUS_PEMBAYARAN)}</div><div class="text-[10px] text-slate-400">${esc(o.METODE_TRANSAKSI)}</div></td><td class="px-4 py-3 align-top"><span class="status-pill s-${esc(o.STATUS)}">${esc(o.STATUS)}</span>${o.STATUS==='CAMPURAN'?'<div class="text-[10px] text-slate-500 mt-1">status paket berbeda</div>':''}</td><td class="px-4 py-3 align-top text-right whitespace-nowrap"><button class="btn text-xs font-extrabold rounded-lg bg-slate-100 px-3 py-2 mr-1" onclick='openStatus(${JSON.stringify(o).replace(/</g,"\\u003c")})'>Aksi</button><button class="btn text-xs font-extrabold rounded-lg bg-emerald-50 text-emerald-700 px-3 py-2 mr-1" onclick="reprintOrder('${esc(o.CODE)}')"><i class="fa-solid fa-print mr-1"></i>Cetak</button>${o.LINK_WA?`<a target="_blank" href="${esc(o.LINK_WA)}" class="btn inline-block text-xs font-extrabold rounded-lg bg-emerald-50 text-emerald-700 px-3 py-2">WA</a>`:''}</td></tr>`}
+function renderActionCenter(){const ready=summary.siap||0,overdue=summary.overdue||0,processing=summary.diproses||0,qc=summary.qc||0;document.getElementById('actionCenter').innerHTML=`<button onclick="filterStatus('SIAP')" class="text-left rounded-2xl border border-emerald-100 bg-emerald-50 p-4"><div class="text-2xl font-extrabold text-emerald-700">${ready}</div><div class="text-xs font-extrabold text-emerald-800 mt-1">SIAP DIAMBIL</div></button><button onclick="filterStatus('DIPROSES')" class="text-left rounded-2xl border border-orange-100 bg-orange-50 p-4"><div class="text-2xl font-extrabold text-orange-700">${processing}</div><div class="text-xs font-extrabold text-orange-800 mt-1">SEDANG DIPROSES</div></button><button onclick="filterStatus('QC')" class="text-left rounded-2xl border border-violet-100 bg-violet-50 p-4"><div class="text-2xl font-extrabold text-violet-700">${qc}</div><div class="text-xs font-extrabold text-violet-800 mt-1">QC</div></button><button onclick="filterStatus('OVERDUE')" class="text-left rounded-2xl border border-red-100 bg-red-50 p-4"><div class="text-2xl font-extrabold text-red-700">${overdue}</div><div class="text-xs font-extrabold text-red-800 mt-1">MELEWATI DEADLINE</div></button>`}
+function filterStatus(s){activeFilter=s;renderOrders();scrollToOrders()}
+function scrollToOrders(){document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth',block:'start'})}
 
-function toast(msg,ok=true){
-  const el=document.getElementById('toast');
-  el.textContent=msg; el.className='toast show fixed top-5 right-5 z-50 max-w-sm rounded-xl px-4 py-3 shadow-xl text-sm font-bold '+(ok?'bg-[#0F5A47] text-white':'bg-red-600 text-white');
-  clearTimeout(window.__toast); window.__toast=setTimeout(()=>el.classList.remove('show'),3000);
-}
-
-async function api(action,data={}){
-  const r=await fetch(WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,data})});
-  const text=await r.text();
-  let j; try{j=JSON.parse(text)}catch{throw new Error('Response backend bukan JSON: '+text.slice(0,180))}
-  if(!r.ok) throw new Error(j.message||j.error||('HTTP '+r.status));
-  if(j.status && j.status!=='success') throw new Error(j.message||'Backend gagal');
-  return j;
-}
-
-async function loadDashboard(silent=false){
-  if(busy)return;
-  const icon=document.getElementById('refreshIcon'); icon.classList.add('fa-spin');
-  try{
-    const j=await api('read');
-    const d=j.data||{};
-    orders=Array.isArray(d.orders)?d.orders:[];
-    summary=d.summary||{};
-    renderSummary(); renderOrders(); renderActionCenter();
-    if(!silent) toast('Data berhasil diperbarui');
-  }catch(e){
-    console.error(e); toast('Gagal memuat data: '+e.message,false);
-  }finally{icon.classList.remove('fa-spin')}
-}
-
-function renderSummary(){
-  ['total','diterima','diproses','qc','siap','selesai'].forEach(k=>document.getElementById('sum-'+k).textContent=summary[k]??0);
-}
-
-function normalizeOrder(o){
-  return {
-    ...o,
-    CODE:o.CODE||o.KODE||o.ID||'-',
-    ID:o.ID||o.CODE||o.KODE||'',
-    NAMA:o.NAMA||'-',
-    PAKET:o.PAKET||o['PAKET/CUCIAN']||'-',
-    BERAT:o.BERAT||'0',
-    TAGIHAN:o.TAGIHAN||'0',
-    STATUS:String(o.STATUS||'DITERIMA').toUpperCase(),
-    NO_WA:o.NO_WA||o['NO WA']||'',
-    LINK_WA:o['LINK WA']||o.LINK_WA||'',
-    DEADLINE:o.DEADLINE||'-'
-  };
-}
-
-function renderOrders(){
-  const q=document.getElementById('search').value.trim().toLowerCase();
-  const list=orders.map(normalizeOrder).filter(o=>(o.NAMA+' '+o.CODE+' '+o.PAKET+' '+o.STATUS).toLowerCase().includes(q));
-  document.getElementById('orderCountText').textContent=list.length+' order';
-  const tbody=document.getElementById('orderRows');
-  document.getElementById('emptyState').classList.toggle('hidden',list.length!==0);
-  tbody.innerHTML=list.map(o=>`
-    <tr class="border-t border-slate-100 hover:bg-slate-50/70">
-      <td class="px-4 py-3 align-top"><div class="font-extrabold">${esc(o.CODE)}</div><div class="text-[10px] text-slate-400">${esc(o.START||'')}</div></td>
-      <td class="px-4 py-3 align-top"><div class="font-bold">${esc(o.NAMA)}</div><div class="text-[10px] text-slate-400">${esc(o.NO_WA)}</div></td>
-      <td class="px-4 py-3 align-top max-w-[190px]">${esc(o.PAKET)}</td>
-      <td class="px-4 py-3 align-top">${esc(o.BERAT)} kg</td>
-      <td class="px-4 py-3 align-top font-bold">${rupiah(o.TAGIHAN)}</td>
-      <td class="px-4 py-3 align-top"><span class="status-pill s-${esc(o.STATUS)}">${esc(o.STATUS)}</span></td>
-      <td class="px-4 py-3 align-top text-right whitespace-nowrap">
-        <button class="btn text-xs font-extrabold rounded-lg bg-slate-100 px-3 py-2 mr-1" onclick='openStatus(${JSON.stringify(o).replace(/</g,"\\u003c")})'>Aksi</button>
-        <button class="btn text-xs font-extrabold rounded-lg bg-slate-100 px-3 py-2 mr-1" onclick="reprintOrder('${esc(o.CODE)}')"><i class="fa-solid fa-print mr-1"></i>Cetak</button>
-        ${o.LINK_WA?`<a target="_blank" href="${esc(o.LINK_WA)}" class="btn inline-block text-xs font-extrabold rounded-lg bg-emerald-50 text-emerald-700 px-3 py-2">WA</a>`:''}
-      </td>
-    </tr>`).join('');
-}
-
-function renderActionCenter(){
-  const ready=summary.siap||0, overdue=summary.overdue||0, processing=(summary.diproses||0)+(summary.qc||0);
-  document.getElementById('actionCenter').innerHTML=`
-    <button onclick="filterStatus('SIAP')" class="text-left rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
-      <div class="text-2xl font-extrabold text-emerald-700">${ready}</div><div class="text-xs font-extrabold text-emerald-800 mt-1">SIAP DIAMBIL</div>
-    </button>
-    <button onclick="filterStatus('DIPROSES')" class="text-left rounded-2xl border border-orange-100 bg-orange-50 p-4">
-      <div class="text-2xl font-extrabold text-orange-700">${processing}</div><div class="text-xs font-extrabold text-orange-800 mt-1">SEDANG DIPROSES / QC</div>
-    </button>
-    <button onclick="filterStatus('OVERDUE')" class="text-left rounded-2xl border border-red-100 bg-red-50 p-4">
-      <div class="text-2xl font-extrabold text-red-700">${overdue}</div><div class="text-xs font-extrabold text-red-800 mt-1">MELEWATI DEADLINE</div>
-    </button>`;
-}
-
-function filterStatus(s){
-  const input=document.getElementById('search');
-  input.value='';
-  const list=orders.map(normalizeOrder);
-  if(s==='OVERDUE'){
-    const overdue=list.filter(o=>o.DEADLINE&&String(o.DEADLINE).toUpperCase()!=='FLEKSIBEL'&&['DITERIMA','DIPROSES','QC','SIAP'].includes(o.STATUS));
-    document.getElementById('orderRows').innerHTML=overdue.map(o=>rowHTML(o)).join('');
-    document.getElementById('orderCountText').textContent=overdue.length+' order overdue';
-    return;
-  }
-  const filtered=list.filter(o=>o.STATUS===s||(s==='DIPROSES'&&o.STATUS==='QC'));
-  document.getElementById('orderRows').innerHTML=filtered.map(o=>rowHTML(o)).join('');
-  document.getElementById('orderCountText').textContent=filtered.length+' order';
-  document.getElementById('emptyState').classList.toggle('hidden',filtered.length!==0);
-}
-function rowHTML(o){
- return `<tr class="border-t border-slate-100"><td class="px-4 py-3 font-extrabold">${esc(o.CODE)}</td><td class="px-4 py-3 font-bold">${esc(o.NAMA)}</td><td class="px-4 py-3">${esc(o.PAKET)}</td><td class="px-4 py-3">${esc(o.BERAT)} kg</td><td class="px-4 py-3">${rupiah(o.TAGIHAN)}</td><td class="px-4 py-3"><span class="status-pill s-${esc(o.STATUS)}">${esc(o.STATUS)}</span></td><td class="px-4 py-3 text-right whitespace-nowrap"><button onclick='openStatus(${JSON.stringify(o).replace(/</g,"\\u003c")})' class="text-xs font-extrabold bg-slate-100 px-3 py-2 rounded-lg mr-1">Aksi</button><button onclick="reprintOrder('${esc(o.CODE)}')" class="text-xs font-extrabold bg-emerald-50 text-emerald-700 px-3 py-2 rounded-lg"><i class="fa-solid fa-print mr-1"></i>Cetak</button></td></tr>`;
-}
-
-const PACKAGE_OPTIONS=[
-  'FLEKSIBEL','CUCI KOMPLIT REGULER','CUCI REGULER','SETRIKA REGULER',
-  'EXPRESS 1 HARI','CUCI EXPRESS 1 HARI','SETRIKA EXPRESS 1 HARI',
-  'EXPRESS 3 JAM','CUCI EXPRESS 3 JAM','SETRIKA EXPRESS 3 JAM',
-  'EXPRESS 6 JAM','CUCI EXPRESS 6 JAM','SETRIKA EXPRESS 6 JAM'
-];
-
-function packageOptions(selected='FLEKSIBEL'){
-  return PACKAGE_OPTIONS.map(x=>`<option ${x===selected?'selected':''}>${x}</option>`).join('');
-}
-
-function addPackageRow(values={}){
-  const wrap=document.getElementById('packageRows');
-  const row=document.createElement('div');
-  row.className='package-row';
-  row.innerHTML=`
-    <div class="flex items-center gap-2">
-      <select class="pkg-name flex-1 rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs font-bold outline-none">${packageOptions(values.PAKET||'FLEKSIBEL')}</select>
-      <button type="button" onclick="this.closest('.package-row').remove(); updateOrderTotal(); ensurePackageRow()" class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-500 hover:text-red-600">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
-    <div class="grid grid-cols-2 gap-2 mt-2">
-      <input class="pkg-weight rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs" type="number" step="0.1" min="0" value="${esc(values.BERAT??'1')}" placeholder="Berat KG">
-      <input class="pkg-price rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs" type="number" min="0" value="${esc(values.TAGIHAN??'0')}" placeholder="Tagihan">
-    </div>`;
-  wrap.appendChild(row);
-  row.querySelector('.pkg-price').addEventListener('input',updateOrderTotal);
-  updateOrderTotal();
-}
-
-function ensurePackageRow(){
-  if(!document.querySelector('.package-row')) addPackageRow();
-}
-
-function updateOrderTotal(){
-  const total=[...document.querySelectorAll('.pkg-price')].reduce((sum,el)=>sum+(Number(el.value)||0),0);
-  document.getElementById('orderTotal').textContent=rupiah(total);
-}
-
-function getPackageItems(){
-  return [...document.querySelectorAll('.package-row')].map(row=>({
-    PAKET:row.querySelector('.pkg-name').value,
-    BERAT:row.querySelector('.pkg-weight').value,
-    TAGIHAN:row.querySelector('.pkg-price').value
-  })).filter(x=>x.PAKET);
-}
+const PACKAGE_OPTIONS=['FLEKSIBEL','CUCI KOMPLIT REGULER','CUCI REGULER','SETRIKA REGULER','EXPRESS 1 HARI','CUCI EXPRESS 1 HARI','SETRIKA EXPRESS 1 HARI','EXPRESS 3 JAM','CUCI EXPRESS 3 JAM','SETRIKA EXPRESS 3 JAM','EXPRESS 6 JAM','CUCI EXPRESS 6 JAM','SETRIKA EXPRESS 6 JAM'];
+function packageOptions(selected='FLEKSIBEL'){return PACKAGE_OPTIONS.map(x=>`<option ${x===selected?'selected':''}>${x}</option>`).join('')}
+function addPackageRow(values={}){const wrap=document.getElementById('packageRows');const row=document.createElement('div');row.className='package-row';row.innerHTML=`<div class="flex items-center gap-2"><select class="pkg-name flex-1 rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs font-bold outline-none">${packageOptions(values.PAKET||'FLEKSIBEL')}</select><button type="button" onclick="this.closest('.package-row').remove();updateOrderTotal();ensurePackageRow()" class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-500 hover:text-red-600"><i class="fa-solid fa-xmark"></i></button></div><div class="grid grid-cols-2 gap-2 mt-2"><input class="pkg-weight rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs" type="number" step="0.1" min="0" value="${esc(values.BERAT??'1')}" placeholder="Berat KG"><input class="pkg-price rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs" type="number" min="0" value="${esc(values.TAGIHAN??'0')}" placeholder="Tagihan"></div>`;wrap.appendChild(row);row.querySelector('.pkg-price').addEventListener('input',updateOrderTotal);updateOrderTotal()}
+function ensurePackageRow(){if(!document.querySelector('.package-row'))addPackageRow()}
+function updateOrderTotal(){const total=[...document.querySelectorAll('.pkg-price')].reduce((sum,el)=>sum+(Number(el.value)||0),0);document.getElementById('orderTotal').textContent=rupiah(total)}
+function getPackageItems(){return [...document.querySelectorAll('.package-row')].map(row=>({PAKET:row.querySelector('.pkg-name').value,BERAT:row.querySelector('.pkg-weight').value,TAGIHAN:row.querySelector('.pkg-price').value})).filter(x=>x.PAKET)}
+function buildDraftOrder(){const items=getPackageItems();if(!items.length)throw new Error('Minimal 1 paket wajib diisi');const total=items.reduce((s,x)=>s+(Number(x.TAGIHAN)||0),0);return {NAMA:document.getElementById('f-nama').value.trim().toUpperCase(),NO_WA:document.getElementById('f-wa').value.trim(),METODE_TRANSAKSI:document.getElementById('f-payment-method').value,STATUS_PEMBAYARAN:document.getElementById('f-payment-status').value,items,total}}
+function previewOrder(){const o=pendingOrder;const dt=new Date();const date=String(dt.getDate()).padStart(2,'0')+' '+['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][dt.getMonth()]+' '+dt.getFullYear()+' '+String(dt.getHours()).padStart(2,'0')+':'+String(dt.getMinutes()).padStart(2,'0');const rows=o.items.map((x,i)=>`<div style="margin:6px 0"><b>${i+1}. ${esc(x.PAKET)}</b><div style="display:flex;justify-content:space-between"><span>${esc(x.BERAT)}x ${Number(x.TAGIHAN||0).toLocaleString('id-ID')}</span><span>${Number(x.TAGIHAN||0).toLocaleString('id-ID')}</span></div></div>`).join('');document.getElementById('receiptPreviewPaper').innerHTML=`<div style="text-align:center"><img src="${FORTUNA_LOGO_PNG}" style="width:130px;max-height:115px;object-fit:contain;margin:0 auto 8px"><b>FORTUNA LAUNDRY</b><div>Jalan Raya Inpres no 4</div><div>Jakarta Timur</div><div>085693280500</div></div><div style="display:flex;justify-content:space-between;margin-top:16px"><span>${date}</span><b>#${o.CODE||'AUTO'}</b></div><div style="font-weight:700;margin-top:4px">${esc(o.NAMA)}</div><hr style="border:0;border-top:1px dashed #000;margin:8px 0">${rows}<hr style="border:0;border-top:1px dashed #000;margin:8px 0"><div style="display:flex;justify-content:space-between;font-weight:800"><span>Total</span><span>Rp${Number(o.total||0).toLocaleString('id-ID')}</span></div><div style="text-align:center;margin-top:4px;font-weight:700">${esc(o.STATUS_PEMBAYARAN)}</div><div style="text-align:center;margin-top:8px">-- PEMBAYARAN HARAP MENGGUNAKAN QRIS --</div><div style="text-align:center;font-weight:800;margin-top:10px">PERHATIAN</div><div style="text-align:center;margin-top:4px">- Baju putih dicuci terpisah minimal 3 kg.<br><br>- Kami tidak menerima komplain lebih dari 2x24jam setelah customer menerima Laundry.<br><br>- Baju yang mudah luntur TAPI tidak memberitahu kami sebelumnya, bukan tanggung jawab kami.<br><br>- Di sarankan baju luntur untuk cuci satuan.<br><br>- Jika ingin pakaian Bapak/Ibu dikerjakan lebih optimal disarankan untuk pengerjaan satuan.<br><br>- Laundry yang lebih dari 10 hari tidak diambil bukan menjadi tanggung jawab kami.<br><br>- Laundry anda GRATIS apabila tidak mendapatkan nota.</div><div style="text-align:center;margin-top:14px">Kritik dan saran<br>085693280500<br><br>#Terimakasih Kasih#</div></div>`;document.getElementById('receiptPreviewModal').classList.add('show')}
+async function createOrder(e){e.preventDefault();if(busy)return;try{pendingOrder=buildDraftOrder();previewOrder()}catch(err){toast(err.message,false)}}
+function closeReceiptPreview(){document.getElementById('receiptPreviewModal').classList.remove('show')}
+function buildWaMessage(order){const paid=order.STATUS_PEMBAYARAN==='LUNAS'?'LUNAS':'BELUM LUNAS';return `Halo ${order.NAMA}, ini dummy pesan dari Fortuna Laundry. Kamu punya orderan #${order.CODE} dengan ${order.items.length} paket. Total tagihan ${rupiah(order.total)} dan status pembayaran ${paid}. Kode tracking kamu: ${order.CODE}. Terima kasih.`}
+async function confirmOrderAction(action){if(!pendingOrder||busy)return;let waWin=null;if(action==='print_wa'&&pendingOrder.NO_WA){waWin=window.open('about:blank','_blank');}busy=true;try{const draft=pendingOrder;let printerReady=true;if(action.startsWith('print')){printerReady=await ensurePrinter();if(!printerReady){await connectPrinter();printerReady=!!printerCharacteristic}}const j=await api('order_create',draft);const created=j.data?.order||j.data?.data?.order||{};const printOrder={...created,...draft,items:Array.isArray(created.items)&&created.items.length?created.items:draft.items,total:created.total??draft.total};closeReceiptPreview();document.getElementById('orderForm').reset();document.getElementById('packageRows').innerHTML='';addPackageRow();updateOrderTotal();pendingOrder=null;toast('Order tersimpan'+(created.CODE?' — #'+created.CODE:''));await loadDashboard(true);if(action.startsWith('print')&&printerReady&&created.CODE){await printOrderReceipt(printOrder)}else if(action.startsWith('print')&&!printerReady){toast('Order tersimpan. Printer tidak terhubung, proses tetap dilanjutkan.',false)}if(action==='print_wa'&&draft.NO_WA){const msg=buildWaMessage({...printOrder,CODE:created.CODE||printOrder.CODE});const n=draft.NO_WA.replace(/\D/g,'').replace(/^0/,'62');const url='https://wa.me/'+n+'?text='+encodeURIComponent(msg);if(waWin&&!waWin.closed)waWin.location.href=url;else window.open(url,'_blank')}else if(action==='print_wa'&&!draft.NO_WA){toast('Order tersimpan, tetapi nomor WhatsApp kosong',false)}}catch(err){console.error(err);if(waWin&&!waWin.closed)waWin.close();toast('Proses order gagal: '+err.message,false)}finally{busy=false}}
 
 // ============================================================
 // BLUETOOTH THERMAL PRINTER — metode dari project kasir lama
@@ -522,7 +422,10 @@ async function escPosReceipt(order){
 
   cmd+='\x1B\x45\x01Total'+ '\x1B\x45\x00'+receiptTextLine('', 'Rp'+total.toLocaleString('id-ID'));
   cmd+='\x1B\x61\x01';
-  cmd+='\x1B\x45\x01Belum Dibayar\x1B\x45\x00\n';
+  const paymentStatus=clean(order.STATUS_PEMBAYARAN||'BELUM LUNAS').toUpperCase();
+  const paymentMethod=clean(order.METODE_TRANSAKSI||'CASH').toUpperCase();
+  cmd+='\x1B\x45\x01'+paymentStatus+'\x1B\x45\x00\n';
+  cmd+='Metode: '+paymentMethod+'\n';
   cmd+='\n';
   cmd+='-- PEMBAYARAN HARAP MENGGUNAKAN QRIS --\n';
   cmd+='\n';
@@ -568,102 +471,19 @@ async function writePrinter(bytes){
 }
 
 async function printOrderReceipt(order){
-  const ok=await ensurePrinter();
-  if(!ok){
-    toast('Order tersimpan, tetapi printer belum terhubung. Hubungkan printer lalu gunakan Cetak Struk.',false);
-    return false;
-  }
-  try{
-    await writePrinter(escPosReceipt(order));
-    toast('Struk otomatis tercetak — '+(order.CODE||''));
-    return true;
-  }catch(err){
-    console.error('Print receipt:',err);
-    printerCharacteristic=null;
-    setPrinterUI(false,'Hubungkan Printer');
-    toast('Order tersimpan, tetapi cetak gagal: '+(err.message||err),false);
-    return false;
-  }
+  let ok=await ensurePrinter();
+  if(!ok){await connectPrinter();ok=!!printerCharacteristic}
+  if(!ok){toast('Printer belum terhubung. Struk tidak dicetak.',false);return false}
+  try{await writePrinter(await escPosReceipt(order));toast('Struk tercetak — '+(order.CODE?'#'+order.CODE:''));return true}catch(err){console.error('Print receipt:',err);printerCharacteristic=null;setPrinterUI(false,'Hubungkan Printer');toast('Cetak gagal: '+(err.message||err),false);return false}
 }
 
-async function reprintOrder(orderId){
-  const o=orders.map(normalizeOrder).find(x=>String(x.ID)===String(orderId)||String(x.CODE)===String(orderId));
-  if(!o){toast('Order tidak ditemukan',false);return}
-  // Dashboard rows are item-level. Reconstruct all items in the same order/code.
-  const same=orders.map(normalizeOrder).filter(x=>String(x.CODE)===String(o.CODE)||String(x.ORDER_ID)===String(o.ORDER_ID));
-  const order={...o,items:same.map(x=>({PAKET:x.PAKET,BERAT:x.BERAT,TAGIHAN:x.TAGIHAN,DEADLINE:x.DEADLINE}))};
-  await printOrderReceipt(order);
-}
-
-async function createOrder(e){
-  e.preventDefault(); if(busy)return; busy=true;
-  const b=document.getElementById('saveBtn'); b.disabled=true; b.innerHTML='<i class="fa-solid fa-spinner fa-spin mr-2"></i>Menyimpan...';
-  try{
-    const items=getPackageItems();
-    if(!items.length)throw new Error('Minimal 1 paket wajib diisi');
-
-    const data={
-      NAMA:document.getElementById('f-nama').value.trim().toUpperCase(),
-      NO_WA:document.getElementById('f-wa').value.trim(),
-      items
-    };
-
-    const j=await api('order_create',data);
-    const created=j.data?.order||{};
-    document.getElementById('orderForm').reset();
-    document.getElementById('packageRows').innerHTML='';
-    addPackageRow();
-    updateOrderTotal();
-
-    toast('Order berhasil dibuat'+(created.CODE?' — '+created.CODE:''));
-    await loadDashboard(true);
-
-    // Cetak hanya setelah backend sukses menyimpan order.
-    if(created.CODE){
-      await printOrderReceipt({
-        ...created,
-        items:Array.isArray(created.items)?created.items:items
-      });
-    }
-  }catch(e){
-    console.error(e);toast('Gagal membuat order: '+e.message,false)
-  }finally{
-    busy=false;b.disabled=false;b.innerHTML='<i class="fa-solid fa-floppy-disk mr-2"></i>Simpan Order • Auto Cetak'
-  }
-}
-
-function openStatus(o){
-  selectedOrder=normalizeOrder(o);
-  document.getElementById('modalTitle').textContent=selectedOrder.CODE+' — '+selectedOrder.NAMA;
-  document.getElementById('modalInfo').innerHTML=`<div><b>Paket:</b> ${esc(selectedOrder.PAKET)}</div><div class="mt-1"><b>Status:</b> ${esc(selectedOrder.STATUS)}</div><div class="mt-1"><b>Deadline:</b> ${esc(selectedOrder.DEADLINE)}</div>`;
-  document.getElementById('modal').classList.add('show');
-}
+async function reprintOrder(orderId){const o=orders.map(normalizeOrder).find(x=>String(x.ID)===String(orderId)||String(x.CODE)===String(orderId)||String(x.ORDER_ID)===String(orderId));if(!o){toast('Order tidak ditemukan',false);return}const order={...o,items:o.items?.length?o.items:orders.map(normalizeOrder).filter(x=>x.CODE===o.CODE).map(x=>({PAKET:x.PAKET,BERAT:x.BERAT,TAGIHAN:x.TAGIHAN,DEADLINE:x.DEADLINE})),total:o.TOTAL_TAGIHAN??o.TAGIHAN,METODE_TRANSAKSI:o.METODE_TRANSAKSI,STATUS_PEMBAYARAN:o.STATUS_PEMBAYARAN};await printOrderReceipt(order)}
+function openStatus(o){selectedOrder=normalizeOrder(o);document.getElementById('modalTitle').textContent='#'+selectedOrder.CODE+' — '+selectedOrder.NAMA;document.getElementById('modalInfo').innerHTML=`<div><b>Paket:</b> ${selectedOrder.items?.length||1}</div><div class="mt-1"><b>Status:</b> ${esc(selectedOrder.STATUS)}</div><div class="mt-1"><b>Pembayaran:</b> <span class="${selectedOrder.STATUS_PEMBAYARAN==='LUNAS'?'text-emerald-700':'text-red-600 font-extrabold'}">${esc(selectedOrder.STATUS_PEMBAYARAN)}</span></div><div class="mt-1"><b>Total:</b> ${rupiah(selectedOrder.TOTAL_TAGIHAN??selectedOrder.TAGIHAN)}</div>`;document.getElementById('modal').classList.add('show')}
 function closeModal(){document.getElementById('modal').classList.remove('show');selectedOrder=null}
+async function updateStatus(newStatus){if(!selectedOrder||busy)return;const code=selectedOrder.CODE;if(!code){toast('Kode order tidak ditemukan',false);return}busy=true;try{await api('update_status',{CODE:code,STATUS:newStatus});closeModal();toast('Status #'+code+' berhasil diperbarui — '+newStatus);await loadDashboard(true)}catch(e){console.error(e);toast('Update gagal: '+e.message,false)}finally{busy=false}}
 
-async function updateStatus(newStatus){
-  if(!selectedOrder||busy)return;
-  const id=selectedOrder.ID; if(!id){toast('ID order tidak ditemukan',false);return}
-  busy=true;
-  try{
-    const j=await api('update_status',{ID:id,STATUS:newStatus});
-    // Immediate UI update so the action visibly succeeds without waiting for a full read.
-    orders=orders.map(x=>String(normalizeOrder(x).ID)===String(id)?{...x,STATUS:newStatus,UPDATED_AT:j.data?.UPDATED_AT||new Date().toISOString(),READY_AT:j.data?.READY_AT||x.READY_AT||''}:x);
-    closeModal(); renderSummaryFromOrders(); renderOrders(); renderActionCenter();
-    toast('Update berhasil — '+newStatus);
-    // Re-read in background to confirm database state.
-    await loadDashboard(true);
-  }catch(e){console.error(e);toast('Update gagal: '+e.message,false)}
-  finally{busy=false}
-}
-
-function renderSummaryFromOrders(){
- const a=orders.map(normalizeOrder);
- summary={...summary,total:a.length,diterima:a.filter(x=>x.STATUS==='DITERIMA').length,diproses:a.filter(x=>x.STATUS==='DIPROSES').length,qc:a.filter(x=>x.STATUS==='QC').length,siap:a.filter(x=>x.STATUS==='SIAP').length,selesai:a.filter(x=>x.STATUS==='SELESAI').length};
- renderSummary();
-}
-function scrollToOrders(){document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth',block:'start'})}
-
-document.addEventListener('DOMContentLoaded',()=>{addPackageRow();restorePrinter();loadDashboard();});
+function renderSummaryFromOrders(){renderSummary()}
+document.addEventListener('DOMContentLoaded',()=>{addPackageRow();restorePrinter();loadDashboard()});
 </script>
 </body>
 </html>
