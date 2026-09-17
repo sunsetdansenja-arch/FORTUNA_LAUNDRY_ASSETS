@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Fortuna Laundry — Dashboard</title>
+<title>Fortuna Laundry — Operasional Dashboard V6</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -24,6 +24,7 @@ body{background:#F4F2EE;color:#202522;font-family:'Plus Jakarta Sans',sans-serif
 .toast{transform:translateY(-12px);opacity:0;pointer-events:none;transition:.22s ease}.toast.show{transform:translateY(0);opacity:1;pointer-events:auto}
 .modal{opacity:0;pointer-events:none;transition:.2s}.modal.show{opacity:1;pointer-events:auto}
 .modal-box{transform:translateY(15px);transition:.2s}.modal.show .modal-box{transform:translateY(0)}
+.package-row{border:1px solid #e2e8f0;background:#f8fafc;border-radius:14px;padding:10px}.package-row select,.package-row input{min-width:0}
 @media(max-width:768px){.table-wrap{max-height:none}.desktop-only{display:none}}
 </style>
 </head>
@@ -35,9 +36,14 @@ body{background:#F4F2EE;color:#202522;font-family:'Plus Jakarta Sans',sans-serif
       <div class="text-xs font-bold tracking-[.18em] text-[#0F5A47] uppercase">Fortuna Laundry</div>
       <h1 class="text-xl sm:text-2xl font-extrabold mt-1">Operasional Dashboard</h1>
     </div>
-    <button onclick="loadDashboard()" id="refreshBtn" class="btn bg-white border border-slate-200 rounded-xl px-4 py-2.5 font-bold text-sm">
-      <i id="refreshIcon" class="fa-solid fa-rotate-right mr-2"></i>Refresh
-    </button>
+    <div class="flex items-center gap-2">
+      <button onclick="connectPrinter()" id="printerBtn" class="btn bg-white border border-slate-200 rounded-xl px-3 py-2.5 font-bold text-sm">
+        <i id="printerIcon" class="fa-solid fa-print mr-2"></i><span id="printerText">Hubungkan Printer</span>
+      </button>
+      <button onclick="loadDashboard()" id="refreshBtn" class="btn bg-white border border-slate-200 rounded-xl px-3 py-2.5 font-bold text-sm">
+        <i id="refreshIcon" class="fa-solid fa-rotate-right mr-2"></i>Refresh
+      </button>
+    </div>
   </div>
 </header>
 
@@ -65,33 +71,19 @@ body{background:#F4F2EE;color:#202522;font-family:'Plus Jakarta Sans',sans-serif
         <div><label class="text-[10px] font-extrabold text-slate-500">NO WHATSAPP</label>
           <input id="f-wa" class="w-full mt-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 outline-none focus:ring-2 focus:ring-[#0F5A47]/20" placeholder="08xxxxxxxxxx">
         </div>
-        <div><label class="text-[10px] font-extrabold text-slate-500">PAKET / CUCIAN</label>
-          <select id="f-paket" class="w-full mt-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 outline-none">
-            <option>FLEKSIBEL</option>
-            <option>CUCI KOMPLIT REGULER</option>
-            <option>CUCI REGULER</option>
-            <option>SETRIKA REGULER</option>
-            <option>EXPRESS 1 HARI</option>
-            <option>CUCI EXPRESS 1 HARI</option>
-            <option>SETRIKA EXPRESS 1 HARI</option>
-            <option>EXPRESS 3 JAM</option>
-            <option>CUCI EXPRESS 3 JAM</option>
-            <option>SETRIKA EXPRESS 3 JAM</option>
-            <option>EXPRESS 6 JAM</option>
-            <option>CUCI EXPRESS 6 JAM</option>
-            <option>SETRIKA EXPRESS 6 JAM</option>
-          </select>
+        <div class="flex items-center justify-between">
+          <label class="text-[10px] font-extrabold text-slate-500">PAKET / CUCIAN</label>
+          <button type="button" onclick="addPackageRow()" class="text-[10px] font-extrabold text-[#0F5A47] bg-emerald-50 px-2.5 py-1.5 rounded-lg">
+            <i class="fa-solid fa-plus mr-1"></i>Tambah Paket
+          </button>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div><label class="text-[10px] font-extrabold text-slate-500">BERAT (KG)</label>
-            <input id="f-berat" type="number" step="0.1" min="0" value="1" required class="w-full mt-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3">
-          </div>
-          <div><label class="text-[10px] font-extrabold text-slate-500">TAGIHAN</label>
-            <input id="f-tagihan" type="number" min="0" value="0" required class="w-full mt-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3">
-          </div>
+        <div id="packageRows" class="space-y-2"></div>
+        <div class="rounded-xl bg-slate-50 border border-slate-100 px-3 py-2.5 flex items-center justify-between">
+          <span class="text-[10px] font-extrabold text-slate-500">TOTAL TAGIHAN</span>
+          <strong id="orderTotal" class="text-sm text-[#0F5A47]">Rp 0</strong>
         </div>
         <button id="saveBtn" class="btn w-full bg-[#0F5A47] text-white rounded-xl py-3.5 font-extrabold">
-          <i class="fa-solid fa-floppy-disk mr-2"></i>Simpan Order
+          <i class="fa-solid fa-floppy-disk mr-2"></i>Simpan Order • Auto Cetak
         </button>
       </form>
     </div>
@@ -227,6 +219,7 @@ function renderOrders(){
       <td class="px-4 py-3 align-top"><span class="status-pill s-${esc(o.STATUS)}">${esc(o.STATUS)}</span></td>
       <td class="px-4 py-3 align-top text-right whitespace-nowrap">
         <button class="btn text-xs font-extrabold rounded-lg bg-slate-100 px-3 py-2 mr-1" onclick='openStatus(${JSON.stringify(o).replace(/</g,"\\u003c")})'>Aksi</button>
+        <button class="btn text-xs font-extrabold rounded-lg bg-slate-100 px-3 py-2 mr-1" onclick="reprintOrder('${esc(o.CODE)}')"><i class="fa-solid fa-print mr-1"></i>Cetak</button>
         ${o.LINK_WA?`<a target="_blank" href="${esc(o.LINK_WA)}" class="btn inline-block text-xs font-extrabold rounded-lg bg-emerald-50 text-emerald-700 px-3 py-2">WA</a>`:''}
       </td>
     </tr>`).join('');
@@ -262,26 +255,381 @@ function filterStatus(s){
   document.getElementById('emptyState').classList.toggle('hidden',filtered.length!==0);
 }
 function rowHTML(o){
- return `<tr class="border-t border-slate-100"><td class="px-4 py-3 font-extrabold">${esc(o.CODE)}</td><td class="px-4 py-3 font-bold">${esc(o.NAMA)}</td><td class="px-4 py-3">${esc(o.PAKET)}</td><td class="px-4 py-3">${esc(o.BERAT)} kg</td><td class="px-4 py-3">${rupiah(o.TAGIHAN)}</td><td class="px-4 py-3"><span class="status-pill s-${esc(o.STATUS)}">${esc(o.STATUS)}</span></td><td class="px-4 py-3 text-right"><button onclick='openStatus(${JSON.stringify(o).replace(/</g,"\\u003c")})' class="text-xs font-extrabold bg-slate-100 px-3 py-2 rounded-lg">Aksi</button></td></tr>`;
+ return `<tr class="border-t border-slate-100"><td class="px-4 py-3 font-extrabold">${esc(o.CODE)}</td><td class="px-4 py-3 font-bold">${esc(o.NAMA)}</td><td class="px-4 py-3">${esc(o.PAKET)}</td><td class="px-4 py-3">${esc(o.BERAT)} kg</td><td class="px-4 py-3">${rupiah(o.TAGIHAN)}</td><td class="px-4 py-3"><span class="status-pill s-${esc(o.STATUS)}">${esc(o.STATUS)}</span></td><td class="px-4 py-3 text-right whitespace-nowrap"><button onclick='openStatus(${JSON.stringify(o).replace(/</g,"\\u003c")})' class="text-xs font-extrabold bg-slate-100 px-3 py-2 rounded-lg mr-1">Aksi</button><button onclick="reprintOrder('${esc(o.CODE)}')" class="text-xs font-extrabold bg-emerald-50 text-emerald-700 px-3 py-2 rounded-lg"><i class="fa-solid fa-print mr-1"></i>Cetak</button></td></tr>`;
+}
+
+const PACKAGE_OPTIONS=[
+  'FLEKSIBEL','CUCI KOMPLIT REGULER','CUCI REGULER','SETRIKA REGULER',
+  'EXPRESS 1 HARI','CUCI EXPRESS 1 HARI','SETRIKA EXPRESS 1 HARI',
+  'EXPRESS 3 JAM','CUCI EXPRESS 3 JAM','SETRIKA EXPRESS 3 JAM',
+  'EXPRESS 6 JAM','CUCI EXPRESS 6 JAM','SETRIKA EXPRESS 6 JAM'
+];
+
+function packageOptions(selected='FLEKSIBEL'){
+  return PACKAGE_OPTIONS.map(x=>`<option ${x===selected?'selected':''}>${x}</option>`).join('');
+}
+
+function addPackageRow(values={}){
+  const wrap=document.getElementById('packageRows');
+  const row=document.createElement('div');
+  row.className='package-row';
+  row.innerHTML=`
+    <div class="flex items-center gap-2">
+      <select class="pkg-name flex-1 rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs font-bold outline-none">${packageOptions(values.PAKET||'FLEKSIBEL')}</select>
+      <button type="button" onclick="this.closest('.package-row').remove(); updateOrderTotal(); ensurePackageRow()" class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-500 hover:text-red-600">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="grid grid-cols-2 gap-2 mt-2">
+      <input class="pkg-weight rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs" type="number" step="0.1" min="0" value="${esc(values.BERAT??'1')}" placeholder="Berat KG">
+      <input class="pkg-price rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs" type="number" min="0" value="${esc(values.TAGIHAN??'0')}" placeholder="Tagihan">
+    </div>`;
+  wrap.appendChild(row);
+  row.querySelector('.pkg-price').addEventListener('input',updateOrderTotal);
+  updateOrderTotal();
+}
+
+function ensurePackageRow(){
+  if(!document.querySelector('.package-row')) addPackageRow();
+}
+
+function updateOrderTotal(){
+  const total=[...document.querySelectorAll('.pkg-price')].reduce((sum,el)=>sum+(Number(el.value)||0),0);
+  document.getElementById('orderTotal').textContent=rupiah(total);
+}
+
+function getPackageItems(){
+  return [...document.querySelectorAll('.package-row')].map(row=>({
+    PAKET:row.querySelector('.pkg-name').value,
+    BERAT:row.querySelector('.pkg-weight').value,
+    TAGIHAN:row.querySelector('.pkg-price').value
+  })).filter(x=>x.PAKET);
+}
+
+// ============================================================
+// BLUETOOTH THERMAL PRINTER — metode dari project kasir lama
+// Pairing hanya dilakukan saat pertama kali menekan "Hubungkan Printer".
+// Setelah permission tersimpan browser, getDevices() akan mengambilnya
+// kembali tanpa meminta pairing ulang.
+// ============================================================
+let bluetoothDevice=null;
+let printerCharacteristic=null;
+let printerConnecting=false;
+
+const PRINTER_OPTIONAL_SERVICES=[
+  '000018f0-0000-1000-8000-00805f9b34fb',
+  '0000e025-0000-1000-8000-00805f9b34fb',
+  '00001101-0000-1000-8000-00805f9b34fb'
+];
+
+function setPrinterUI(connected,text){
+  const btn=document.getElementById('printerBtn');
+  const icon=document.getElementById('printerIcon');
+  const label=document.getElementById('printerText');
+  if(!btn)return;
+  label.textContent=text||(connected?'Printer Terhubung':'Hubungkan Printer');
+  icon.className='fa-solid fa-print mr-2';
+  btn.classList.toggle('bg-emerald-50',connected);
+  btn.classList.toggle('text-[#0F5A47]',connected);
+}
+
+async function findWritableCharacteristic(device){
+  if(!device?.gatt)return null;
+  const server=device.gatt.connected?device.gatt.server:await device.gatt.connect();
+  const services=await server.getPrimaryServices();
+  for(const service of services){
+    const chars=await service.getCharacteristics();
+    for(const c of chars){
+      if(c.properties.writeWithoutResponse||c.properties.write)return c;
+    }
+  }
+  return null;
+}
+
+async function restorePrinter(){
+  if(!navigator.bluetooth?.getDevices)return;
+  try{
+    const devices=await navigator.bluetooth.getDevices();
+    if(!devices.length)return;
+    const device=devices.find(d=>d.name&&(/RPP02N|Printer|Thermal|POS/i.test(d.name)))||devices[0];
+    bluetoothDevice=device;
+    printerCharacteristic=await findWritableCharacteristic(device);
+    if(printerCharacteristic) setPrinterUI(true,device.name||'Printer Terhubung');
+  }catch(err){
+    console.debug('Printer belum dapat dipulihkan:',err);
+  }
+}
+
+async function connectPrinter(){
+  if(printerConnecting)return;
+  if(!navigator.bluetooth){
+    toast('Browser ini tidak mendukung Web Bluetooth',false);
+    return;
+  }
+  printerConnecting=true;
+  setPrinterUI(false,'Menghubungkan...');
+  try{
+    if(bluetoothDevice?.gatt){
+      try{
+        printerCharacteristic=await findWritableCharacteristic(bluetoothDevice);
+        if(printerCharacteristic){
+          setPrinterUI(true,bluetoothDevice.name||'Printer Terhubung');
+          toast('Printer sudah terhubung');
+          return;
+        }
+      }catch(_){}
+    }
+
+    // Ambil device yang sudah diberi permission terlebih dahulu.
+    if(navigator.bluetooth.getDevices){
+      const devices=await navigator.bluetooth.getDevices();
+      if(devices.length){
+        bluetoothDevice=devices.find(d=>d.name&&(/RPP02N|Printer|Thermal|POS/i.test(d.name)))||devices[0];
+      }
+    }
+
+    // Hanya tahap ini yang memunculkan dialog pairing pertama kali.
+    if(!bluetoothDevice){
+      bluetoothDevice=await navigator.bluetooth.requestDevice({
+        acceptAllDevices:true,
+        optionalServices:PRINTER_OPTIONAL_SERVICES
+      });
+    }
+
+    printerCharacteristic=await findWritableCharacteristic(bluetoothDevice);
+    if(!printerCharacteristic)throw new Error('Characteristic printer untuk menulis data tidak ditemukan');
+
+    setPrinterUI(true,bluetoothDevice.name||'Printer Terhubung');
+    toast('Printer terhubung. Selanjutnya order bisa cetak otomatis.');
+  }catch(err){
+    console.error('Bluetooth printer:',err);
+    bluetoothDevice=null; printerCharacteristic=null;
+    setPrinterUI(false,'Hubungkan Printer');
+    toast('Gagal menghubungkan printer: '+(err.message||err),false);
+  }finally{
+    printerConnecting=false;
+  }
+}
+
+async function ensurePrinter(){
+  if(printerCharacteristic && bluetoothDevice?.gatt?.connected)return true;
+  if(!bluetoothDevice)return false;
+  try{
+    printerCharacteristic=await findWritableCharacteristic(bluetoothDevice);
+    if(printerCharacteristic){
+      setPrinterUI(true,bluetoothDevice.name||'Printer Terhubung');
+      return true;
+    }
+  }catch(err){
+    console.warn('Reconnect printer gagal',err);
+  }
+  printerCharacteristic=null;
+  return false;
+}
+
+const FORTUNA_LOGO_PNG='data:image/png;base64,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';
+
+async function logoToEscPos(){
+  // Logo client diubah menjadi bitmap ESC/POS agar bisa dicetak langsung ke thermal.
+  const img=new Image();
+  img.src=FORTUNA_LOGO_PNG;
+  await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject});
+  const maxWidth=320;
+  const ratio=Math.min(1,maxWidth/img.naturalWidth);
+  const w=Math.max(8,Math.round(img.naturalWidth*ratio));
+  const h=Math.max(8,Math.round(img.naturalHeight*ratio));
+  const canvas=document.createElement('canvas');
+  canvas.width=w; canvas.height=h;
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,w,h);
+  ctx.drawImage(img,0,0,w,h);
+  const data=ctx.getImageData(0,0,w,h).data;
+  const rowBytes=Math.ceil(w/8);
+  const bitmap=new Uint8Array(8+rowBytes*h);
+  bitmap[0]=0x1d; bitmap[1]=0x76; bitmap[2]=0x30; bitmap[3]=0x00;
+  bitmap[4]=rowBytes&0xff; bitmap[5]=(rowBytes>>8)&0xff;
+  bitmap[6]=h&0xff; bitmap[7]=(h>>8)&0xff;
+  for(let y=0;y<h;y++){
+    for(let x=0;x<w;x++){
+      const i=(y*w+x)*4;
+      const gray=(data[i]*0.299)+(data[i+1]*0.587)+(data[i+2]*0.114);
+      if(gray<180) bitmap[8+y*rowBytes+(x>>3)] |= (0x80>>(x&7));
+    }
+  }
+  const out=new Uint8Array(3+bitmap.length+3);
+  out.set([0x1b,0x40,0x1b],0);
+  out[3]=0x61; out[4]=0x01; // center
+  out.set(bitmap,5);
+  out.set([0x1b,0x61,0x00],5+bitmap.length);
+  return out;
+}
+
+function receiptTextLine(left,right,width=32){
+  left=String(left??''); right=String(right??'');
+  const gap=Math.max(1,width-left.length-right.length);
+  return left+' '.repeat(gap)+right+'\n';
+}
+function wrapReceipt(text,width=32){
+  const words=String(text??'').split(/\s+/);
+  const out=[]; let line='';
+  words.forEach(word=>{
+    if((line?line.length+1:0)+word.length<=width) line+=(line?' ':'')+word;
+    else { if(line)out.push(line); line=word.slice(0,width); }
+  });
+  if(line)out.push(line);
+  return out;
+}
+
+async function escPosReceipt(order){
+  const clean=v=>String(v??'').trim();
+  const items=Array.isArray(order.items)?order.items:[];
+  const total=items.reduce((sum,x)=>sum+(Number(x.TAGIHAN)||0),0);
+  const dt=new Date();
+  const months=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const now=String(dt.getDate()).padStart(2,'0')+' '+months[dt.getMonth()]+' '+dt.getFullYear()+' '+String(dt.getHours()).padStart(2,'0')+':'+String(dt.getMinutes()).padStart(2,'0');
+  const code=clean(order.CODE||order.ORDER_NUMBER||'-');
+
+  let chunks=[];
+  try{chunks.push(await logoToEscPos())}catch(e){console.debug('Logo gagal dicetak, lanjut teks.',e)}
+
+  let cmd='\x1B\x40';
+  cmd+='\x1B\x61\x01';
+  cmd+='\x1B\x45\x01FORTUNA LAUNDRY\x1B\x45\x00\n';
+  cmd+='Jalan Raya Inpres no 4\n';
+  cmd+='Jakarta Timur\n';
+  cmd+='085693280500\n';
+  cmd+='\n';
+  cmd+=receiptTextLine(now,'#'+code);
+  cmd+='\x1B\x45\x01'+clean(order.NAMA).toUpperCase()+'\x1B\x45\x00\n';
+  cmd+='--------------------------------\n';
+  cmd+='\x1B\x61\x00';
+
+  items.forEach((x,i)=>{
+    const paket=clean(x.PAKET).toUpperCase();
+    const qty=Number(x.BERAT)||0;
+    const harga=Number(x.TAGIHAN)||0;
+    const paketLines=wrapReceipt(paket,32);
+    cmd+='\x1B\x45\x01'+(i+1)+'. '+paketLines[0]+'\x1B\x45\x00\n';
+    for(let j=1;j<paketLines.length;j++)cmd+='   '+paketLines[j]+'\n';
+    cmd+=receiptTextLine((String(qty).replace(/\.0$/,'')||'0')+'x '+harga.toLocaleString('id-ID'),harga.toLocaleString('id-ID'));
+    if(x.DEADLINE&&String(x.DEADLINE).toUpperCase()!=='FLEKSIBEL'){
+      let dl=clean(x.DEADLINE).replace('T',' ');
+      if(dl.endsWith('.000Z'))dl=dl.slice(0,-5);
+      cmd+='Selesai: '+dl+'\n';
+    }
+    cmd+='--------------------------------\n';
+  });
+
+  cmd+='\x1B\x45\x01Total'+ '\x1B\x45\x00'+receiptTextLine('', 'Rp'+total.toLocaleString('id-ID'));
+  cmd+='\x1B\x61\x01';
+  cmd+='\x1B\x45\x01Belum Dibayar\x1B\x45\x00\n';
+  cmd+='\n';
+  cmd+='-- PEMBAYARAN HARAP MENGGUNAKAN QRIS --\n';
+  cmd+='\n';
+  cmd+='\x1B\x45\x01PERHATIAN\x1B\x45\x00\n';
+
+  const notes=[
+    'Baju putih dicuci terpisah minimal 3 kg.',
+    'Kami tidak menerima komplain lebih dari 2x24jam setelah customer menerima Laundry.',
+    'Baju yang mudah luntur TAPI tidak memberitahu kami sebelumnya, bukan tanggung jawab kami.',
+    'Di sarankan baju luntur untuk cuci satuan.',
+    'Jika ingin pakaian Bapak/Ibu dikerjakan lebih optimal disarankan untuk pengerjaan satuan.',
+    'Laundry yang lebih dari 10 hari tidak diambil bukan menjadi tanggung jawab kami.',
+    'Laundry anda GRATIS apabila tidak mendapatkan nota.'
+  ];
+  notes.forEach((n,idx)=>{
+    const prefix='- ';
+    wrapReceipt(n,30).forEach((line,j)=>cmd+=(j===0?prefix:'  ')+line+'\n');
+    if(idx===2)cmd+='\n';
+  });
+
+  cmd+='\nKritik dan saran\n085693280500\n';
+  cmd+='\n#Terimakasih Kasih#\n\n\n\n';
+  cmd+='\x1D\x56\x00';
+
+  chunks.push(new TextEncoder().encode(cmd));
+  // Gabungkan bitmap logo + teks dalam satu payload.
+  const totalLen=chunks.reduce((n,a)=>n+a.length,0);
+  const all=new Uint8Array(totalLen);
+  let pos=0; for(const a of chunks){all.set(a,pos);pos+=a.length}
+  return all;
+}
+
+async function writePrinter(bytes){
+  if(!printerCharacteristic)throw new Error('Printer belum terhubung');
+  // Thermal Bluetooth tertentu punya packet kecil; kirim bertahap.
+  const chunkSize=180;
+  for(let i=0;i<bytes.length;i+=chunkSize){
+    const chunk=bytes.slice(i,i+chunkSize);
+    if(printerCharacteristic.writeValueWithoutResponse) await printerCharacteristic.writeValueWithoutResponse(chunk);
+    else await printerCharacteristic.writeValue(chunk);
+    await new Promise(r=>setTimeout(r,20));
+  }
+}
+
+async function printOrderReceipt(order){
+  const ok=await ensurePrinter();
+  if(!ok){
+    toast('Order tersimpan, tetapi printer belum terhubung. Hubungkan printer lalu gunakan Cetak Struk.',false);
+    return false;
+  }
+  try{
+    await writePrinter(escPosReceipt(order));
+    toast('Struk otomatis tercetak — '+(order.CODE||''));
+    return true;
+  }catch(err){
+    console.error('Print receipt:',err);
+    printerCharacteristic=null;
+    setPrinterUI(false,'Hubungkan Printer');
+    toast('Order tersimpan, tetapi cetak gagal: '+(err.message||err),false);
+    return false;
+  }
+}
+
+async function reprintOrder(orderId){
+  const o=orders.map(normalizeOrder).find(x=>String(x.ID)===String(orderId)||String(x.CODE)===String(orderId));
+  if(!o){toast('Order tidak ditemukan',false);return}
+  // Dashboard rows are item-level. Reconstruct all items in the same order/code.
+  const same=orders.map(normalizeOrder).filter(x=>String(x.CODE)===String(o.CODE)||String(x.ORDER_ID)===String(o.ORDER_ID));
+  const order={...o,items:same.map(x=>({PAKET:x.PAKET,BERAT:x.BERAT,TAGIHAN:x.TAGIHAN,DEADLINE:x.DEADLINE}))};
+  await printOrderReceipt(order);
 }
 
 async function createOrder(e){
   e.preventDefault(); if(busy)return; busy=true;
   const b=document.getElementById('saveBtn'); b.disabled=true; b.innerHTML='<i class="fa-solid fa-spinner fa-spin mr-2"></i>Menyimpan...';
   try{
-    const data={NAMA:document.getElementById('f-nama').value.trim().toUpperCase(),NO_WA:document.getElementById('f-wa').value.trim(),PAKET:document.getElementById('f-paket').value,BERAT:document.getElementById('f-berat').value,TAGIHAN:document.getElementById('f-tagihan').value};
+    const items=getPackageItems();
+    if(!items.length)throw new Error('Minimal 1 paket wajib diisi');
+
+    const data={
+      NAMA:document.getElementById('f-nama').value.trim().toUpperCase(),
+      NO_WA:document.getElementById('f-wa').value.trim(),
+      items
+    };
+
     const j=await api('order_create',data);
-    document.getElementById('orderForm').reset(); document.getElementById('f-berat').value='1'; document.getElementById('f-tagihan').value='0';
-    const created=j.data?.order;
-    if(created){
-      const n=normalizeOrder(created);
-      orders=[n,...orders.filter(x=>String(normalizeOrder(x).ID)!==String(n.ID))];
-      renderSummary(); renderOrders(); renderActionCenter();
-    }
-    toast('Order berhasil dibuat'+(created?.CODE?' — '+created.CODE:''));
+    const created=j.data?.order||{};
+    document.getElementById('orderForm').reset();
+    document.getElementById('packageRows').innerHTML='';
+    addPackageRow();
+    updateOrderTotal();
+
+    toast('Order berhasil dibuat'+(created.CODE?' — '+created.CODE:''));
     await loadDashboard(true);
-  }catch(e){console.error(e);toast('Gagal membuat order: '+e.message,false)}
-  finally{busy=false;b.disabled=false;b.innerHTML='<i class="fa-solid fa-floppy-disk mr-2"></i>Simpan Order'}
+
+    // Cetak hanya setelah backend sukses menyimpan order.
+    if(created.CODE){
+      await printOrderReceipt({
+        ...created,
+        items:Array.isArray(created.items)?created.items:items
+      });
+    }
+  }catch(e){
+    console.error(e);toast('Gagal membuat order: '+e.message,false)
+  }finally{
+    busy=false;b.disabled=false;b.innerHTML='<i class="fa-solid fa-floppy-disk mr-2"></i>Simpan Order • Auto Cetak'
+  }
 }
 
 function openStatus(o){
@@ -315,7 +663,7 @@ function renderSummaryFromOrders(){
 }
 function scrollToOrders(){document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth',block:'start'})}
 
-document.addEventListener('DOMContentLoaded',()=>loadDashboard());
+document.addEventListener('DOMContentLoaded',()=>{addPackageRow();restorePrinter();loadDashboard();});
 </script>
 </body>
 </html>
