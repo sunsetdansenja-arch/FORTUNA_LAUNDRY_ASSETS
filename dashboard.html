@@ -1,1031 +1,276 @@
-<!doctype html>
-<html lang="id">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Fortuna Laundry — V3</title>
-
-<style>
-:root{
-  --g:#0f6b57;
-  --bg:#f5f7f6;
-  --line:#e4e9e6;
-}
-
-*{
-  box-sizing:border-box;
-}
-
-body{
-  margin:0;
-  background:var(--bg);
-  font-family:Arial,sans-serif;
-  color:#18221f;
-}
-
-.wrap{
-  max-width:1250px;
-  margin:auto;
-  padding:28px 20px;
-}
-
-.top,
-.bar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-}
-
-.top{
-  margin-bottom:20px;
-}
-
-.top h1{
-  margin:0;
-  font-size:25px;
-}
-
-.muted{
-  color:#7b8581;
-  font-size:13px;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:12px;
-  margin:18px 0;
-}
-
-.card{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:16px;
-  box-shadow:0 8px 24px #10231d0a;
-}
-
-.stat strong{
-  display:block;
-  font-size:25px;
-  margin-top:7px;
-}
-
-.layout{
-  display:grid;
-  grid-template-columns:350px 1fr;
-  gap:18px;
-}
-
-.form{
-  display:grid;
-  gap:11px;
-}
-
-label{
-  font-size:11px;
-  font-weight:bold;
-  color:#68726f;
-}
-
-input,
-select{
-  width:100%;
-  padding:12px;
-  border:1px solid var(--line);
-  border-radius:10px;
-  background:#fafbfa;
-  font:inherit;
-}
-
-.row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-button{
-  border:0;
-  border-radius:10px;
-  padding:10px 13px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-button:disabled{
-  opacity:.6;
-  cursor:not-allowed;
-}
-
-.primary{
-  background:var(--g);
-  color:white;
-}
-
-.ghost{
-  background:white;
-  border:1px solid var(--line);
-}
-
-.notice{
-  margin:0 0 18px;
-  padding:14px 16px;
-  background:white;
-  border:1px solid var(--line);
-  border-radius:14px;
-}
-
-.tablewrap{
-  overflow:auto;
-}
-
-.table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:900px;
-}
-
-.table th,
-.table td{
-  text-align:left;
-  padding:12px 9px;
-  border-bottom:1px solid var(--line);
-  font-size:13px;
-}
-
-.table th{
-  font-size:10px;
-  color:#7b8581;
-  text-transform:uppercase;
-}
-
-.badge{
-  padding:5px 8px;
-  border-radius:999px;
-  background:#eef1ef;
-  font-size:10px;
-  font-weight:bold;
-}
-
-.ready{
-  background:#dff3ed;
-  color:var(--g);
-}
-
-.late{
-  background:#ffe7e7;
-  color:#a63c3c;
-}
-
-.actions{
-  display:flex;
-  gap:5px;
-  flex-wrap:wrap;
-}
-
-.actions button{
-  font-size:10px;
-  padding:7px 8px;
-}
-
-@media(max-width:900px){
-
-  .grid{
-    grid-template-columns:repeat(3,1fr);
-  }
-
-  .layout{
-    grid-template-columns:1fr;
-  }
-
-}
-
-@media(max-width:560px){
-
-  .grid{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-}
-</style>
-</head>
-
-<body>
-
-<div class="wrap">
-
-  <!-- HEADER -->
-  <div class="top">
-
-    <div>
-      <h1>Fortuna Laundry</h1>
-
-      <div class="muted">
-        Dashboard operasional — V3
-      </div>
-    </div>
-
-    <button
-      class="ghost"
-      onclick="load()">
-      ↻ Refresh
-    </button>
-
-  </div>
-
-
-  <!-- NOTIFICATION -->
-  <div
-    id="notice"
-    class="notice">
-    Memuat data...
-  </div>
-
-
-  <!-- STATISTICS -->
-  <div class="grid">
-
-    <div class="card stat">
-      <small>Total</small>
-      <strong id="total">0</strong>
-    </div>
-
-    <div class="card stat">
-      <small>Diterima</small>
-      <strong id="diterima">0</strong>
-    </div>
-
-    <div class="card stat">
-      <small>Diproses</small>
-      <strong id="diproses">0</strong>
-    </div>
-
-    <div class="card stat">
-      <small>QC</small>
-      <strong id="qc">0</strong>
-    </div>
-
-    <div class="card stat">
-      <small>Siap</small>
-      <strong id="siap">0</strong>
-    </div>
-
-    <div class="card stat">
-      <small>Selesai</small>
-      <strong id="selesai">0</strong>
-    </div>
-
-  </div>
-
-
-  <!-- MAIN -->
-  <div class="layout">
-
-
-    <!-- ORDER BARU -->
-    <div class="card">
-
-      <h2>Order Baru</h2>
-
-      <form
-        id="form"
-        class="form">
-
-        <div>
-
-          <label>NAMA</label>
-
-          <input
-            id="nama"
-            required>
-
-        </div>
-
-
-        <div>
-
-          <label>NO WHATSAPP</label>
-
-          <input
-            id="wa">
-
-        </div>
-
-
-        <div>
-
-          <label>PAKET / CUCIAN</label>
-
-          <select id="paket">
-
-            <option>FLEKSIBEL</option>
-
-            <option>CUCI REGULER</option>
-
-            <option>CUCI KOMPLIT REGULER</option>
-
-            <option>SETRIKA REGULER</option>
-
-            <option>EXPRESS 1 HARI</option>
-
-            <option>EXPRESS 3 JAM</option>
-
-            <option>EXPRESS 6 JAM</option>
-
-            <option>CUCI EXPRESS 1 HARI</option>
-
-            <option>CUCI EXPRESS 3 JAM</option>
-
-            <option>CUCI EXPRESS 6 JAM</option>
-
-            <option>SETRIKA EXPRESS 1 HARI</option>
-
-            <option>SETRIKA EXPRESS 3 JAM</option>
-
-            <option>SETRIKA EXPRESS 6 JAM</option>
-
-          </select>
-
-        </div>
-
-
-        <div class="row">
-
-          <div>
-
-            <label>BERAT KG</label>
-
-            <input
-              id="berat"
-              type="number"
-              step="0.1"
-              value="1">
-
-          </div>
-
-
-          <div>
-
-            <label>TAGIHAN</label>
-
-            <input
-              id="tagihan"
-              type="number"
-              value="0">
-
-          </div>
-
-        </div>
-
-
-        <button
-          class="primary"
-          id="save"
-          type="submit">
-
-          Simpan Order
-
-        </button>
-
-      </form>
-
-    </div>
-
-
-    <!-- ORDER TABLE -->
-    <div class="card">
-
-      <div class="bar">
-
-        <h2>Order</h2>
-
-        <input
-          id="q"
-          placeholder="Cari nama / kode..."
-          oninput="render()">
-
-      </div>
-
-
-      <div class="tablewrap">
-
-        <table class="table">
-
-          <thead>
-
-            <tr>
-
-              <th>Kode</th>
-
-              <th>Pelanggan</th>
-
-              <th>Paket</th>
-
-              <th>Berat</th>
-
-              <th>Tagihan</th>
-
-              <th>Status</th>
-
-              <th>Aksi</th>
-
-            </tr>
-
-          </thead>
-
-
-          <tbody id="body">
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-<script>
-
-/* =========================================================
-   CONFIG
-========================================================= */
-
-const API =
-  'https://n8n-mzbmiib3etk4.kangkung.sumopod.my.id/webhook/fortuna-v3';
-
-
-/* =========================================================
-   STATE
-========================================================= */
-
-let orders = [];
-
-
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
-
-const esc = x =>
-  String(x ?? '')
-    .replace(
-      /[&<>"']/g,
-      m => ({
-        '&':'&amp;',
-        '<':'&lt;',
-        '>':'&gt;',
-        '"':'&quot;',
-        "'":'&#039;'
-      }[m])
-    );
-
-
-/* =========================================================
-   API
-========================================================= */
-
-async function api(action, data = {}){
-
-  const r = await fetch(
-    API,
-    {
-      method:'POST',
-
-      headers:{
-        'Content-Type':'application/json'
-      },
-
-      body:JSON.stringify({
-        action,
-        data
-      })
-    }
-  );
-
-
-  const t = await r.text();
-
-  let j;
-
-  try{
-
-    j = JSON.parse(t);
-
-  }catch{
-
-    throw Error(
-      'Response bukan JSON: ' +
-      t.slice(0,160)
-    );
-
-  }
-
-
-  if(
-    !r.ok ||
-    j.status === 'error'
-  ){
-
-    throw Error(
-      j.message ||
-      'Request gagal'
-    );
-
-  }
-
-
-  return j;
-
-}
-
-
-/* =========================================================
-   LOAD DASHBOARD
-========================================================= */
-
-async function load(){
-
-  const n =
-    document.getElementById('notice');
-
-  n.textContent =
-    'Memuat data...';
-
-
-  try{
-
-    const j =
-      await api('dashboard');
-
-
-    orders =
-      j.data?.orders || [];
-
-
-    const s =
-      j.data?.summary || {};
-
-
-    [
-      'total',
-      'diterima',
-      'diproses',
-      'qc',
-      'siap',
-      'selesai'
-    ].forEach(k => {
-
-      document.getElementById(k)
-        .textContent =
-        s[k] || 0;
-
-    });
-
-
-    n.textContent =
-      `${s.siap || 0} order siap diambil • ` +
-      `${s.overdue || 0} melewati deadline`;
-
-
-    render();
-
-
-  }catch(e){
-
-    n.textContent =
-      'Gagal menarik data: ' +
-      e.message;
-
-  }
-
-}
-
-
-/* =========================================================
-   CHECK DEADLINE
-========================================================= */
-
-function late(o){
-
-  if(
-    ['SIAP','SELESAI'].includes(o.STATUS) ||
-    !o.DEADLINE ||
-    o.DEADLINE === 'FLEKSIBEL'
-  ){
-
-    return false;
-
-  }
-
-
-  const t =
-    Date.parse(o.DEADLINE);
-
-
-  return (
-    !isNaN(t) &&
-    t < Date.now()
-  );
-
-}
-
-
-/* =========================================================
-   RENDER TABLE
-========================================================= */
-
-function render(){
-
-  const q =
-    document
-      .getElementById('q')
-      .value
-      .toLowerCase();
-
-
-  const a =
-    orders.filter(o =>
-      (
-        o.NAMA +
-        ' ' +
-        o.ID +
-        ' ' +
-        o.CODE +
-        ' ' +
-        o['PAKET/CUCIAN']
-      )
-      .toLowerCase()
-      .includes(q)
-    );
-
-
-  document.getElementById('body')
-    .innerHTML =
-
-    a.length
-
-    ?
-
-    a.map(o => {
-
-      const id =
-        esc(
-          o.ID ||
-          o.CODE
-        );
-
-
-      return `
-
-        <tr>
-
-          <td>
-
-            <b>
-              ${id}
-            </b>
-
-            <br>
-
-            <small>
-              ${esc(o.START)}
-            </small>
-
-          </td>
-
-
-          <td>
-
-            <b>
-              ${esc(o.NAMA)}
-            </b>
-
-            <br>
-
-            <small>
-              ${esc(o['NO WA'])}
-            </small>
-
-          </td>
-
-
-          <td>
-            ${esc(o['PAKET/CUCIAN'])}
-          </td>
-
-
-          <td>
-            ${esc(o.BERAT)} kg
-          </td>
-
-
-          <td>
-
-            Rp ${Number(
-              String(
-                o.TAGIHAN || 0
-              )
-              .replace(/\D/g,'')
-              || 0
-            ).toLocaleString('id-ID')}
-
-          </td>
-
-
-          <td>
-
-            <span
-              class="badge
-              ${o.STATUS === 'SIAP' ? 'ready' : ''}
-              ${late(o) ? 'late' : ''}">
-
-              ${
-                late(o)
-                ? 'TERLAMBAT'
-                : esc(o.STATUS)
-              }
-
-            </span>
-
-          </td>
-
-
-          <td>
-
-            <div class="actions">
-
-
-              <button
-                class="ghost"
-                onclick="status('${id}','DIPROSES')">
-
-                Proses
-
-              </button>
-
-
-              <button
-                class="ghost"
-                onclick="status('${id}','QC')">
-
-                QC
-
-              </button>
-
-
-              <button
-                class="ghost"
-                onclick="status('${id}','SIAP')">
-
-                Siap
-
-              </button>
-
-
-              <button
-                class="ghost"
-                onclick="status('${id}','SELESAI')">
-
-                Selesai
-
-              </button>
-
-
-              <button
-                class="primary"
-                onclick="wa('${id}')">
-
-                WA
-
-              </button>
-
-
-            </div>
-
-          </td>
-
-        </tr>
-
-      `;
-
-    }).join('')
-
-    :
-
-    `
-
-      <tr>
-
-        <td
-          colspan="7"
-          style="
-            text-align:center;
-            padding:35px;
-          ">
-
-          Belum ada data.
-
-        </td>
-
-      </tr>
-
-    `;
-
-}
-
-
-/* =========================================================
-   WHATSAPP
-========================================================= */
-
-function wa(id){
-
-  const o =
-    orders.find(
-      x =>
-        String(
-          x.ID ||
-          x.CODE
-        ) === String(id)
-    );
-
-
-  if(
-    !o ||
-    !o['NO WA']
-  ){
-
-    return;
-
-  }
-
-
-  let n =
-    o['NO WA']
-      .replace(/\D/g,'');
-
-
-  if(
-    n.startsWith('0')
-  ){
-
-    n =
-      '62' +
-      n.slice(1);
-
-  }
-
-
-  const msg =
-
-`Halo ${o.NAMA},
-
-Kami informasikan bahwa cucian dengan kode ${o.CODE || o.ID} sudah selesai dan siap diambil di Fortuna Laundry.
-
-Terima kasih.`;
-
-
-  open(
-    'https://wa.me/' +
-    n +
-    '?text=' +
-    encodeURIComponent(msg),
-
-    '_blank'
-  );
-
-}
-
-
-/* =========================================================
-   UPDATE STATUS
-========================================================= */
-
-async function status(id,s){
-
-  try{
-
-    await api(
-      'status_update',
-      {
-        ID:id,
-        STATUS:s
+Today 10:18 AM
+Pasted text.txt
+Document
+FORTUNA BACKEND V3 - CLEAN TEST.json
+File
+[
+  {
+    "headers": {
+      "host": "n8n-mzbmiib3etk4.kangkung.sumopod.my.id",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 OPR/135.0.0.0",
+      "content-length": "98",
+      "accept": "*/*",
+      "accept-encoding": "gzip, br",
+      "accept-language": "en-US,en;q=0.9",
+      "cdn-loop": "cloudflare; loops=1",
+      "cf-connecting-ip": "2001:448a:81b0:98c:3d52:2fe5:5358:f6e8",
+      "cf-ipcountry": "ID",
+      "cf-ray": "a3c4f2defe276029-SIN",
+      "cf-visitor": "{\"scheme\":\"https\"}",
+      "content-type": "application/json",
+      "origin": "https://fortunasortir.beuna.xyz",
+      "priority": "u=1, i",
+      "referer": "https://fortunasortir.beuna.xyz/",
+      "sec-ch-ua": "\"Not=A?Brand\";v=\"99\", \"Opera\";v=\"135\", \"Chromium\";v=\"151\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Windows\"",
+      "sec-fetch-dest": "empty",
+      "sec-fetch-mode": "cors",
+      "sec-fetch-site": "cross-site",
+      "x-forwarded-for": "2001:448a:81b0:98c:3d52:2fe5:5358:f6e8, 172.70.143.195",
+      "x-forwarded-host": "n8n-mzbmiib3etk4.kangkung.sumopod.my.id",
+      "x-forwarded-port": "443",
+      "x-forwarded-proto": "https",
+      "x-forwarded-server": "4df574d946e6",
+      "x-real-ip": "172.70.143.195"
+    },
+    "params": {},
+    "query": {},
+    "body": {
+      "action": "order_create",
+      "data": {
+        "NAMA": "test",
+        "PAKET": "FLEKSIBEL",
+        "BERAT": "1",
+        "TAGIHAN": "10000"
       }
-    );
-
-
-    await load();
-
-
-  }catch(e){
-
-    alert(
-      'Gagal update status: ' +
-      e.message
-    );
-
+    },
+    "webhookUrl": "https://n8n-mzbmiib3etk4.kangkung.sumopod.my.id/webhook/fortuna-v3",
+    "executionMode": "production"
   }
+]
 
+Nah, sekarang kelihatan jelas. Webhook sudah menerima request order_create dengan benar. Jadi problem sebelumnya bukan di HTML → webhook.
+
+Payload yang masuk sekarang:
+
+{
+  "action": "order_create",
+  "data": {
+    "NAMA": "test",
+    "PAKET": "FLEKSIBEL",
+    "BERAT": "1",
+    "TAGIHAN": "10000"
+  }
 }
 
+Ada 2 hal penting dari screenshot ini:
 
-/* =========================================================
-   CREATE ORDER
-========================================================= */
+1. Switch Action sudah benar masuk jalur ORDER
 
-document
-  .getElementById('form')
-  .onsubmit = async e => {
+Di execution terlihat:
 
-    e.preventDefault();
+Webhook Utama
+      ↓
+Switch Action
+      ↓
+PROCESS ORDER
+      ↓
+GET LOG CODE
+      ↓
+GENERATE UNIQUE CODE
+      ↓
+SAVE LOG CODE
+      ↓
+SAVE ORDER
 
+Dan node sampai SAVE LOG CODE terlihat hijau.
 
-    const b =
-      document.getElementById('save');
+Jadi routing order_create sudah berhasil.
 
+2. SAVE ORDER sekarang yang perlu kita pastikan
 
-    b.disabled = true;
+Di screenshot SAVE ORDER masih merah.
 
-    b.textContent =
-      'Menyimpan...';
+Jadi sekarang jangan utak-atik HTML dulu.
 
+Kita perlu lihat error/output node SAVE ORDER yang terbaru, karena SAVE LOG CODE sudah lolos.
 
-    try{
+Ada satu hal lagi: payload test lu tidak mengirim NO_WA:
 
-      const j =
-        await api(
-          'order_create',
-          {
-            NAMA:
-              nama.value,
+"NO_WA": ...
 
-            NO_WA:
-              wa.value,
+belum ada.
 
-            PAKET:
-              paket.value,
+Untuk testing database, ini seharusnya tidak membuat SAVE ORDER error kalau mapping kita memang mengizinkan kosong. Tapi nanti tetap kita masukkan dari dashboard karena fitur WA memang membutuhkan nomor pelanggan.
 
-            BERAT:
-              berat.value,
+Yang gue sarankan sekarang
 
-            TAGIHAN:
-              tagihan.value
-          }
-        );
+Klik node SAVE ORDER → buka Output / Error dan kirim screenshot-nya.
 
+Jangan ubah node apa pun dulu.
 
-      alert(
-        'Order berhasil: ' +
-        (
-          j.data?.order?.CODE ||
-          ''
-        )
-      );
+Kalau error-nya masih:
 
+columns.schema is required
 
-      e.target.reset();
+berarti JSON V3 yang ter-import masih membawa konfigurasi schema yang salah dan gue akan kasih JSON backend V4 yang benar-benar dibersihkan, bukan suruh lu setting manual satu-satu.
 
+Kalau error-nya berubah menjadi error Google Sheets seperti:
 
-      berat.value = 1;
+Column not found
+Invalid value
+ID already exists
+...
 
-      tagihan.value = 0;
+itu justru bagus — berarti konfigurasi node sudah lolos dan kita tinggal bereskan mapping datanya.
 
+Nah, sekarang masalahnya sudah cukup jelas dari screenshot.
 
-      await load();
+Dashboard berhasil membaca data: Total 2347 / Diterima 2346. Artinya request order_create memang masuk, tapi order baru belum berhasil ditulis ke LOG ORDER.
 
+Di workflow yang lu pakai, SAVE ORDER masih menggunakan appendOrUpdate dengan matching ID. Untuk proses membuat order baru, kita sebenarnya tidak membutuhkan appendOrUpdate sama sekali karena ID sudah dibuat unik sebelumnya.
 
-    }catch(x){
+Jadi gue ubah jalurnya menjadi:
 
-      alert(
-        'Gagal membuat order.\n\n' +
-        x.message
-      );
+PROCESS ORDER
+      ↓
+GET LOG CODE
+      ↓
+GENERATE UNIQUE CODE
+      ↓
+SAVE LOG CODE       ← append
+      ↓
+SAVE ORDER          ← APPEND LANGSUNG
+      ↓
+RESPOND ORDER
 
+Dengan begitu SAVE ORDER tidak lagi mencoba mencari/mencocokkan ID terlebih dahulu.
 
-    }finally{
+V4 — Robust Order
 
-      b.disabled = false;
+Download FORTUNA BACKEND V4 - ROBUST ORDER.json
 
-      b.textContent =
-        'Simpan Order';
+Import V4 ini sebagai workflow baru, jangan hapus V3 dulu.
 
-    }
+Setelah import:
 
-  };
+Aktifkan/publish V4.
 
+Pastikan webhook tetap:
 
-/* =========================================================
-   INITIAL LOAD
-========================================================= */
+/webhook/fortuna-v3
+Buka dashboard.
 
-load();
+Test:
 
-</script>
+Nama: TEST
+WA: 085359033973
+Paket: FLEKSIBEL
+Berat: 1
+Tagihan: 10000
+Cek execution.
 
-</body>
-</html>
+Target kita sekarang sangat sederhana:
+
+2346
+  ↓
+buat order TEST
+  ↓
+LOG ORDER
+  ↓
+2347
+
+Kalau SAVE ORDER hijau, berarti fondasi create order sudah beres. Setelah itu baru kita lanjutkan status update dan fitur dashboard lainnya. 
+
+FORTUNA BACKEND V4 - ROBUST ORDER.json
+Code
+tombol aksi saat ditekan di frontend sudah bsia, dibuktikan di backend tapi tidak ada perubahan setelah di tkean / animasi berhasil dan update berhasil tdak muncuk
+
+Nah, ketemu masalah frontend-nya.
+
+Di dashboard-v3.html, fungsi tombol status memang mengirim status_update dan menunggu response, tapi setelah sukses cuma menjalankan load()—tidak ada feedback sukses ke user dan UI tidak langsung mengubah status.
+
+Sementara backend memang sudah punya response:
+
+Status order berhasil diperbarui
+
+dan alurnya sampai RESPOND STATUS.
+
+Jadi gue sudah bikin dashboard V4 khusus fix action/status:
+
+Download dashboard-v4-status-fixed.html
+
+Perubahannya
+
+Sekarang ketika lu klik:
+
+PROSES → QC → SIAP → SELESAI
+
+alur jadi:
+
+Klik tombol
+   ↓
+Tombol berubah/loading
+   ↓
+POST status_update
+   ↓
+Backend berhasil
+   ↓
+UI LANGSUNG berubah
+   ↓
+Toast:
+"Status berhasil diperbarui → Siap"
+   ↓
+600ms kemudian
+   ↓
+Dashboard sync ulang dengan Google Sheets
+
+Jadi nggak perlu nunggu refresh manual lagi.
+
+Dan kalau backend gagal, sekarang muncul:
+
+Gagal update status: [alasan error]
+
+bukan sekadar tombol seperti berhasil.
+
+Test dulu file HTML ini dengan backend V4 yang sekarang. Kalau klik SIAP misalnya, targetnya status di tabel langsung berubah ke SIAP + muncul toast sukses. 
+
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fortuna Laundry — V3</title><style>:root{--g:#0f6b57;--bg:#f5f7f6;--line:#e4e9e6}*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial,sans-serif;color:#18221f}.wrap{max-width:1250px;margin:auto;padding:28px 20px}.top,.bar{display:flex;justify-content:space-between;align-items:center;gap:12px}.top{margin-bottom:20px}.top h1{margin:0;font-size:25px}.muted{color:#7b8581;font-size:13px}.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin:18px 0}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 8px 24px #10231d0a}.stat strong{display:block;font-size:25px;margin-top:7px}.layout{display:grid;grid-template-columns:350px 1fr;gap:18px}.form{display:grid;gap:11px}label{font-size:11px;font-weight:bold;color:#68726f}input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fafbfa;font:inherit}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}button{border:0;border-radius:10px;padding:10px 13px;font-weight:bold;cursor:pointer}.primary{background:var(--g);color:white}.ghost{background:white;border:1px solid var(--line)}.notice{margin:0 0 18px;padding:14px 16px;background:white;border:1px solid var(--line);border-radius:14px}.tablewrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:900px}.table th,.table td{text-align:left;padding:12px 9px;border-bottom:1px solid var(--line);font-size:13px}.table th{font-size:10px;color:#7b8581;text-transform:uppercase}.badge{padding:5px 8px;border-radius:999px;background:#eef1ef;font-size:10px;font-weight:bold}.ready{background:#dff3ed;color:var(--g)}.late{background:#ffe7e7;color:#a63c3c}.actions{display:flex;gap:5px;flex-wrap:wrap}.actions button{font-size:10px;padding:7px 8px}.actions button.loading{opacity:.55;pointer-events:none}.toast{position:fixed;right:22px;bottom:22px;z-index:9999;background:#18221f;color:#fff;padding:13px 16px;border-radius:12px;box-shadow:0 10px 30px #0002;font-size:13px;font-weight:bold;opacity:0;transform:translateY(10px);transition:.2s}.toast.show{opacity:1;transform:translateY(0)}.toast.ok{background:#0f6b57}.toast.err{background:#a63c3c}@media(max-width:900px){.grid{grid-template-columns:repeat(3,1fr)}.layout{grid-template-columns:1fr}}@media(max-width:560px){.grid{grid-template-columns:repeat(2,1fr)}} </style></head><body><div class="wrap"><div class="top"><div><h1>Fortuna Laundry</h1><div class="muted">Dashboard operasional — clean test</div></div><button class="ghost" onclick="load()">↻ Refresh</button></div><div id="notice" class="notice">Memuat data...</div><div class="grid"><div class="card stat"><small>Total</small><strong id="total">0</strong></div><div class="card stat"><small>Diterima</small><strong id="diterima">0</strong></div><div class="card stat"><small>Diproses</small><strong id="diproses">0</strong></div><div class="card stat"><small>QC</small><strong id="qc">0</strong></div><div class="card stat"><small>Siap</small><strong id="siap">0</strong></div><div class="card stat"><small>Selesai</small><strong id="selesai">0</strong></div></div><div class="layout"><div class="card"><h2>Order Baru</h2><form id="form" class="form"><div><label>NAMA</label><input id="nama" required></div><div><label>NO WHATSAPP</label><input id="wa"></div><div><label>PAKET / CUCIAN</label><select id="paket"><option>FLEKSIBEL</option><option>CUCI REGULER</option><option>CUCI KOMPLIT REGULER</option><option>SETRIKA REGULER</option><option>EXPRESS 1 HARI</option><option>EXPRESS 3 JAM</option><option>EXPRESS 6 JAM</option><option>CUCI EXPRESS 1 HARI</option><option>CUCI EXPRESS 3 JAM</option><option>CUCI EXPRESS 6 JAM</option><option>SETRIKA EXPRESS 1 HARI</option><option>SETRIKA EXPRESS 3 JAM</option><option>SETRIKA EXPRESS 6 JAM</option></select></div><div class="row"><div><label>BERAT KG</label><input id="berat" type="number" step="0.1" value="1"></div><div><label>TAGIHAN</label><input id="tagihan" type="number" value="0"></div></div><button class="primary" id="save">Simpan Order</button></form></div><div class="card"><div class="bar"><h2>Order</h2><input id="q" placeholder="Cari nama / kode..." oninput="render()"></div><div class="tablewrap"><table class="table"><thead><tr><th>Kode</th><th>Pelanggan</th><th>Paket</th><th>Berat</th><th>Tagihan</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="body"></tbody></table></div></div></div></div><div id="toast" class="toast"></div><script>
+const API='https://n8n-mzbmiib3etk4.kangkung.sumopod.my.id/webhook/fortuna-v3';let orders=[];const esc=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+async function api(action,data={}){const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,data})});const t=await r.text();let j;try{j=JSON.parse(t)}catch{throw Error('Response bukan JSON: '+t.slice(0,160))}if(!r.ok||j.status==='error')throw Error(j.message||'Request gagal');return j}
+async function load(){const n=document.getElementById('notice');n.textContent='Memuat data...';try{const j=await api('dashboard');orders=j.data?.orders||[];const s=j.data?.summary||{};['total','diterima','diproses','qc','siap','selesai'].forEach(k=>document.getElementById(k).textContent=s[k]||0);n.textContent=`${s.siap||0} order siap diambil • ${s.overdue||0} melewati deadline`;render()}catch(e){n.textContent='Gagal menarik data: '+e.message}}
+function late(o){if(['SIAP','SELESAI'].includes(o.STATUS)||!o.DEADLINE||o.DEADLINE==='FLEKSIBEL')return false;const t=Date.parse(o.DEADLINE);return !isNaN(t)&&t<Date.now()}
+function render(){const q=document.getElementById('q').value.toLowerCase();const a=orders.filter(o=>(o.NAMA+' '+o.ID+' '+o.CODE+' '+o['PAKET/CUCIAN']).toLowerCase().includes(q));document.getElementById('body').innerHTML=a.length?a.map(o=>{const id=esc(o.ID||o.CODE);return `<tr><td><b>${id}</b><br><small>${esc(o.START)}</small></td><td><b>${esc(o.NAMA)}</b><br><small>${esc(o['NO WA'])}</small></td><td>${esc(o['PAKET/CUCIAN'])}</td><td>${esc(o.BERAT)} kg</td><td>Rp ${Number(String(o.TAGIHAN||0).replace(/\D/g,'' )||0).toLocaleString('id-ID')}</td><td><span class="badge ${o.STATUS==='SIAP'?'ready':''} ${late(o)?'late':''}">${late(o)?'TERLAMBAT':esc(o.STATUS)}</span></td><td><div class="actions"><button class="ghost" onclick="status('${id}','DIPROSES')">Proses</button><button class="ghost" onclick="status('${id}','QC')">QC</button><button class="ghost" onclick="status('${id}','SIAP')">Siap</button><button class="ghost" onclick="status('${id}','SELESAI')">Selesai</button><button class="primary" onclick="wa('${id}')">WA</button></div></td></tr>`}).join(''):'<tr><td colspan="7" style="text-align:center;padding:35px">Belum ada data.</td></tr>'}
+function wa(id){const o=orders.find(x=>String(x.ID||x.CODE)===String(id));if(!o||!o['NO WA'])return;let n=o['NO WA'].replace(/\D/g,'');if(n.startsWith('0'))n='62'+n.slice(1);const msg=`Halo ${o.NAMA},\n\nKami informasikan bahwa cucian dengan kode ${o.CODE||o.ID} sudah selesai dan siap diambil di Fortuna Laundry.\n\nTerima kasih.`;open('https://wa.me/'+n+'?text='+encodeURIComponent(msg),'_blank')}
+let toastTimer;
+function toast(message,type='ok'){const el=document.getElementById('toast');el.textContent=message;el.className='toast show '+type;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.className='toast',2200)}
+function setSummaryOptimistic(oldStatus,newStatus){if(oldStatus===newStatus)return;const ids=['total','diterima','diproses','qc','siap','selesai'];if(document.getElementById(oldStatus.toLowerCase()))document.getElementById(oldStatus.toLowerCase()).textContent=Math.max(0,Number(document.getElementById(oldStatus.toLowerCase()).textContent||0)-1);if(document.getElementById(newStatus.toLowerCase()))document.getElementById(newStatus.toLowerCase()).textContent=Number(document.getElementById(newStatus.toLowerCase()).textContent||0)+1}
+async function status(id,s){
+  const o=orders.find(x=>String(x.ID||x.CODE)===String(id));
+  if(!o){toast('Order tidak ditemukan','err');return}
+  const oldStatus=String(o.STATUS||'').toUpperCase();
+  const buttons=[...document.querySelectorAll('.actions button')].filter(b=>b.getAttribute('onclick')?.includes(String(id)));
+  buttons.forEach(b=>{b.disabled=true;b.classList.add('loading')});
+  try{
+    const result=await api('status_update',{ID:id,STATUS:s});
+    const returned=result?.data||{};
+    // Update UI immediately after the backend confirms success.
+    o.STATUS=returned.STATUS||s;
+    o.UPDATED_AT=returned.UPDATED_AT||o.UPDATED_AT;
+    o.READY_AT=returned.READY_AT||o.READY_AT;
+    setSummaryOptimistic(oldStatus,o.STATUS);
+    render();
+    const label={DIPROSES:'Diproses',QC:'QC',SIAP:'Siap',SELESAI:'Selesai'}[o.STATUS]||o.STATUS;
+    toast('Status berhasil diperbarui → '+label,'ok');
+    // Re-read Sheets shortly after the write to sync the dashboard.
+    setTimeout(()=>load(),600);
+  }catch(e){
+    toast('Gagal update status: '+e.message,'err');
+    buttons.forEach(b=>{b.disabled=false;b.classList.remove('loading')});
+  }
+}
+document.getElementById('form').onsubmit=async e=>{e.preventDefault();const b=document.getElementById('save');b.disabled=true;b.textContent='Menyimpan...';try{const j=await api('order_create',{NAMA:nama.value,NO_WA:wa.value,PAKET:paket.value,BERAT:berat.value,TAGIHAN:tagihan.value});alert('Order berhasil: '+(j.data?.order?.CODE||''));e.target.reset();berat.value=1;tagihan.value=0;await load()}catch(x){alert('Gagal membuat order.\n\n'+x.message)}finally{b.disabled=false;b.textContent='Simpan Order'}};load();
+</script></body></html>
+dashboard-v4-status-fixed.html
+HTML
