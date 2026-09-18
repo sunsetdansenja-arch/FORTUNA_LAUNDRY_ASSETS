@@ -1,489 +1,106 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Fortuna Laundry — Operasional Dashboard V6</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script>
-tailwind.config={theme:{extend:{fontFamily:{sans:['Plus Jakarta Sans','sans-serif']},colors:{
-  fortuna:{bg:'#F4F2EE',green:'#0F5A47',green2:'#0B4638',orange:'#F6A04D',text:'#202522'}
-}}}}
-</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Fortuna Laundry — Operasional</title>
+<script src="https://cdn.tailwindcss.com"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <style>
-body{background:#F4F2EE;color:#202522;font-family:'Plus Jakarta Sans',sans-serif}
-.card{background:#fff;border:1px solid #ece9e3;border-radius:20px;box-shadow:0 8px 30px rgba(25,35,30,.05)}
-.btn{transition:.18s ease}.btn:active{transform:scale(.97)}
-.status-pill{font-size:11px;font-weight:800;padding:6px 9px;border-radius:999px;white-space:nowrap}
-.s-DITERIMA{background:#eef2ff;color:#4f46e5}.s-DIPROSES{background:#fff7ed;color:#c2410c}
-.s-QC{background:#f5f3ff;color:#7c3aed}.s-SIAP{background:#ecfdf5;color:#047857}
-.s-SELESAI{background:#f1f5f9;color:#475569}
-.table-wrap{max-height:560px;overflow:auto}.table-wrap::-webkit-scrollbar{width:7px}.table-wrap::-webkit-scrollbar-thumb{background:#d8d5cf;border-radius:20px}
-.toast{transform:translateY(-12px);opacity:0;pointer-events:none;transition:.22s ease}.toast.show{transform:translateY(0);opacity:1;pointer-events:auto}
-.modal{opacity:0;pointer-events:none;transition:.2s}.modal.show{opacity:1;pointer-events:auto}
-.modal-box{transform:translateY(15px);transition:.2s}.modal.show .modal-box{transform:translateY(0)}
-.package-row{border:1px solid #e2e8f0;background:#f8fafc;border-radius:14px;padding:10px}.package-row select,.package-row input{min-width:0}.payment-unpaid{background:#fff1f2!important;color:#b91c1c!important;border-color:#fecdd3!important}.order-filter-active{box-shadow:0 0 0 2px #0F5A47 inset}
-@media(max-width:768px){.table-wrap{max-height:none}.desktop-only{display:none}}
+body{background:#f5f3ef;color:#202522;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.card{background:#fff;border:1px solid #e9e5de;border-radius:20px;box-shadow:0 8px 28px rgba(25,35,30,.05)}.btn{transition:.15s}.btn:active{transform:scale(.97)}.nav-active{background:#0f5a47;color:#fff}.pill{font-size:10px;font-weight:800;padding:5px 8px;border-radius:999px}.s-DITERIMA{background:#eef2ff;color:#4338ca}.s-DIPROSES{background:#fff7ed;color:#c2410c}.s-QC{background:#f5f3ff;color:#7c3aed}.s-SIAP{background:#ecfdf5;color:#047857}.s-SELESAI{background:#f1f5f9;color:#475569}.unpaid{background:#fff1f2;color:#b91c1c;border-color:#fecdd3}.modal{opacity:0;pointer-events:none;transition:.18s}.modal.show{opacity:1;pointer-events:auto}.modal-box{transform:translateY(14px);transition:.18s}.modal.show .modal-box{transform:none}.toast{transform:translateY(10px);opacity:0;pointer-events:none;transition:.2s}.toast.show{transform:none;opacity:1}.table-scroll{overflow:auto;max-height:620px}.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.numpad button{height:58px;border-radius:14px;background:#f8fafc;border:1px solid #e2e8f0;font-size:20px;font-weight:800}.receipt{width:300px;background:#fff;color:#111;padding:18px;font-family:monospace}.receipt hr{border:0;border-top:1px dashed #777;margin:10px 0}.receipt .row{display:flex;justify-content:space-between;gap:10px}.receipt .total{font-weight:900;font-size:17px}.danger{color:#b91c1c}.deadline-priority{border-left:5px solid #f59e0b}.deadline-critical{border-left:5px solid #dc2626}.deadline-overdue{border-left:5px solid #7f1d1d;background:#fff7f7}
+@media(min-width:900px){.layout{display:grid;grid-template-columns:220px 1fr}.sidebar{min-height:100vh;position:sticky;top:0;height:100vh}.mobile-nav{display:none}}@media(max-width:899px){.sidebar{display:none}.mobile-nav{display:flex}}
 </style>
 </head>
-<body class="min-h-screen pb-10">
-
-<header class="sticky top-0 z-30 bg-[#F4F2EE]/95 backdrop-blur border-b border-[#e7e3dc]">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
-    <div>
-      <div class="text-xs font-bold tracking-[.18em] text-[#0F5A47] uppercase">Fortuna Laundry</div>
-      <h1 class="text-xl sm:text-2xl font-extrabold mt-1">Operasional Dashboard</h1>
-    </div>
-    <div class="flex items-center gap-2">
-      <button onclick="connectPrinter()" id="printerBtn" class="btn bg-white border border-slate-200 rounded-xl px-3 py-2.5 font-bold text-sm">
-        <i id="printerIcon" class="fa-solid fa-print mr-2"></i><span id="printerText">Hubungkan Printer</span>
-      </button>
-      <button onclick="loadDashboard()" id="refreshBtn" class="btn bg-white border border-slate-200 rounded-xl px-3 py-2.5 font-bold text-sm">
-        <i id="refreshIcon" class="fa-solid fa-rotate-right mr-2"></i>Refresh
-      </button>
-    </div>
-  </div>
+<body>
+<div class="layout">
+<aside class="sidebar bg-white border-r border-slate-200 p-4 flex flex-col">
+  <div class="px-3 py-4"><div class="text-[11px] font-black tracking-[.2em] text-[#0F5A47]">FORTUNA</div><div class="font-extrabold text-lg mt-1">Laundry</div></div>
+  <nav class="space-y-2 mt-3">
+    <button onclick="showTab('ops')" data-tab="ops" class="navbtn nav-active w-full text-left rounded-xl px-4 py-3 font-bold text-sm"><i class="fa-solid fa-gauge-high w-5"></i> Operasional Dashboard</button>
+    <button onclick="showTab('deadline')" data-tab="deadline" class="navbtn w-full text-left rounded-xl px-4 py-3 font-bold text-sm text-slate-600 hover:bg-slate-100"><i class="fa-solid fa-hourglass-half w-5"></i> Deadline Dashboard</button>
+    <button onclick="showTab('expense')" data-tab="expense" class="navbtn w-full text-left rounded-xl px-4 py-3 font-bold text-sm text-slate-600 hover:bg-slate-100"><i class="fa-solid fa-receipt w-5"></i> Expense</button>
+  </nav>
+  <div class="mt-auto p-3 text-[10px] text-slate-400 font-semibold">Fortuna Laundry V8</div>
+</aside>
+<div class="min-w-0">
+<header class="sticky top-0 z-30 bg-[#f5f3ef]/95 backdrop-blur border-b border-[#e5e1da]">
+ <div class="max-w-[1400px] mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-3"><div><div class="text-[10px] font-black tracking-[.18em] text-[#0F5A47] uppercase">Fortuna Laundry</div><h1 id="title" class="text-xl sm:text-2xl font-extrabold mt-1">Operasional Dashboard</h1></div><div class="flex gap-2"><button id="printerBtn" onclick="connectPrinter()" class="btn bg-white border border-slate-200 rounded-xl px-3 py-2.5 font-bold text-sm"><i id="printerIcon" class="fa-solid fa-print mr-1"></i><span id="printerText">Printer</span></button><button onclick="loadDashboard()" class="btn bg-white border border-slate-200 rounded-xl px-3 py-2.5 font-bold text-sm"><i class="fa-solid fa-rotate-right mr-1"></i>Refresh</button></div></div>
 </header>
-
-<main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-5">
-
-  <section class="grid grid-cols-2 lg:grid-cols-6 gap-3">
-    <button onclick="filterStatus('ALL')" class="card p-4 text-left hover:ring-2 hover:ring-slate-200 transition"><div class="text-xs text-slate-500 font-bold">TOTAL</div><div id="sum-total" class="text-2xl font-extrabold mt-1">0</div></button>
-    <button onclick="filterStatus('DITERIMA')" class="card p-4 text-left hover:ring-2 hover:ring-indigo-200 transition"><div class="text-xs text-indigo-500 font-bold">DITERIMA</div><div id="sum-diterima" class="text-2xl font-extrabold mt-1 text-indigo-600">0</div></button>
-    <button onclick="filterStatus('DIPROSES')" class="card p-4 text-left hover:ring-2 hover:ring-orange-200 transition"><div class="text-xs text-orange-500 font-bold">DIPROSES</div><div id="sum-diproses" class="text-2xl font-extrabold mt-1 text-orange-600">0</div></button>
-    <button onclick="filterStatus('QC')" class="card p-4 text-left hover:ring-2 hover:ring-violet-200 transition"><div class="text-xs text-violet-500 font-bold">QC</div><div id="sum-qc" class="text-2xl font-extrabold mt-1 text-violet-600">0</div></button>
-    <button onclick="filterStatus('SIAP')" class="card p-4 text-left hover:ring-2 hover:ring-emerald-200 transition"><div class="text-xs text-emerald-500 font-bold">SIAP</div><div id="sum-siap" class="text-2xl font-extrabold mt-1 text-emerald-600">0</div></button>
-    <button onclick="filterStatus('SELESAI')" class="card p-4 text-left hover:ring-2 hover:ring-slate-200 transition"><div class="text-xs text-slate-500 font-bold">SELESAI</div><div id="sum-selesai" class="text-2xl font-extrabold mt-1 text-slate-600">0</div></button>
+<div class="mobile-nav sticky top-[73px] z-20 bg-white border-b border-slate-200 px-2 py-2 gap-1 overflow-auto"><button onclick="showTab('ops')" data-tab="ops" class="navbtn nav-active whitespace-nowrap rounded-lg px-3 py-2 text-xs font-bold">Operasional</button><button onclick="showTab('deadline')" data-tab="deadline" class="navbtn whitespace-nowrap rounded-lg px-3 py-2 text-xs font-bold">Deadline</button><button onclick="showTab('expense')" data-tab="expense" class="navbtn whitespace-nowrap rounded-lg px-3 py-2 text-xs font-bold">Expense</button></div>
+<main class="max-w-[1400px] mx-auto px-4 sm:px-6 py-5">
+<section id="tab-ops" class="tab space-y-5">
+ <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+  <div class="card p-4"><div class="text-[10px] font-black text-slate-500">TOTAL ORDER</div><div id="sum-total" class="text-2xl font-black mt-1">0</div></div>
+  <div class="card p-4"><div class="text-[10px] font-black text-indigo-500">DITERIMA</div><div id="sum-diterima" class="text-2xl font-black mt-1">0</div></div>
+  <div class="card p-4"><div class="text-[10px] font-black text-orange-500">DIPROSES</div><div id="sum-diproses" class="text-2xl font-black mt-1">0</div></div>
+  <div class="card p-4"><div class="text-[10px] font-black text-violet-500">QC</div><div id="sum-qc" class="text-2xl font-black mt-1">0</div></div>
+  <div class="card p-4"><div class="text-[10px] font-black text-emerald-600">SIAP</div><div id="sum-siap" class="text-2xl font-black mt-1">0</div></div>
+  <div class="card p-4"><div class="text-[10px] font-black text-slate-500">SELESAI</div><div id="sum-selesai" class="text-2xl font-black mt-1">0</div></div>
+ </div>
+ <div class="grid xl:grid-cols-[360px_1fr] gap-5">
+  <section class="card p-5 h-fit xl:sticky xl:top-24">
+   <div class="flex justify-between items-center mb-5"><div><h2 class="font-extrabold text-lg">Order Baru</h2><p class="text-xs text-slate-500">Satu transaksi dapat berisi beberapa paket.</p></div><span class="w-9 h-9 rounded-xl bg-emerald-50 text-[#0F5A47] flex items-center justify-center"><i class="fa-solid fa-plus"></i></span></div>
+   <form onsubmit="draftOrder(event)" class="space-y-3">
+    <label class="block"><span class="label">NAMA</span><input id="f-nama" required class="input" placeholder="Nama pelanggan"></label>
+    <label class="block"><span class="label">NO WHATSAPP</span><input id="f-wa" class="input" placeholder="08xxxxxxxxxx"></label>
+    <div class="flex justify-between items-center"><span class="label">PAKET</span><button type="button" onclick="addPackage()" class="text-xs font-black text-[#0F5A47]">+ Tambah Paket</button></div>
+    <div id="packageRows" class="space-y-2"></div>
+    <label class="block"><span class="label">PEMBAYARAN</span><select id="f-payment" class="input"><option>CASH</option><option>QRIS</option><option>TRANSFER</option><option selected>BELUM LUNAS</option></select></label>
+    <div class="bg-slate-50 rounded-xl px-3 py-3 flex justify-between"><span class="label">TOTAL TAGIHAN</span><strong id="orderTotal">Rp 0</strong></div>
+    <button class="btn w-full bg-[#0F5A47] text-white rounded-xl py-3.5 font-extrabold"><i class="fa-solid fa-receipt mr-2"></i>Lanjutkan • Preview Struk</button>
+   </form>
   </section>
-
-  <section class="grid lg:grid-cols-[360px_1fr] gap-5">
-    <div class="card p-5 h-fit lg:sticky lg:top-24">
-      <div class="flex items-center justify-between mb-5">
-        <div><h2 class="font-extrabold text-lg">Order Baru</h2><p class="text-xs text-slate-500 mt-1">Input order pelanggan</p></div>
-        <span class="w-9 h-9 rounded-xl bg-[#E6EFEA] text-[#0F5A47] flex items-center justify-center"><i class="fa-solid fa-plus"></i></span>
-      </div>
-      <form id="orderForm" onsubmit="createOrder(event)" class="space-y-3">
-        <div><label class="text-[10px] font-extrabold text-slate-500">NAMA</label>
-          <input id="f-nama" required class="w-full mt-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 outline-none focus:ring-2 focus:ring-[#0F5A47]/20" placeholder="Nama pelanggan">
-        </div>
-        <div><label class="text-[10px] font-extrabold text-slate-500">NO WHATSAPP</label>
-          <input id="f-wa" class="w-full mt-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 outline-none focus:ring-2 focus:ring-[#0F5A47]/20" placeholder="08xxxxxxxxxx">
-        </div>
-        <div class="flex items-center justify-between">
-          <label class="text-[10px] font-extrabold text-slate-500">PAKET / CUCIAN</label>
-          <button type="button" onclick="addPackageRow()" class="text-[10px] font-extrabold text-[#0F5A47] bg-emerald-50 px-2.5 py-1.5 rounded-lg">
-            <i class="fa-solid fa-plus mr-1"></i>Tambah Paket
-          </button>
-        </div>
-        <div id="packageRows" class="space-y-2"></div>
-        <div class="grid grid-cols-2 gap-2">
-          <div><label class="text-[10px] font-extrabold text-slate-500">METODE TRANSAKSI</label>
-            <select id="f-payment-method" required class="w-full mt-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 outline-none">
-              <option value="CASH">CASH</option><option value="QRIS">QRIS</option><option value="TRANSFER">TRANSFER</option>
-            </select>
-          </div>
-          <div><label class="text-[10px] font-extrabold text-slate-500">STATUS PEMBAYARAN</label>
-            <select id="f-payment-status" required class="w-full mt-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 outline-none">
-              <option value="LUNAS">LUNAS</option><option value="BELUM LUNAS" selected>BELUM LUNAS</option>
-            </select>
-          </div>
-        </div>
-        <div class="rounded-xl bg-slate-50 border border-slate-100 px-3 py-2.5 flex items-center justify-between">
-          <span class="text-[10px] font-extrabold text-slate-500">TOTAL TAGIHAN</span>
-          <strong id="orderTotal" class="text-sm text-[#0F5A47]">Rp 0</strong>
-        </div>
-        <button id="saveBtn" class="btn w-full bg-[#0F5A47] text-white rounded-xl py-3.5 font-extrabold">
-          <i class="fa-solid fa-floppy-disk mr-2"></i>Lanjutkan • Preview Struk
-        </button>
-      </form>
-    </div>
-
-    <div class="card overflow-hidden">
-      <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-        <div><h2 class="font-extrabold text-lg">Order</h2><p id="orderCountText" class="text-xs text-slate-500 mt-1">0 order</p></div>
-        <div class="relative sm:w-72">
-          <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-400 text-sm"></i>
-          <input id="search" oninput="renderOrders()" class="w-full rounded-xl border border-slate-200 pl-9 pr-3 py-3 text-sm outline-none" placeholder="Cari nama / kode...">
-        </div>
-      </div>
-      <div class="table-wrap">
-        <table class="w-full text-sm">
-          <thead class="bg-[#faf9f7] sticky top-0 z-10">
-            <tr class="text-[10px] text-slate-500 font-extrabold">
-              <th class="text-left px-4 py-3">KODE</th>
-              <th class="text-left px-4 py-3">PELANGGAN</th>
-              <th class="text-left px-4 py-3">PAKET</th>
-              <th class="text-left px-4 py-3">BERAT</th>
-              <th class="text-left px-4 py-3">TAGIHAN</th>
-              <th class="text-left px-4 py-3">STATUS</th>
-              <th class="text-right px-4 py-3">AKSI</th>
-            </tr>
-          </thead>
-          <tbody id="orderRows"></tbody>
-        </table>
-      </div>
-      <div id="emptyState" class="hidden text-center py-12 text-slate-400">
-        <i class="fa-solid fa-box-open text-3xl mb-3"></i><div class="font-bold">Tidak ada order</div>
-      </div>
-    </div>
+  <section class="card overflow-hidden">
+   <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3"><div><h2 class="font-extrabold text-lg">Daftar Order</h2><p id="orderCount" class="text-xs text-slate-500">Memuat...</p></div><input id="search" oninput="renderOrders()" class="input sm:max-w-xs" placeholder="Cari nomor / nama / paket..."></div>
+   <div class="table-scroll"><table class="w-full"><thead class="sticky top-0 bg-[#faf9f7] z-10"><tr class="text-[10px] font-black text-slate-500"><th class="text-left px-4 py-3">ORDER</th><th class="text-left px-4 py-3">PELANGGAN</th><th class="text-left px-4 py-3">PAKET</th><th class="text-left px-4 py-3">TOTAL</th><th class="text-left px-4 py-3">STATUS</th><th class="text-right px-4 py-3">AKSI</th></tr></thead><tbody id="orderRows"></tbody></table></div>
   </section>
+ </div>
+</section>
+<section id="tab-deadline" class="tab hidden space-y-5"><div class="grid grid-cols-3 gap-3"><div class="card p-4"><div class="text-[10px] font-black text-amber-600">PRIORITY</div><div id="dl-priority" class="text-2xl font-black">0</div></div><div class="card p-4"><div class="text-[10px] font-black text-red-600">DEADLINE</div><div id="dl-deadline" class="text-2xl font-black">0</div></div><div class="card p-4"><div class="text-[10px] font-black text-red-900">OVERDUE</div><div id="dl-overdue" class="text-2xl font-black">0</div></div></div><div class="card overflow-hidden"><div class="p-5 border-b border-slate-100 flex justify-between"><div><h2 class="font-extrabold text-lg">Deadline Tracking</h2><p class="text-xs text-slate-500 mt-1">Progress dihitung dari START menuju READY_AT.</p></div><button onclick="loadDeadline()" class="text-slate-500"><i class="fa-solid fa-rotate"></i></button></div><div id="deadlineList" class="p-4 grid md:grid-cols-2 xl:grid-cols-3 gap-3"></div></div></section>
+<section id="tab-expense" class="tab hidden space-y-5"><div class="grid lg:grid-cols-[360px_1fr] gap-5"><div class="card p-5 h-fit"><h2 class="font-extrabold text-lg">Input Expense</h2><p class="text-xs text-slate-500 mb-5">Catat pengeluaran operasional.</p><form onsubmit="createExpense(event)" class="space-y-3"><label class="block"><span class="label">TANGGAL</span><input id="e-tanggal" type="date" required class="input"></label><label class="block"><span class="label">KATEGORI</span><input id="e-kategori" class="input" placeholder="Listrik, bahan, gaji, dll"></label><label class="block"><span class="label">KETERANGAN</span><input id="e-keterangan" class="input" placeholder="Keterangan"></label><label class="block"><span class="label">NOMINAL</span><input id="e-nominal" inputmode="decimal" class="input num-input" placeholder="50000"></label><label class="block"><span class="label">METODE</span><select id="e-metode" class="input"><option>CASH</option><option>QRIS</option><option>TRANSFER</option></select></label><button class="btn w-full bg-[#0F5A47] text-white rounded-xl py-3 font-extrabold">Simpan Expense</button></form></div><div class="card overflow-hidden"><div class="p-5 border-b border-slate-100 flex justify-between"><div><h2 class="font-extrabold text-lg">Daftar Expense</h2><p id="expenseTotal" class="text-xs text-slate-500">Rp 0</p></div><button onclick="loadExpense()" class="text-slate-500"><i class="fa-solid fa-rotate"></i></button></div><div id="expenseList" class="divide-y divide-slate-100"></div></div></div></section>
+</main></div></div>
 
-  <section class="card p-5">
-    <div class="flex items-center justify-between mb-3">
-      <div><h2 class="font-extrabold">Action Center</h2><p class="text-xs text-slate-500 mt-1">Perhatian operasional tanpa log panjang</p></div>
-      <button onclick="scrollToOrders()" class="text-xs font-extrabold text-[#0F5A47]">Lihat order</button>
-    </div>
-    <div id="actionCenter" class="grid sm:grid-cols-3 gap-3"></div>
-  </section>
-</main>
-
-<div id="toast" class="toast fixed top-5 right-5 z-50 max-w-sm bg-[#202522] text-white rounded-xl px-4 py-3 shadow-xl text-sm font-bold"></div>
-
-<div id="receiptPreviewModal" class="modal fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3" onclick="if(event.target===this)closeReceiptPreview()">
-  <div class="modal-box bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden">
-    <div class="p-5 border-b border-slate-100 flex items-center justify-between">
-      <div><div class="text-xs font-extrabold text-[#0F5A47]">KONFIRMASI ORDER</div><h3 class="text-xl font-extrabold mt-1">Preview Struk</h3><p class="text-xs text-slate-500 mt-1">Order belum disimpan. Pilih tindakan di bawah.</p></div>
-      <button onclick="closeReceiptPreview()" class="w-9 h-9 rounded-xl bg-slate-100"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div class="p-5 bg-slate-100 max-h-[65vh] overflow-auto">
-      <div id="receiptPreviewPaper" class="bg-white mx-auto shadow-sm p-5 w-[58mm] min-h-[120mm] text-[10px] leading-tight text-black font-mono"></div>
-    </div>
-    <div class="p-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-2">
-      <button onclick="closeReceiptPreview()" class="btn rounded-xl py-3 bg-slate-100 text-slate-700 font-extrabold"><i class="fa-solid fa-xmark mr-1"></i>Cancel</button>
-      <button onclick="confirmOrderAction('print_save')" class="btn rounded-xl py-3 bg-[#0F5A47] text-white font-extrabold"><i class="fa-solid fa-print mr-1"></i>Cetak Struk & Simpan</button>
-      <button onclick="confirmOrderAction('print_wa')" class="btn rounded-xl py-3 bg-emerald-600 text-white font-extrabold"><i class="fa-brands fa-whatsapp mr-1"></i>Cetak & Kirim WA</button>
-    </div>
-  </div>
-</div>
-
-<div id="modal" class="modal fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-3" onclick="if(event.target===this)closeModal()">
-  <div class="modal-box bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl">
-    <div class="flex justify-between items-start">
-      <div><div class="text-xs font-extrabold text-[#0F5A47]">UPDATE STATUS</div><h3 id="modalTitle" class="text-xl font-extrabold mt-1">Order</h3></div>
-      <button onclick="closeModal()" class="w-9 h-9 rounded-xl bg-slate-100"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div id="modalInfo" class="mt-4 p-4 rounded-2xl bg-slate-50 text-sm"></div>
-    <div class="grid grid-cols-2 gap-2 mt-4">
-      <button onclick="updateStatus('DITERIMA')" class="btn rounded-xl py-3 bg-indigo-50 text-indigo-700 font-extrabold">DITERIMA</button>
-      <button onclick="updateStatus('DIPROSES')" class="btn rounded-xl py-3 bg-orange-50 text-orange-700 font-extrabold">DIPROSES</button>
-      <button onclick="updateStatus('QC')" class="btn rounded-xl py-3 bg-violet-50 text-violet-700 font-extrabold">QC</button>
-      <button onclick="updateStatus('SIAP')" class="btn rounded-xl py-3 bg-emerald-50 text-emerald-700 font-extrabold">SIAP</button>
-      <button onclick="updateStatus('SELESAI')" class="btn col-span-2 rounded-xl py-3 bg-slate-100 text-slate-700 font-extrabold">SELESAI / DIAMBIL</button>
-    </div>
-  </div>
-</div>
-
+<div id="previewModal" class="modal fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"><div class="modal-box bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-auto p-4"><div class="flex justify-between items-center mb-3"><h3 class="font-extrabold">Preview Struk</h3><button onclick="closeModal('previewModal')"><i class="fa-solid fa-xmark"></i></button></div><div id="receiptPreview" class="bg-slate-100 p-3 rounded-xl flex justify-center"></div><div class="grid gap-2 mt-4"><button onclick="confirmCreate(true,false)" class="btn bg-[#0F5A47] text-white rounded-xl py-3 font-extrabold">Cetak Struk dan Simpan</button><button onclick="confirmCreate(true,true)" class="btn bg-slate-900 text-white rounded-xl py-3 font-extrabold">Cetak Struk dan Kirimkan WA</button><button onclick="confirmCreate(false,false)" class="btn bg-slate-100 rounded-xl py-3 font-extrabold">Simpan Tanpa Cetak</button><button onclick="closeModal('previewModal')" class="py-2 text-sm font-bold text-slate-500">Batal</button></div></div></div>
+<div id="editModal" class="modal fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"><div class="modal-box bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-auto p-5"><div class="flex justify-between"><div><h3 class="font-extrabold text-lg">Edit Item</h3><p id="edit-id" class="text-xs text-slate-500"></p></div><button onclick="closeModal('editModal')"><i class="fa-solid fa-xmark"></i></button></div><form onsubmit="saveEdit(event)" class="space-y-3 mt-5"><input type="hidden" id="edit-item"><label class="block"><span class="label">NAMA</span><input id="edit-nama" class="input"></label><label class="block"><span class="label">NO WHATSAPP</span><input id="edit-wa" class="input"></label><label class="block"><span class="label">PAKET</span><select id="edit-paket" class="input"></select></label><div class="grid grid-cols-2 gap-2"><label><span class="label">BERAT</span><input id="edit-berat" inputmode="decimal" class="input num-input"></label><label><span class="label">TAGIHAN</span><input id="edit-tagihan" inputmode="decimal" class="input num-input"></label></div><p class="text-[11px] text-slate-500">Jika paket berubah, DURATION dan READY_AT otomatis dihitung ulang dari START.</p><button class="btn w-full bg-[#0F5A47] text-white rounded-xl py-3 font-extrabold">Simpan Perubahan</button></form></div></div>
+<div id="payModal" class="modal fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"><div class="modal-box bg-white rounded-2xl max-w-sm w-full p-5"><h3 class="font-extrabold text-lg">Pelunasan</h3><p class="text-sm text-slate-500 mt-1">Lunas menggunakan metode apa?</p><div class="grid gap-2 mt-5"><button onclick="pay('CASH')" class="btn border rounded-xl py-3 font-extrabold">CASH</button><button onclick="pay('QRIS')" class="btn border rounded-xl py-3 font-extrabold">QRIS</button><button onclick="pay('TRANSFER')" class="btn border rounded-xl py-3 font-extrabold">TRANSFER</button><button onclick="closeModal('payModal')" class="py-2 text-sm font-bold text-slate-500">Batal</button></div></div></div>
+<div id="numpadModal" class="modal fixed inset-0 z-[60] bg-black/40 flex items-end justify-center p-3"><div class="modal-box bg-white rounded-2xl w-full max-w-sm p-4"><div class="flex justify-between mb-3"><b>Input angka</b><button onclick="closeModal('numpadModal')">Selesai</button></div><div id="numDisplay" class="text-right text-2xl font-black p-3 bg-slate-50 rounded-xl mb-3">0</div><div class="numpad" id="numpad"></div></div></div>
+<div id="toast" class="toast fixed top-5 right-5 z-[80] bg-slate-900 text-white px-4 py-3 rounded-xl text-sm font-bold"></div>
 <script>
 const WEBHOOK_URL='https://n8n-mzbmiib3etk4.kangkung.sumopod.my.id/webhook/fortuna-v5';
-let orders=[], summary={}, selectedOrder=null, busy=false, activeFilter='ALL', pendingOrder=null;
-
-const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-const rupiah=v=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',minimumFractionDigits:0}).format(Number(v)||0);
-function toast(msg,ok=true){const el=document.getElementById('toast');el.textContent=msg;el.className='toast show fixed top-5 right-5 z-50 max-w-sm rounded-xl px-4 py-3 shadow-xl text-sm font-bold '+(ok?'bg-[#0F5A47] text-white':'bg-red-600 text-white');clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove('show'),3000)}
-async function api(action,data={}){const r=await fetch(WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,data})});const text=await r.text();let j;try{j=JSON.parse(text)}catch{throw new Error('Response backend bukan JSON: '+text.slice(0,180))}if(!r.ok)throw new Error(j.message||j.error||('HTTP '+r.status));if(j.status&&j.status!=='success')throw new Error(j.message||'Backend gagal');return j}
-async function loadDashboard(silent=false){if(busy)return;const icon=document.getElementById('refreshIcon');if(icon)icon.classList.add('fa-spin');try{const j=await api('read');const d=j.data||{};orders=Array.isArray(d.orders)?d.orders:[];summary=d.summary||{};renderSummary();renderOrders();renderActionCenter();if(!silent)toast('Data berhasil diperbarui')}catch(e){console.error(e);toast('Gagal memuat data: '+e.message,false)}finally{if(icon)icon.classList.remove('fa-spin')}}
-function renderSummary(){['total','diterima','diproses','qc','siap','selesai'].forEach(k=>{const el=document.getElementById('sum-'+k);if(el)el.textContent=summary[k]??0});const map={total:'ALL',diterima:'DITERIMA',diproses:'DIPROSES',qc:'QC',siap:'SIAP',selesai:'SELESAI'};Object.entries(map).forEach(([k,f])=>{const el=document.getElementById('sum-'+k);const btn=el?.closest('button');if(btn)btn.classList.toggle('order-filter-active',activeFilter===f)})}
-function normalizeOrder(o){return {...o,CODE:o.CODE||o.KODE||o.ID||'-',ID:o.ID||o.ORDER_ID||o.CODE||o.KODE||'',ORDER_ID:o.ORDER_ID||'',NAMA:o.NAMA||'-',PAKET:o.PAKET||o['PAKET/CUCIAN']||'-',BERAT:o.BERAT||'0',TAGIHAN:o.TAGIHAN||'0',STATUS:String(o.STATUS||'DITERIMA').toUpperCase(),NO_WA:o.NO_WA||o['NO WA']||'',LINK_WA:o['LINK WA']||o.LINK_WA||'',DEADLINE:o.DEADLINE||'-',METODE_TRANSAKSI:o.METODE_TRANSAKSI||'CASH',STATUS_PEMBAYARAN:String(o.STATUS_PEMBAYARAN||'BELUM LUNAS').toUpperCase(),items:Array.isArray(o.items)?o.items:[]}}
-function orderMatchesFilter(o){if(activeFilter==='ALL')return true;if(activeFilter==='OVERDUE')return o.items?.some(i=>['DITERIMA','DIPROSES','QC','SIAP'].includes(String(i.STATUS||o.STATUS).toUpperCase())&&i.DEADLINE&&String(i.DEADLINE).toUpperCase()!=='FLEKSIBEL'&&Date.parse(i.DEADLINE)<Date.now());return o.STATUS===activeFilter||(o.items||[]).some(i=>String(i.STATUS||'').toUpperCase()===activeFilter)}
-function renderOrders(){const q=document.getElementById('search').value.trim().toLowerCase();let list=orders.map(normalizeOrder).filter(orderMatchesFilter).filter(o=>(o.NAMA+' '+o.CODE+' '+o.PAKET+' '+o.STATUS+' '+(o.items||[]).map(i=>i.PAKET).join(' ')).toLowerCase().includes(q));document.getElementById('orderCountText').textContent=list.length+' order'+(activeFilter!=='ALL'?' • '+activeFilter:'');document.getElementById('emptyState').classList.toggle('hidden',list.length!==0);document.getElementById('orderRows').innerHTML=list.map(rowHTML).join('')}
-function rowHTML(o){const unpaid=o.STATUS_PEMBAYARAN!=='LUNAS';const items=o.items?.length?o.items:[{PAKET:o.PAKET,BERAT:o.BERAT,TAGIHAN:o.TAGIHAN,STATUS:o.STATUS,DEADLINE:o.DEADLINE}];const pkg=items.map(i=>`<div class="font-bold">${esc(i.PAKET||'-')}</div><div class="text-[10px] text-slate-400">${esc(i.BERAT||'0')} kg • ${rupiah(i.TAGIHAN)}</div>`).join('');return `<tr class="border-t border-slate-100 hover:bg-slate-50/70 ${unpaid?'bg-red-50/60':''}"><td class="px-4 py-3 align-top"><div class="font-extrabold">#${esc(o.CODE)}</div><div class="text-[10px] text-slate-400">${esc(o.START||'')}</div></td><td class="px-4 py-3 align-top"><div class="font-bold">${esc(o.NAMA)}</div><div class="text-[10px] text-slate-400">${esc(o.NO_WA)}</div></td><td class="px-4 py-3 align-top max-w-[230px]">${pkg}</td><td class="px-4 py-3 align-top font-bold">${esc(o.TOTAL_BERAT??o.BERAT??'0')} kg</td><td class="px-4 py-3 align-top"><div class="font-extrabold ${unpaid?'text-red-600':'text-slate-800'}">${rupiah(o.TOTAL_TAGIHAN??o.TAGIHAN)}</div><div class="text-[10px] font-extrabold ${unpaid?'text-red-600':'text-emerald-700'}">${esc(o.STATUS_PEMBAYARAN)}</div><div class="text-[10px] text-slate-400">${esc(o.METODE_TRANSAKSI)}</div></td><td class="px-4 py-3 align-top"><span class="status-pill s-${esc(o.STATUS)}">${esc(o.STATUS)}</span>${o.STATUS==='CAMPURAN'?'<div class="text-[10px] text-slate-500 mt-1">status paket berbeda</div>':''}</td><td class="px-4 py-3 align-top text-right whitespace-nowrap"><button class="btn text-xs font-extrabold rounded-lg bg-slate-100 px-3 py-2 mr-1" onclick='openStatus(${JSON.stringify(o).replace(/</g,"\\u003c")})'>Aksi</button><button class="btn text-xs font-extrabold rounded-lg bg-emerald-50 text-emerald-700 px-3 py-2 mr-1" onclick="reprintOrder('${esc(o.CODE)}')"><i class="fa-solid fa-print mr-1"></i>Cetak</button>${o.LINK_WA?`<a target="_blank" href="${esc(o.LINK_WA)}" class="btn inline-block text-xs font-extrabold rounded-lg bg-emerald-50 text-emerald-700 px-3 py-2">WA</a>`:''}</td></tr>`}
-function renderActionCenter(){const ready=summary.siap||0,overdue=summary.overdue||0,processing=summary.diproses||0,qc=summary.qc||0;document.getElementById('actionCenter').innerHTML=`<button onclick="filterStatus('SIAP')" class="text-left rounded-2xl border border-emerald-100 bg-emerald-50 p-4"><div class="text-2xl font-extrabold text-emerald-700">${ready}</div><div class="text-xs font-extrabold text-emerald-800 mt-1">SIAP DIAMBIL</div></button><button onclick="filterStatus('DIPROSES')" class="text-left rounded-2xl border border-orange-100 bg-orange-50 p-4"><div class="text-2xl font-extrabold text-orange-700">${processing}</div><div class="text-xs font-extrabold text-orange-800 mt-1">SEDANG DIPROSES</div></button><button onclick="filterStatus('QC')" class="text-left rounded-2xl border border-violet-100 bg-violet-50 p-4"><div class="text-2xl font-extrabold text-violet-700">${qc}</div><div class="text-xs font-extrabold text-violet-800 mt-1">QC</div></button><button onclick="filterStatus('OVERDUE')" class="text-left rounded-2xl border border-red-100 bg-red-50 p-4"><div class="text-2xl font-extrabold text-red-700">${overdue}</div><div class="text-xs font-extrabold text-red-800 mt-1">MELEWATI DEADLINE</div></button>`}
-function filterStatus(s){activeFilter=s;renderOrders();scrollToOrders()}
-function scrollToOrders(){document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth',block:'start'})}
-
-const PACKAGE_OPTIONS=['FLEKSIBEL','CUCI KOMPLIT REGULER','CUCI REGULER','SETRIKA REGULER','EXPRESS 1 HARI','CUCI EXPRESS 1 HARI','SETRIKA EXPRESS 1 HARI','EXPRESS 3 JAM','CUCI EXPRESS 3 JAM','SETRIKA EXPRESS 3 JAM','EXPRESS 6 JAM','CUCI EXPRESS 6 JAM','SETRIKA EXPRESS 6 JAM'];
-function packageOptions(selected='FLEKSIBEL'){return PACKAGE_OPTIONS.map(x=>`<option ${x===selected?'selected':''}>${x}</option>`).join('')}
-function addPackageRow(values={}){const wrap=document.getElementById('packageRows');const row=document.createElement('div');row.className='package-row';row.innerHTML=`<div class="flex items-center gap-2"><select class="pkg-name flex-1 rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs font-bold outline-none">${packageOptions(values.PAKET||'FLEKSIBEL')}</select><button type="button" onclick="this.closest('.package-row').remove();updateOrderTotal();ensurePackageRow()" class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-500 hover:text-red-600"><i class="fa-solid fa-xmark"></i></button></div><div class="grid grid-cols-2 gap-2 mt-2"><input class="pkg-weight rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs" type="number" step="0.1" min="0" value="${esc(values.BERAT??'1')}" placeholder="Berat KG"><input class="pkg-price rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs" type="number" min="0" value="${esc(values.TAGIHAN??'0')}" placeholder="Tagihan"></div>`;wrap.appendChild(row);row.querySelector('.pkg-price').addEventListener('input',updateOrderTotal);updateOrderTotal()}
-function ensurePackageRow(){if(!document.querySelector('.package-row'))addPackageRow()}
-function updateOrderTotal(){const total=[...document.querySelectorAll('.pkg-price')].reduce((sum,el)=>sum+(Number(el.value)||0),0);document.getElementById('orderTotal').textContent=rupiah(total)}
-function getPackageItems(){return [...document.querySelectorAll('.package-row')].map(row=>({PAKET:row.querySelector('.pkg-name').value,BERAT:row.querySelector('.pkg-weight').value,TAGIHAN:row.querySelector('.pkg-price').value})).filter(x=>x.PAKET)}
-function buildDraftOrder(){const items=getPackageItems();if(!items.length)throw new Error('Minimal 1 paket wajib diisi');const total=items.reduce((s,x)=>s+(Number(x.TAGIHAN)||0),0);return {NAMA:document.getElementById('f-nama').value.trim().toUpperCase(),NO_WA:document.getElementById('f-wa').value.trim(),METODE_TRANSAKSI:document.getElementById('f-payment-method').value,STATUS_PEMBAYARAN:document.getElementById('f-payment-status').value,items,total}}
-function previewOrder(){const o=pendingOrder;const dt=new Date();const date=String(dt.getDate()).padStart(2,'0')+' '+['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][dt.getMonth()]+' '+dt.getFullYear()+' '+String(dt.getHours()).padStart(2,'0')+':'+String(dt.getMinutes()).padStart(2,'0');const rows=o.items.map((x,i)=>`<div style="margin:6px 0"><b>${i+1}. ${esc(x.PAKET)}</b><div style="display:flex;justify-content:space-between"><span>${esc(x.BERAT)}x ${Number(x.TAGIHAN||0).toLocaleString('id-ID')}</span><span>${Number(x.TAGIHAN||0).toLocaleString('id-ID')}</span></div></div>`).join('');document.getElementById('receiptPreviewPaper').innerHTML=`<div style="text-align:center"><img src="${FORTUNA_LOGO_PNG}" style="width:130px;max-height:115px;object-fit:contain;margin:0 auto 8px"><b>FORTUNA LAUNDRY</b><div>Jalan Raya Inpres no 4</div><div>Jakarta Timur</div><div>085693280500</div></div><div style="display:flex;justify-content:space-between;margin-top:16px"><span>${date}</span><b>#${o.CODE||'AUTO'}</b></div><div style="font-weight:700;margin-top:4px">${esc(o.NAMA)}</div><hr style="border:0;border-top:1px dashed #000;margin:8px 0">${rows}<hr style="border:0;border-top:1px dashed #000;margin:8px 0"><div style="display:flex;justify-content:space-between;font-weight:800"><span>Total</span><span>Rp${Number(o.total||0).toLocaleString('id-ID')}</span></div><div style="text-align:center;margin-top:4px;font-weight:700">${esc(o.STATUS_PEMBAYARAN)}</div><div style="text-align:center;margin-top:8px">-- PEMBAYARAN HARAP MENGGUNAKAN QRIS --</div><div style="text-align:center;font-weight:800;margin-top:10px">PERHATIAN</div><div style="text-align:center;margin-top:4px">- Baju putih dicuci terpisah minimal 3 kg.<br><br>- Kami tidak menerima komplain lebih dari 2x24jam setelah customer menerima Laundry.<br><br>- Baju yang mudah luntur TAPI tidak memberitahu kami sebelumnya, bukan tanggung jawab kami.<br><br>- Di sarankan baju luntur untuk cuci satuan.<br><br>- Jika ingin pakaian Bapak/Ibu dikerjakan lebih optimal disarankan untuk pengerjaan satuan.<br><br>- Laundry yang lebih dari 10 hari tidak diambil bukan menjadi tanggung jawab kami.<br><br>- Laundry anda GRATIS apabila tidak mendapatkan nota.</div><div style="text-align:center;margin-top:14px">Kritik dan saran<br>085693280500<br><br>#Terimakasih Kasih#</div></div>`;document.getElementById('receiptPreviewModal').classList.add('show')}
-async function createOrder(e){e.preventDefault();if(busy)return;try{pendingOrder=buildDraftOrder();previewOrder()}catch(err){toast(err.message,false)}}
-function closeReceiptPreview(){document.getElementById('receiptPreviewModal').classList.remove('show')}
-function buildWaMessage(order){const paid=order.STATUS_PEMBAYARAN==='LUNAS'?'LUNAS':'BELUM LUNAS';return `Halo ${order.NAMA}, ini dummy pesan dari Fortuna Laundry. Kamu punya orderan #${order.CODE} dengan ${order.items.length} paket. Total tagihan ${rupiah(order.total)} dan status pembayaran ${paid}. Kode tracking kamu: ${order.CODE}. Terima kasih.`}
-async function confirmOrderAction(action){if(!pendingOrder||busy)return;let waWin=null;if(action==='print_wa'&&pendingOrder.NO_WA){waWin=window.open('about:blank','_blank');}busy=true;try{const draft=pendingOrder;let printerReady=true;if(action.startsWith('print')){printerReady=await ensurePrinter();if(!printerReady){await connectPrinter();printerReady=!!printerCharacteristic}}const j=await api('order_create',draft);const created=j.data?.order||j.data?.data?.order||{};const printOrder={...created,...draft,items:Array.isArray(created.items)&&created.items.length?created.items:draft.items,total:created.total??draft.total};closeReceiptPreview();document.getElementById('orderForm').reset();document.getElementById('packageRows').innerHTML='';addPackageRow();updateOrderTotal();pendingOrder=null;toast('Order tersimpan'+(created.CODE?' — #'+created.CODE:''));await loadDashboard(true);if(action.startsWith('print')&&printerReady&&created.CODE){await printOrderReceipt(printOrder)}else if(action.startsWith('print')&&!printerReady){toast('Order tersimpan. Printer tidak terhubung, proses tetap dilanjutkan.',false)}if(action==='print_wa'&&draft.NO_WA){const msg=buildWaMessage({...printOrder,CODE:created.CODE||printOrder.CODE});const n=draft.NO_WA.replace(/\D/g,'').replace(/^0/,'62');const url='https://wa.me/'+n+'?text='+encodeURIComponent(msg);if(waWin&&!waWin.closed)waWin.location.href=url;else window.open(url,'_blank')}else if(action==='print_wa'&&!draft.NO_WA){toast('Order tersimpan, tetapi nomor WhatsApp kosong',false)}}catch(err){console.error(err);if(waWin&&!waWin.closed)waWin.close();toast('Proses order gagal: '+err.message,false)}finally{busy=false}}
-
-// ============================================================
-// BLUETOOTH THERMAL PRINTER — metode dari project kasir lama
-// Pairing hanya dilakukan saat pertama kali menekan "Hubungkan Printer".
-// Setelah permission tersimpan browser, getDevices() akan mengambilnya
-// kembali tanpa meminta pairing ulang.
-// ============================================================
-let bluetoothDevice=null;
-let printerCharacteristic=null;
-let printerConnecting=false;
-
-const PRINTER_OPTIONAL_SERVICES=[
-  '000018f0-0000-1000-8000-00805f9b34fb',
-  '0000e025-0000-1000-8000-00805f9b34fb',
-  '00001101-0000-1000-8000-00805f9b34fb'
-];
-
-function setPrinterUI(connected,text){
-  const btn=document.getElementById('printerBtn');
-  const icon=document.getElementById('printerIcon');
-  const label=document.getElementById('printerText');
-  if(!btn)return;
-  label.textContent=text||(connected?'Printer Terhubung':'Hubungkan Printer');
-  icon.className='fa-solid fa-print mr-2';
-  btn.classList.toggle('bg-emerald-50',connected);
-  btn.classList.toggle('text-[#0F5A47]',connected);
-}
-
-async function findWritableCharacteristic(device){
-  if(!device?.gatt)return null;
-  const server=device.gatt.connected?device.gatt.server:await device.gatt.connect();
-  const services=await server.getPrimaryServices();
-  for(const service of services){
-    const chars=await service.getCharacteristics();
-    for(const c of chars){
-      if(c.properties.writeWithoutResponse||c.properties.write)return c;
-    }
-  }
-  return null;
-}
-
-async function restorePrinter(){
-  if(!navigator.bluetooth?.getDevices)return;
-  try{
-    const devices=await navigator.bluetooth.getDevices();
-    if(!devices.length)return;
-    const device=devices.find(d=>d.name&&(/RPP02N|Printer|Thermal|POS/i.test(d.name)))||devices[0];
-    bluetoothDevice=device;
-    printerCharacteristic=await findWritableCharacteristic(device);
-    if(printerCharacteristic) setPrinterUI(true,device.name||'Printer Terhubung');
-  }catch(err){
-    console.debug('Printer belum dapat dipulihkan:',err);
-  }
-}
-
-async function connectPrinter(){
-  if(printerConnecting)return;
-  if(!navigator.bluetooth){
-    toast('Browser ini tidak mendukung Web Bluetooth',false);
-    return;
-  }
-  printerConnecting=true;
-  setPrinterUI(false,'Menghubungkan...');
-  try{
-    if(bluetoothDevice?.gatt){
-      try{
-        printerCharacteristic=await findWritableCharacteristic(bluetoothDevice);
-        if(printerCharacteristic){
-          setPrinterUI(true,bluetoothDevice.name||'Printer Terhubung');
-          toast('Printer sudah terhubung');
-          return;
-        }
-      }catch(_){}
-    }
-
-    // Ambil device yang sudah diberi permission terlebih dahulu.
-    if(navigator.bluetooth.getDevices){
-      const devices=await navigator.bluetooth.getDevices();
-      if(devices.length){
-        bluetoothDevice=devices.find(d=>d.name&&(/RPP02N|Printer|Thermal|POS/i.test(d.name)))||devices[0];
-      }
-    }
-
-    // Hanya tahap ini yang memunculkan dialog pairing pertama kali.
-    if(!bluetoothDevice){
-      bluetoothDevice=await navigator.bluetooth.requestDevice({
-        acceptAllDevices:true,
-        optionalServices:PRINTER_OPTIONAL_SERVICES
-      });
-    }
-
-    printerCharacteristic=await findWritableCharacteristic(bluetoothDevice);
-    if(!printerCharacteristic)throw new Error('Characteristic printer untuk menulis data tidak ditemukan');
-
-    setPrinterUI(true,bluetoothDevice.name||'Printer Terhubung');
-    toast('Printer terhubung. Selanjutnya order bisa cetak otomatis.');
-  }catch(err){
-    console.error('Bluetooth printer:',err);
-    bluetoothDevice=null; printerCharacteristic=null;
-    setPrinterUI(false,'Hubungkan Printer');
-    toast('Gagal menghubungkan printer: '+(err.message||err),false);
-  }finally{
-    printerConnecting=false;
-  }
-}
-
-async function ensurePrinter(){
-  if(printerCharacteristic && bluetoothDevice?.gatt?.connected)return true;
-  if(!bluetoothDevice)return false;
-  try{
-    printerCharacteristic=await findWritableCharacteristic(bluetoothDevice);
-    if(printerCharacteristic){
-      setPrinterUI(true,bluetoothDevice.name||'Printer Terhubung');
-      return true;
-    }
-  }catch(err){
-    console.warn('Reconnect printer gagal',err);
-  }
-  printerCharacteristic=null;
-  return false;
-}
-
-const FORTUNA_LOGO_PNG='data:image/png;base64,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';
-
-async function logoToEscPos(){
-  // Logo client diubah menjadi bitmap ESC/POS agar bisa dicetak langsung ke thermal.
-  const img=new Image();
-  img.src=FORTUNA_LOGO_PNG;
-  await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject});
-  const maxWidth=320;
-  const ratio=Math.min(1,maxWidth/img.naturalWidth);
-  const w=Math.max(8,Math.round(img.naturalWidth*ratio));
-  const h=Math.max(8,Math.round(img.naturalHeight*ratio));
-  const canvas=document.createElement('canvas');
-  canvas.width=w; canvas.height=h;
-  const ctx=canvas.getContext('2d',{willReadFrequently:true});
-  ctx.fillStyle='#fff'; ctx.fillRect(0,0,w,h);
-  ctx.drawImage(img,0,0,w,h);
-  const data=ctx.getImageData(0,0,w,h).data;
-  const rowBytes=Math.ceil(w/8);
-  const bitmap=new Uint8Array(8+rowBytes*h);
-  bitmap[0]=0x1d; bitmap[1]=0x76; bitmap[2]=0x30; bitmap[3]=0x00;
-  bitmap[4]=rowBytes&0xff; bitmap[5]=(rowBytes>>8)&0xff;
-  bitmap[6]=h&0xff; bitmap[7]=(h>>8)&0xff;
-  for(let y=0;y<h;y++){
-    for(let x=0;x<w;x++){
-      const i=(y*w+x)*4;
-      const gray=(data[i]*0.299)+(data[i+1]*0.587)+(data[i+2]*0.114);
-      if(gray<180) bitmap[8+y*rowBytes+(x>>3)] |= (0x80>>(x&7));
-    }
-  }
-  const out=new Uint8Array(3+bitmap.length+3);
-  out.set([0x1b,0x40,0x1b],0);
-  out[3]=0x61; out[4]=0x01; // center
-  out.set(bitmap,5);
-  out.set([0x1b,0x61,0x00],5+bitmap.length);
-  return out;
-}
-
-function receiptTextLine(left,right,width=32){
-  left=String(left??''); right=String(right??'');
-  const gap=Math.max(1,width-left.length-right.length);
-  return left+' '.repeat(gap)+right+'\n';
-}
-function wrapReceipt(text,width=32){
-  const words=String(text??'').split(/\s+/);
-  const out=[]; let line='';
-  words.forEach(word=>{
-    if((line?line.length+1:0)+word.length<=width) line+=(line?' ':'')+word;
-    else { if(line)out.push(line); line=word.slice(0,width); }
-  });
-  if(line)out.push(line);
-  return out;
-}
-
-async function escPosReceipt(order){
-  const clean=v=>String(v??'').trim();
-  const items=Array.isArray(order.items)?order.items:[];
-  const total=items.reduce((sum,x)=>sum+(Number(x.TAGIHAN)||0),0);
-  const dt=new Date();
-  const months=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-  const now=String(dt.getDate()).padStart(2,'0')+' '+months[dt.getMonth()]+' '+dt.getFullYear()+' '+String(dt.getHours()).padStart(2,'0')+':'+String(dt.getMinutes()).padStart(2,'0');
-  const code=clean(order.CODE||order.ORDER_NUMBER||'-');
-
-  let chunks=[];
-  try{chunks.push(await logoToEscPos())}catch(e){console.debug('Logo gagal dicetak, lanjut teks.',e)}
-
-  let cmd='\x1B\x40';
-  cmd+='\x1B\x61\x01';
-  cmd+='\x1B\x45\x01FORTUNA LAUNDRY\x1B\x45\x00\n';
-  cmd+='Jalan Raya Inpres no 4\n';
-  cmd+='Jakarta Timur\n';
-  cmd+='085693280500\n';
-  cmd+='\n';
-  cmd+=receiptTextLine(now,'#'+code);
-  cmd+='\x1B\x45\x01'+clean(order.NAMA).toUpperCase()+'\x1B\x45\x00\n';
-  cmd+='--------------------------------\n';
-  cmd+='\x1B\x61\x00';
-
-  items.forEach((x,i)=>{
-    const paket=clean(x.PAKET).toUpperCase();
-    const qty=Number(x.BERAT)||0;
-    const harga=Number(x.TAGIHAN)||0;
-    const paketLines=wrapReceipt(paket,32);
-    cmd+='\x1B\x45\x01'+(i+1)+'. '+paketLines[0]+'\x1B\x45\x00\n';
-    for(let j=1;j<paketLines.length;j++)cmd+='   '+paketLines[j]+'\n';
-    cmd+=receiptTextLine((String(qty).replace(/\.0$/,'')||'0')+'x '+harga.toLocaleString('id-ID'),harga.toLocaleString('id-ID'));
-    if(x.DEADLINE&&String(x.DEADLINE).toUpperCase()!=='FLEKSIBEL'){
-      let dl=clean(x.DEADLINE).replace('T',' ');
-      if(dl.endsWith('.000Z'))dl=dl.slice(0,-5);
-      cmd+='Selesai: '+dl+'\n';
-    }
-    cmd+='--------------------------------\n';
-  });
-
-  cmd+='\x1B\x45\x01Total'+ '\x1B\x45\x00'+receiptTextLine('', 'Rp'+total.toLocaleString('id-ID'));
-  cmd+='\x1B\x61\x01';
-  const paymentStatus=clean(order.STATUS_PEMBAYARAN||'BELUM LUNAS').toUpperCase();
-  const paymentMethod=clean(order.METODE_TRANSAKSI||'CASH').toUpperCase();
-  cmd+='\x1B\x45\x01'+paymentStatus+'\x1B\x45\x00\n';
-  cmd+='Metode: '+paymentMethod+'\n';
-  cmd+='\n';
-  cmd+='-- PEMBAYARAN HARAP MENGGUNAKAN QRIS --\n';
-  cmd+='\n';
-  cmd+='\x1B\x45\x01PERHATIAN\x1B\x45\x00\n';
-
-  const notes=[
-    'Baju putih dicuci terpisah minimal 3 kg.',
-    'Kami tidak menerima komplain lebih dari 2x24jam setelah customer menerima Laundry.',
-    'Baju yang mudah luntur TAPI tidak memberitahu kami sebelumnya, bukan tanggung jawab kami.',
-    'Di sarankan baju luntur untuk cuci satuan.',
-    'Jika ingin pakaian Bapak/Ibu dikerjakan lebih optimal disarankan untuk pengerjaan satuan.',
-    'Laundry yang lebih dari 10 hari tidak diambil bukan menjadi tanggung jawab kami.',
-    'Laundry anda GRATIS apabila tidak mendapatkan nota.'
-  ];
-  notes.forEach((n,idx)=>{
-    const prefix='- ';
-    wrapReceipt(n,30).forEach((line,j)=>cmd+=(j===0?prefix:'  ')+line+'\n');
-    if(idx===2)cmd+='\n';
-  });
-
-  cmd+='\nKritik dan saran\n085693280500\n';
-  cmd+='\n#Terimakasih Kasih#\n\n\n\n';
-  cmd+='\x1D\x56\x00';
-
-  chunks.push(new TextEncoder().encode(cmd));
-  // Gabungkan bitmap logo + teks dalam satu payload.
-  const totalLen=chunks.reduce((n,a)=>n+a.length,0);
-  const all=new Uint8Array(totalLen);
-  let pos=0; for(const a of chunks){all.set(a,pos);pos+=a.length}
-  return all;
-}
-
-async function writePrinter(bytes){
-  if(!printerCharacteristic)throw new Error('Printer belum terhubung');
-  // Thermal Bluetooth tertentu punya packet kecil; kirim bertahap.
-  const chunkSize=180;
-  for(let i=0;i<bytes.length;i+=chunkSize){
-    const chunk=bytes.slice(i,i+chunkSize);
-    if(printerCharacteristic.writeValueWithoutResponse) await printerCharacteristic.writeValueWithoutResponse(chunk);
-    else await printerCharacteristic.writeValue(chunk);
-    await new Promise(r=>setTimeout(r,20));
-  }
-}
-
-async function printOrderReceipt(order){
-  let ok=await ensurePrinter();
-  if(!ok){await connectPrinter();ok=!!printerCharacteristic}
-  if(!ok){toast('Printer belum terhubung. Struk tidak dicetak.',false);return false}
-  try{await writePrinter(await escPosReceipt(order));toast('Struk tercetak — '+(order.CODE?'#'+order.CODE:''));return true}catch(err){console.error('Print receipt:',err);printerCharacteristic=null;setPrinterUI(false,'Hubungkan Printer');toast('Cetak gagal: '+(err.message||err),false);return false}
-}
-
-async function reprintOrder(orderId){const o=orders.map(normalizeOrder).find(x=>String(x.ID)===String(orderId)||String(x.CODE)===String(orderId)||String(x.ORDER_ID)===String(orderId));if(!o){toast('Order tidak ditemukan',false);return}const order={...o,items:o.items?.length?o.items:orders.map(normalizeOrder).filter(x=>x.CODE===o.CODE).map(x=>({PAKET:x.PAKET,BERAT:x.BERAT,TAGIHAN:x.TAGIHAN,DEADLINE:x.DEADLINE})),total:o.TOTAL_TAGIHAN??o.TAGIHAN,METODE_TRANSAKSI:o.METODE_TRANSAKSI,STATUS_PEMBAYARAN:o.STATUS_PEMBAYARAN};await printOrderReceipt(order)}
-function openStatus(o){selectedOrder=normalizeOrder(o);document.getElementById('modalTitle').textContent='#'+selectedOrder.CODE+' — '+selectedOrder.NAMA;document.getElementById('modalInfo').innerHTML=`<div><b>Paket:</b> ${selectedOrder.items?.length||1}</div><div class="mt-1"><b>Status:</b> ${esc(selectedOrder.STATUS)}</div><div class="mt-1"><b>Pembayaran:</b> <span class="${selectedOrder.STATUS_PEMBAYARAN==='LUNAS'?'text-emerald-700':'text-red-600 font-extrabold'}">${esc(selectedOrder.STATUS_PEMBAYARAN)}</span></div><div class="mt-1"><b>Total:</b> ${rupiah(selectedOrder.TOTAL_TAGIHAN??selectedOrder.TAGIHAN)}</div>`;document.getElementById('modal').classList.add('show')}
-function closeModal(){document.getElementById('modal').classList.remove('show');selectedOrder=null}
-async function updateStatus(newStatus){if(!selectedOrder||busy)return;const code=selectedOrder.CODE;if(!code){toast('Kode order tidak ditemukan',false);return}busy=true;try{await api('update_status',{CODE:code,STATUS:newStatus});closeModal();toast('Status #'+code+' berhasil diperbarui — '+newStatus);await loadDashboard(true)}catch(e){console.error(e);toast('Update gagal: '+e.message,false)}finally{busy=false}}
-
-function renderSummaryFromOrders(){renderSummary()}
-document.addEventListener('DOMContentLoaded',()=>{addPackageRow();restorePrinter();loadDashboard()});
+const PACKAGES=['CUCI KOMPLIT REGULER','CUCI REGULER','SETRIKA REGULER','EXPRESS 1 HARI','CUCI EXPRESS 1 HARI','SETRIKA EXPRESS 1 HARI','EXPRESS 3 JAM','CUCI EXPRESS 3 JAM','SETRIKA EXPRESS 3 JAM','EXPRESS 6 JAM','CUCI EXPRESS 6 JAM','SETRIKA EXPRESS 6 JAM','FLEKSIBEL'];
+const DURATION={'CUCI KOMPLIT REGULER':72,'CUCI REGULER':72,'SETRIKA REGULER':48,'EXPRESS 1 HARI':24,'CUCI EXPRESS 1 HARI':24,'SETRIKA EXPRESS 1 HARI':24,'EXPRESS 3 JAM':3,'CUCI EXPRESS 3 JAM':3,'SETRIKA EXPRESS 3 JAM':3,'EXPRESS 6 JAM':6,'CUCI EXPRESS 6 JAM':6,'SETRIKA EXPRESS 6 JAM':6,'FLEKSIBEL':0};
+let orders=[],draft=null,payOrder=null,printer=null,busy=false,numTarget=null;
+const $=id=>document.getElementById(id), rupiah=n=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',minimumFractionDigits:0}).format(Number(n)||0), esc=s=>String(s??'').replace(/[&<>'"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[m]));
+const toast=(m,ok=true)=>{const t=$('toast');t.textContent=m;t.style.background=ok?'#0f5a47':'#991b1b';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800)};
+const api=async(action,data={})=>{const r=await fetch(WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,data})});const j=await r.json();if(!r.ok||j.status==='error')throw new Error(j.message||'Request gagal');return j};
+function showTab(tab){document.querySelectorAll('.tab').forEach(x=>x.classList.add('hidden'));$('tab-'+tab).classList.remove('hidden');document.querySelectorAll('.navbtn').forEach(b=>{b.classList.toggle('nav-active',b.dataset.tab===tab);b.classList.toggle('text-slate-600',b.dataset.tab!==tab)});$('title').textContent=tab==='ops'?'Operasional Dashboard':tab==='deadline'?'Deadline Dashboard':'Expense';if(tab==='deadline')loadDeadline();if(tab==='expense')loadExpense()}
+function addPackage(data={}){const row=document.createElement('div');row.className='package-row';row.innerHTML=`<div class="flex gap-2"><select class="input package flex-1">${PACKAGES.map(p=>`<option ${p===(data.PAKET||'FLEKSIBEL')?'selected':''}>${p}</option>`).join('')}</select><button type="button" onclick="this.closest('.package-row').remove();calcTotal()" class="w-10 rounded-xl bg-red-50 text-red-600"><i class="fa-solid fa-trash"></i></button></div><div class="grid grid-cols-2 gap-2 mt-2"><input class="input weight num-input" inputmode="decimal" value="${esc(data.BERAT||'')}" placeholder="Berat (kg)"><input class="input amount num-input" inputmode="decimal" value="${esc(data.TAGIHAN||'')}" placeholder="Tagihan"></div>`;$('packageRows').appendChild(row);row.querySelectorAll('input').forEach(x=>x.addEventListener('input',calcTotal));}
+function calcTotal(){let t=0;document.querySelectorAll('#packageRows .amount').forEach(x=>t+=Number(String(x.value).replace(/[^0-9.-]/g,''))||0);$('orderTotal').textContent=rupiah(t)}
+function draftOrder(e){e.preventDefault();const rows=[...document.querySelectorAll('#packageRows .package-row')];if(!rows.length){toast('Tambahkan minimal satu paket',false);return}draft={NAMA:$('f-nama').value.trim(),NO_WA:$('f-wa').value.trim(),METODE_TRANSAKSI:$('f-payment').value,items:rows.map(r=>({PAKET:r.querySelector('.package').value,BERAT:r.querySelector('.weight').value,TAGIHAN:r.querySelector('.amount').value}))};$('receiptPreview').innerHTML=receiptHTML({...draft,ORDER_ID:'PREVIEW'});$('previewModal').classList.add('show')}
+function receiptHTML(o){const total=(o.items||[]).reduce((s,x)=>s+(Number(String(x.TAGIHAN||'').replace(/[^0-9.-]/g,''))||0),0);return `<div class="receipt"><div style="text-align:center;font-weight:900;font-size:18px">FORTUNA LAUNDRY</div><div style="text-align:center;font-size:10px">Cuci Bersih, Hidup Lebih Happy!</div><hr><div class="row"><span>No</span><b>#${esc(o.ORDER_ID)}</b></div><div class="row"><span>Customer</span><b>${esc(o.NAMA)}</b></div><div style="font-size:10px">${new Date().toLocaleString('id-ID')}</div><hr>${(o.items||[]).map(x=>`<div style="margin:7px 0"><b>${esc(x.PAKET)}</b><div class="row"><span>${esc(x.BERAT||'0')} kg</span><span>${rupiah(x.TAGIHAN)}</span></div></div>`).join('')}<hr><div class="row total"><span>TOTAL</span><span>${rupiah(total)}</span></div><div style="margin-top:8px;font-weight:900;text-align:center">${o.METODE_TRANSAKSI==='BELUM LUNAS'?'BELUM DIBAYAR':'LUNAS'}</div><hr><div style="font-size:10px;line-height:1.45">PERHATIAN:<br>Simpan struk ini sebagai bukti transaksi.<br>Terima kasih telah menggunakan Fortuna Laundry.</div><div style="text-align:center;margin-top:12px;font-weight:900">#Terimakasih Kasih#</div></div>`}
+async function confirmCreate(print,sendWa){if(busy||!draft)return;busy=true;try{const res=await api('order_create',draft);const o=res.data;closeModal('previewModal');$('orderForm')?.reset();$('packageRows').innerHTML='';addPackage();calcTotal();await loadDashboard(true);const full={...draft,...o};if(print){try{await printReceipt(full)}catch(err){toast('Printer gagal: '+err.message,false)}}if(sendWa)openWA(full);toast('Order #'+o.ORDER_ID+' berhasil disimpan');}catch(e){toast(e.message,false)}finally{busy=false}}
+function openWA(o){const total=(o.items||[]).reduce((s,x)=>s+(Number(String(x.TAGIHAN||'').replace(/[^0-9.-]/g,''))||0),0);let n=String(o.NO_WA||'').replace(/\D/g,'');if(n.startsWith('0'))n='62'+n.slice(1);if(!n){toast('Nomor WhatsApp kosong',false);return}const msg=`Halo ${o.NAMA},\n\nOrder laundry #${o.ORDER_ID} sudah kami terima.\nTotal tagihan: ${rupiah(total)}\nPembayaran: ${o.METODE_TRANSAKSI==='BELUM LUNAS'?'BELUM LUNAS':o.METODE_TRANSAKSI+' / LUNAS'}\n\nTerima kasih — Fortuna Laundry.`;window.open('https://wa.me/'+n+'?text='+encodeURIComponent(msg),'_blank')}
+function normalize(o){return o}
+function renderOrders(){const q=$('search').value.toLowerCase();const list=orders.filter(o=>(o.ORDER_ID+' '+o.NAMA+' '+o.PAKET+' '+(o.items||[]).map(i=>i.PAKET).join(' ')).toLowerCase().includes(q));$('orderCount').textContent=list.length+' order';$('orderRows').innerHTML=list.map(o=>`<tr class="border-t border-slate-100 align-top"><td class="px-4 py-4 font-black">#${esc(o.ORDER_ID)}<div class="text-[10px] text-slate-400 mt-1">${o.START?new Date(o.START.replace(' ','T')).toLocaleString('id-ID'):''}</div></td><td class="px-4 py-4"><b>${esc(o.NAMA)}</b><div class="text-[10px] text-slate-400">${esc(o.NO_WA)}</div>${o.STATUS_PEMBAYARAN==='BELUM LUNAS'?'<span class="pill unpaid inline-block mt-2">BELUM LUNAS</span>':''}</td><td class="px-4 py-4 text-xs">${(o.items||[]).map(i=>`<div class="mb-2"><b>${esc(i.PAKET)}</b><br>${esc(i.BERAT)} kg • ${rupiah(i.TAGIHAN)} <span class="pill s-${esc(i.STATUS)}">${esc(i.STATUS)}</span></div>`).join('')}</td><td class="px-4 py-4 font-black">${rupiah(o.TOTAL_TAGIHAN)}</td><td class="px-4 py-4"><span class="pill s-${esc(o.STATUS)}">${esc(o.STATUS)}</span></td><td class="px-4 py-4 text-right">${o.STATUS_PEMBAYARAN==='BELUM LUNAS'?`<button onclick="openPay('${esc(o.ORDER_ID)}')" class="btn text-[11px] font-black bg-red-50 text-red-700 rounded-lg px-2.5 py-2 mb-2">LUNAS</button><br>`:''}<button onclick="printOrder('${esc(o.ORDER_ID)}')" class="btn text-slate-600 px-2"><i class="fa-solid fa-print"></i></button><button onclick="waOrder('${esc(o.ORDER_ID)}')" class="btn text-emerald-700 px-2"><i class="fa-brands fa-whatsapp"></i></button>${o.STATUS!=='SELESAI'?`<div class="mt-2">${(o.items||[]).map(i=>`<div class="flex justify-end gap-1 mb-1"><button onclick="editItem('${esc(i.ITEM_ID)}')" class="btn text-slate-500 bg-slate-100 rounded-lg px-2 py-1"><i class="fa-solid fa-pen"></i></button>${i.STATUS==='DITERIMA'?`<button onclick="setStatus('${esc(i.ITEM_ID)}','DIPROSES')" class="btn text-[10px] bg-orange-50 text-orange-700 rounded-lg px-2 py-1">PROSES</button>`:''}${i.STATUS==='DIPROSES'?`<button onclick="setStatus('${esc(i.ITEM_ID)}','QC')" class="btn text-[10px] bg-violet-50 text-violet-700 rounded-lg px-2 py-1">QC</button>`:''}${i.STATUS==='QC'||i.STATUS==='DIPROSES'?`<button onclick="setStatus('${esc(i.ITEM_ID)}','SIAP')" class="btn text-[10px] bg-emerald-50 text-emerald-700 rounded-lg px-2 py-1">SIAP</button>`:''}${i.STATUS==='SIAP'?`<button onclick="setStatus('${esc(i.ITEM_ID)}','SELESAI')" class="btn text-[10px] bg-slate-900 text-white rounded-lg px-2 py-1">SELESAI</button>`:''}</div>`).join('')}</div>`:''}</td></tr>`).join('')||`<tr><td colspan="6" class="p-10 text-center text-slate-400">Belum ada order.</td></tr>`}
+function renderSummary(){for(const k of ['total','diterima','diproses','qc','siap','selesai'])$('sum-'+k).textContent=summary[k]||0}
+let summary={};
+async function loadDashboard(silent=false){try{const j=await api('read');orders=j.data?.orders||[];summary=j.data?.summary||{};renderSummary();renderOrders();if(!silent)toast('Data berhasil diperbarui')}catch(e){toast('Gagal memuat dashboard: '+e.message,false)}}
+function findItem(id){for(const o of orders){const i=(o.items||[]).find(x=>x.ITEM_ID===id);if(i)return{o,i}}return null}
+async function setStatus(item,status){if(!confirm('Ubah item menjadi '+status+'?'))return;try{await api('update_status',{ITEM_ID:item,STATUS:status});await loadDashboard(true);if(status==='SIAP')loadDeadline();toast('Status berhasil diperbarui')}catch(e){toast(e.message,false)}}
+function editItem(id){const f=findItem(id);if(!f||f.o.STATUS==='SELESAI')return;const o=f.o,i=f.i;$('edit-item').value=id;$('edit-id').textContent='#'+o.ORDER_ID+' • '+id;$('edit-nama').value=o.NAMA;$('edit-wa').value=o.NO_WA;$('edit-paket').innerHTML=PACKAGES.map(p=>`<option ${p===i.PAKET?'selected':''}>${p}</option>`).join('');$('edit-berat').value=i.BERAT||'';$('edit-tagihan').value=i.TAGIHAN||'';$('editModal').classList.add('show')}
+async function saveEdit(e){e.preventDefault();try{await api('edit_order',{ITEM_ID:$('edit-item').value,NAMA:$('edit-nama').value,NO_WA:$('edit-wa').value,PAKET:$('edit-paket').value,BERAT:$('edit-berat').value,TAGIHAN:$('edit-tagihan').value});closeModal('editModal');await loadDashboard(true);toast('Item diperbarui')}catch(e){toast(e.message,false)}}
+function openPay(id){payOrder=id;$('payModal').classList.add('show')}
+async function pay(method){try{await api('payment_update',{ORDER_ID:payOrder,METODE_TRANSAKSI:method});closeModal('payModal');await loadDashboard(true);toast('Pembayaran #'+payOrder+' menjadi LUNAS')}catch(e){toast(e.message,false)}}
+function waOrder(id){const o=orders.find(x=>x.ORDER_ID===id);if(o)openWA(o)}
+async function printOrder(id){const o=orders.find(x=>x.ORDER_ID===id);if(!o)return;try{await printReceipt(o)}catch(e){toast('Printer: '+e.message,false)}}
+async function loadDeadline(){try{const j=await api('deadline_read');const d=j.data||{};$('dl-priority').textContent=d.summary?.priority||0;$('dl-deadline').textContent=d.summary?.deadline||0;$('dl-overdue').textContent=d.summary?.overdue||0;$('deadlineList').innerHTML=(d.items||[]).map(x=>{const cls=x.BUCKET==='OVERDUE'?'deadline-overdue':x.BUCKET==='DEADLINE'?'deadline-critical':'deadline-priority';return `<div class="card p-4 ${cls}"><div class="flex justify-between"><b>#${esc(x.ORDER_ID)} • ${esc(x.PAKET)}</b><span class="pill">${x.REMAINING_PERCENT}% tersisa</span></div><div class="text-xs text-slate-500 mt-2">${esc(x.NAMA)} • ${esc(x.STATUS)}</div><div class="text-xs mt-2">Target: <b>${new Date(x.READY_AT).toLocaleString('id-ID')}</b></div><div class="mt-3 flex justify-between items-center"><span class="text-[10px] font-black">${x.BUCKET}</span><button onclick="setStatus('${esc(x.ITEM_ID)}','SIAP')" class="btn bg-emerald-600 text-white rounded-lg px-3 py-2 text-xs font-black">SIAP</button></div></div>`}).join('')||`<div class="text-center text-slate-400 p-10 md:col-span-2 xl:col-span-3">Tidak ada item dalam deadline dashboard.</div>`}catch(e){toast('Deadline gagal dimuat: '+e.message,false)}}
+async function loadExpense(){try{const j=await api('expense_read');const d=j.data||{};$('expenseTotal').textContent='Total: '+rupiah(d.summary?.total);$('expenseList').innerHTML=(d.expenses||[]).map(x=>`<div class="p-4 flex justify-between"><div><b>${esc(x.KATEGORI||'LAINNYA')}</b><div class="text-xs text-slate-500 mt-1">${esc(x.TANGGAL)} • ${esc(x.KETERANGAN)}</div></div><div class="text-right"><b>${rupiah(x.NOMINAL)}</b><div class="text-[10px] text-slate-400">${esc(x.METODE_TRANSAKSI)}</div></div></div>`).join('')||`<div class="p-10 text-center text-slate-400">Belum ada expense.</div>`}catch(e){toast('Expense gagal dimuat: '+e.message,false)}}
+async function createExpense(e){e.preventDefault();try{await api('expense_create',{TANGGAL:$('e-tanggal').value,KATEGORI:$('e-kategori').value,KETERANGAN:$('e-keterangan').value,NOMINAL:$('e-nominal').value,METODE_TRANSAKSI:$('e-metode').value});e.target.reset();$('e-tanggal').value=new Date().toISOString().slice(0,10);await loadExpense();toast('Expense tersimpan')}catch(e){toast(e.message,false)}}
+function closeModal(id){$(id).classList.remove('show')}
+// Web Bluetooth / ESC-POS: reuse authorized device first, ask pairing only if needed.
+async function connectPrinter(){if(!navigator.bluetooth){toast('Browser tidak mendukung Bluetooth',false);return}try{if(!printer){const saved=await navigator.bluetooth.getDevices();printer=saved.find(d=>d.gatt);if(!printer){printer=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:[]})}}if(!printer.gatt.connected)await printer.gatt.connect();let chars=[];for(const s of await printer.gatt.getPrimaryServices()){for(const c of await s.getCharacteristics()){if(c.properties.write||c.properties.writeWithoutResponse)chars.push(c)}}window.btChar=chars[0];if(!window.btChar)throw new Error('Characteristic printer tidak ditemukan');$('printerText').textContent='Printer terhubung';$('printerIcon').className='fa-solid fa-print mr-1 text-emerald-600';toast('Printer terhubung')}catch(e){printer=null;window.btChar=null;toast('Gagal menghubungkan printer: '+e.message,false);throw e}}
+async function printReceipt(o){if(!window.btChar||!printer?.gatt?.connected)await connectPrinter();const enc=new TextEncoder();const bytes=[];const push=s=>bytes.push(...enc.encode(s));const nl='\n';push('\x1B\x40');push('\x1B\x61\x01');push('FORTUNA LAUNDRY'+nl);push('Cuci Bersih, Hidup Lebih Happy!'+nl);push('\x1B\x61\x00');push('--------------------------------'+nl);push('NO      : #'+o.ORDER_ID+nl);push('NAMA    : '+o.NAMA+nl);push('TANGGAL : '+new Date().toLocaleString('id-ID')+nl);push('--------------------------------'+nl);for(const x of (o.items||[])){push(x.PAKET+nl);push(String(x.BERAT||0)+' kg     '+rupiah(x.TAGIHAN)+nl)}const total=(o.items||[]).reduce((s,x)=>s+(Number(String(x.TAGIHAN||'').replace(/[^0-9.-]/g,''))||0),0);push('--------------------------------'+nl);push('TOTAL   : '+rupiah(total)+nl);push(o.METODE_TRANSAKSI==='BELUM LUNAS'?'BELUM DIBAYAR'+nl:'LUNAS - '+o.METODE_TRANSAKSI+nl);push('--------------------------------'+nl);push('Simpan struk ini sebagai bukti transaksi.'+nl);push('#Terimakasih Kasih#'+nl+nl+nl);const chunk=180;for(let i=0;i<bytes.length;i+=chunk){const part=new Uint8Array(bytes.slice(i,i+chunk));if(window.btChar.writeValueWithoutResponse)await window.btChar.writeValueWithoutResponse(part);else await window.btChar.writeValue(part)}}
+function setupNumpad(){for(const el of document.querySelectorAll('.num-input'))el.addEventListener('focus',()=>openNumpad(el));const pad=[1,2,3,4,5,6,7,8,9,'.',0,'⌫'];$('numpad').innerHTML=pad.map(x=>`<button type="button" onclick="numKey('${x}')">${x}</button>`).join('')}
+function openNumpad(el){numTarget=el;$('numDisplay').textContent=el.value||'0';$('numpadModal').classList.add('show');setTimeout(()=>el.blur(),0)}function numKey(k){if(!numTarget)return;let v=numTarget.value||'';if(k==='⌫')v=v.slice(0,-1);else if(k==='.'&&!v.includes('.'))v+='.';else if(k!=='.')v+=k;numTarget.value=v;$('numDisplay').textContent=v||'0';numTarget.dispatchEvent(new Event('input',{bubbles:true}))}
+$('e-tanggal').value=new Date().toISOString().slice(0,10);addPackage();setupNumpad();loadDashboard(true);
 </script>
-</body>
-</html>
+<style>.label{font-size:10px;font-weight:900;color:#64748b}.input{width:100%;margin-top:5px;border:1px solid #e2e8f0;background:#f8fafc;border-radius:12px;padding:11px 12px;outline:none;font-size:14px}.input:focus{box-shadow:0 0 0 3px rgba(15,90,71,.1);border-color:#0f5a47}.package-row{border:1px solid #e2e8f0;background:#f8fafc;border-radius:14px;padding:10px}</style>
+</body></html>
