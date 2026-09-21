@@ -24,7 +24,7 @@ body{background:#f5f3ef;color:#202522;font-family:Inter,system-ui,-apple-system,
 </aside>
 <div class="min-w-0">
 <header class="sticky top-0 z-30 bg-[#f5f3ef]/95 backdrop-blur border-b border-[#e5e1da]">
- <div class="max-w-[1400px] mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-3"><div class="flex items-center gap-3"><button id="navToggle" onclick="toggleNav()" class="nav-toggle btn bg-white border border-slate-200 rounded-xl w-10 h-10" aria-label="Buka/tutup navigasi"><i class="fa-solid fa-bars"></i></button><div><div class="text-[10px] font-black tracking-[.18em] text-[#0F5A47] uppercase">Fortuna Laundry</div><h1 id="title" class="text-xl sm:text-2xl font-extrabold mt-1">Operasional Dashboard</h1></div></div><div class="flex gap-2"><button id="printerBtn" onclick="connectPrinter()" class="btn bg-white border border-slate-200 rounded-xl px-3 py-2.5 font-bold text-sm"><i id="printerIcon" class="fa-solid fa-print mr-1"></i><span id="printerText">Printer</span></button><button id="globalRefreshBtn" onclick="refreshActiveTab()" class="btn bg-white border border-slate-200 rounded-xl px-3 py-2.5 font-bold text-sm"><i id="globalRefreshIcon" class="fa-solid fa-rotate-right mr-1"></i>Refresh</button></div></div>
+ <div class="max-w-[1400px] mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-3"><div class="flex items-center gap-3"><button id="navToggle" onclick="toggleNav()" class="nav-toggle btn bg-white border border-slate-200 rounded-xl w-10 h-10" aria-label="Buka/tutup navigasi"><i class="fa-solid fa-bars"></i></button><div><div class="text-[10px] font-black tracking-[.18em] text-[#0F5A47] uppercase">Fortuna Laundry</div><h1 id="title" class="text-xl sm:text-2xl font-extrabold mt-1">Operasional Dashboard</h1></div></div><div class="flex gap-2"><button id="printerBtn" onclick="connectPrinter()" class="btn bg-white border border-slate-200 rounded-xl px-3 py-2.5 font-bold text-sm"><i id="printerIcon" class="fa-solid fa-print mr-1"></i><span id="printerText">Hubungkan ke printer</span></button><button id="globalRefreshBtn" onclick="refreshActiveTab()" class="btn bg-white border border-slate-200 rounded-xl px-3 py-2.5 font-bold text-sm"><i id="globalRefreshIcon" class="fa-solid fa-rotate-right mr-1"></i>Refresh</button></div></div>
 </header>
 
 <main class="max-w-[1400px] mx-auto px-4 sm:px-6 py-5">
@@ -284,12 +284,47 @@ async function createExpense(e){e.preventDefault();const btn=$('expenseSaveBtn')
 function refreshActiveTab(){const btn=$('globalRefreshBtn'),icon=$('globalRefreshIcon');if(btn)btn.disabled=true;if(icon)icon.className='fa-solid fa-spinner fa-spin mr-1';const active=document.querySelector('.tab:not(.hidden)')?.id;const done=active==='tab-deadline'?loadDeadline():active==='tab-expense'?loadExpense():loadDashboard();Promise.resolve(done).finally(()=>{if(btn)btn.disabled=false;if(icon)icon.className='fa-solid fa-rotate-right mr-1'});}
 function closeModal(id){$(id).classList.remove('show');if(id==='previewModal'||id==='numpadModal'||id==='payModal')document.body.classList.remove('overflow-hidden')}
 // Web Bluetooth / ESC-POS: reuse authorized device first, ask pairing only if needed.
-async function connectPrinter(){if(!navigator.bluetooth){toast('Browser tidak mendukung Bluetooth',false);return}try{if(!printer){const saved=await navigator.bluetooth.getDevices();printer=saved.find(d=>d.gatt);if(!printer){printer=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:[]})}}if(!printer.gatt.connected)await printer.gatt.connect();let chars=[];for(const s of await printer.gatt.getPrimaryServices()){for(const c of await s.getCharacteristics()){if(c.properties.write||c.properties.writeWithoutResponse)chars.push(c)}}window.btChar=chars[0];if(!window.btChar)throw new Error('Characteristic printer tidak ditemukan');$('printerText').textContent='Printer terhubung';$('printerIcon').className='fa-solid fa-print mr-1 text-emerald-600';toast('Printer terhubung')}catch(e){printer=null;window.btChar=null;toast('Gagal menghubungkan printer: '+e.message,false);throw e}}
+async function connectPrinter(){
+  if(!navigator.bluetooth){toast('Browser tidak mendukung Bluetooth',false);return false}
+  const btn=$('printerBtn'),icon=$('printerIcon'),txt=$('printerText');
+  if(btn)btn.disabled=true;if(icon)icon.className='fa-solid fa-spinner fa-spin mr-1';if(txt)txt.textContent='Menghubungkan...';
+  try{
+    if(!printer){
+      const saved=await navigator.bluetooth.getDevices();
+      printer=saved.find(d=>d.gatt);
+      if(!printer) printer=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:[]});
+    }
+    if(!printer.gatt.connected) await printer.gatt.connect();
+    printer.gatt.removeEventListener('disconnected',onPrinterDisconnected);
+    printer.gatt.addEventListener('disconnected',onPrinterDisconnected);
+    let chars=[];
+    for(const s of await printer.gatt.getPrimaryServices()){
+      for(const c of await s.getCharacteristics()) if(c.properties.write||c.properties.writeWithoutResponse) chars.push(c);
+    }
+    window.btChar=chars[0];
+    if(!window.btChar) throw new Error('Characteristic printer tidak ditemukan');
+    $('printerText').textContent='Terhubung';$('printerIcon').className='fa-solid fa-print mr-1 text-emerald-600';
+    toast('Printer terhubung');
+    return true;
+  }catch(e){
+    printer=null;window.btChar=null;
+    $('printerText').textContent='Hubungkan ke printer';$('printerIcon').className='fa-solid fa-print mr-1 text-red-600';
+    toast('Printer belum terhubung. Silakan hubungkan kembali ke thermal printer.',false);
+    return false;
+  }finally{if(btn)btn.disabled=false;}
+}
+function onPrinterDisconnected(){window.btChar=null;$('printerText').textContent='Hubungkan ke printer';$('printerIcon').className='fa-solid fa-print mr-1 text-red-600';toast('Thermal printer terputus. Hubungkan kembali sebelum mencetak.',false)}
 async function logoToEscPos(){const img=new Image();img.src=FORTUNA_LOGO_PNG;await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject});const maxWidth=320;const ratio=Math.min(1,maxWidth/img.naturalWidth);const w=Math.max(8,Math.round(img.naturalWidth*ratio));const h=Math.max(8,Math.round(img.naturalHeight*ratio));const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);ctx.drawImage(img,0,0,w,h);const data=ctx.getImageData(0,0,w,h).data;const rowBytes=Math.ceil(w/8);const bitmap=new Uint8Array(8+rowBytes*h);bitmap[0]=0x1d;bitmap[1]=0x76;bitmap[2]=0x30;bitmap[3]=0x00;bitmap[4]=rowBytes&0xff;bitmap[5]=(rowBytes>>8)&0xff;bitmap[6]=h&0xff;bitmap[7]=(h>>8)&0xff;for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=(y*w+x)*4;const gray=data[i]*.299+data[i+1]*.587+data[i+2]*.114;if(gray<180)bitmap[8+y*rowBytes+(x>>3)]|=0x80>>(x&7)}const out=new Uint8Array(5+bitmap.length+3);out.set([0x1b,0x40,0x1b,0x61,0x01],0);out.set(bitmap,5);out.set([0x1b,0x61,0x00,0x1b,0x45,0x00],5+bitmap.length);return out}
 function receiptTextLine(left,right,width=32){left=String(left??'');right=String(right??'');const gap=Math.max(1,width-left.length-right.length);return left+' '.repeat(gap)+right+'\n'}
 function wrapReceipt(text,width=32){const words=String(text??'').split(/\s+/);const out=[];let line='';for(const word of words){if((line?line.length+1:0)+word.length<=width)line+=(line?' ':'')+word;else{if(line)out.push(line);line=word.slice(0,width)}}if(line)out.push(line);return out}
 async function printReceipt(o){
-  if(!window.btChar||!printer?.gatt?.connected) await connectPrinter();
+  // SETIAP aksi cetak wajib memastikan printer benar-benar tersambung.
+  // Jika koneksi hilang/tidak ada, minta operator menghubungkan thermal printer lagi.
+  let ready=!!(window.btChar && printer?.gatt?.connected);
+  if(!ready){
+    ready=await connectPrinter();
+    if(!ready) throw new Error('Thermal printer belum terhubung. Hubungkan printer lalu coba cetak lagi.');
+  }
   const enc=new TextEncoder();
   const bytes=[];
   const push=s=>bytes.push(...enc.encode(s));
@@ -313,20 +348,19 @@ async function printReceipt(o){
   items.forEach((x,i)=>{
     const lines=wrapReceipt((i+1)+'. '+String(x.PAKET||'-').toUpperCase(),32);
     push('\x1B\x45\x01'+lines[0]+'\x1B\x45\x00'+nl);
-    for(let j=1;j<lines.length;j++) push('   '+lines[j]+nl);
-    const harga=Number(x.TAGIHAN)||0;
-    const berat=String(x.BERAT||'0').replace(/\.0$/,'');
-    push(receiptTextLine((berat||'0')+'x '+harga.toLocaleString('id-ID'),harga.toLocaleString('id-ID')));
+    for(let j=1;j<lines.length;j++)push('  '+lines[j]+nl);
+    push(receiptTextLine(String(x.BERAT||0)+' kg',rupiah(x.TAGIHAN)));
   });
 
   push('--------------------------------'+nl);
-  push('\x1B\x45\x01Total\x1B\x45\x00'+receiptTextLine('', 'Rp'+total.toLocaleString('id-ID')));
-  push('\x1B\x61\x01');
-  push('\x1B\x45\x01'+String(o.STATUS_PEMBAYARAN||'BELUM LUNAS')+'\x1B\x45\x00'+nl);
-  if(o.METODE_TRANSAKSI && o.METODE_TRANSAKSI!=='BELUM LUNAS') push('Metode: '+o.METODE_TRANSAKSI+nl);
-  push(nl+'-- PEMBAYARAN HARAP MENGGUNAKAN QRIS --'+nl+nl);
-  push('\x1B\x45\x01PERHATIAN\x1B\x45\x00'+nl);
-
+  push(receiptTextLine('TOTAL',rupiah(total)));
+  const paymentStatus=String(o.STATUS_PEMBAYARAN||'BELUM LUNAS').toUpperCase();
+  const paymentMethod=String(o.METODE_TRANSAKSI||'BELUM LUNAS').toUpperCase();
+  push('\x1B\x61\x01\x1B\x45\x01'+(paymentStatus==='LUNAS'?'LUNAS':'BELUM DIBAYAR')+'\x1B\x45\x00'+nl);
+  push('Metode: '+paymentMethod+nl);
+  push('\x1B\x61\x00');
+  push('\n-- PEMBAYARAN HARAP MENGGUNAKAN QRIS --\n\n');
+  push('\x1B\x45\x01PERHATIAN\x1B\x45\x00\n');
   const notes=[
     'Baju putih dicuci terpisah minimal 3 kg.',
     'Kami tidak menerima komplain lebih dari 2x24jam setelah customer menerima Laundry.',
@@ -336,14 +370,24 @@ async function printReceipt(o){
     'Laundry yang lebih dari 10 hari tidak diambil bukan menjadi tanggung jawab kami.',
     'Laundry anda GRATIS apabila tidak mendapatkan nota.'
   ];
-  notes.forEach(n=>wrapReceipt(n,30).forEach((line,j)=>push((j===0?'- ':'  ')+line+nl)));
-  push(nl+'Kritik dan saran'+nl+'085693280500'+nl+nl+'#Terimakasih Kasih#'+nl+nl+nl);
+  notes.forEach((n,idx)=>{wrapReceipt(n,30).forEach((line,j)=>push((j===0?'- ':'  ')+line+'\n'));if(idx===2)push('\n')});
+  push('\nKritik dan saran\n0856930280500\n\n#Terimakasih Kasih#\n\n\n\n');
+  push('\x1D\x56\x00');
 
+  const payload=new Uint8Array(bytes.length);payload.set(bytes);
   const chunk=180;
-  for(let i=0;i<bytes.length;i+=chunk){
-    const part=new Uint8Array(bytes.slice(i,i+chunk));
-    if(window.btChar.writeValueWithoutResponse) await window.btChar.writeValueWithoutResponse(part);
-    else await window.btChar.writeValue(part);
+  try{
+    for(let i=0;i<payload.length;i+=chunk){
+      if(!printer?.gatt?.connected||!window.btChar) throw new Error('Koneksi thermal printer terputus.');
+      const part=payload.slice(i,i+chunk);
+      if(window.btChar.writeValueWithoutResponse) await window.btChar.writeValueWithoutResponse(part);
+      else await window.btChar.writeValue(part);
+      await new Promise(r=>setTimeout(r,20));
+    }
+    return true;
+  }catch(err){
+    printer=null;window.btChar=null;onPrinterDisconnected();
+    throw new Error('Cetak gagal karena koneksi printer terputus. Hubungkan kembali thermal printer lalu cetak ulang.');
   }
 }
 function setupNumpad(){const pad=[1,2,3,4,5,6,7,8,9,'.',0,'⌫'];$('numpad').innerHTML=pad.map(x=>`<button type="button" onclick="numKey('${x}')">${x}</button>`).join('');document.removeEventListener('focusin',handleNumFocus);document.addEventListener('focusin',handleNumFocus)}
