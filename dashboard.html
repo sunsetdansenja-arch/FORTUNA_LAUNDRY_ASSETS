@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Fortuna Laundry — Operasional V10.5</title>
+<title>Fortuna Laundry — Operasional V10.6</title>
 <script src="https://cdn.tailwindcss.com"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <style>
 body{background:#f5f3ef;color:#202522;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.card{background:#fff;border:1px solid #e9e5de;border-radius:20px;box-shadow:0 8px 28px rgba(25,35,30,.05)}.btn{transition:.15s}.deadline-list{display:flex;flex-direction:column}.deadline-row{display:grid;grid-template-columns:minmax(300px,1.25fr) minmax(260px,1fr) auto;align-items:center;gap:14px;padding:10px 14px;background:#fff;border-left:4px solid transparent;min-height:68px}.deadline-row:hover{background:#fafaf8}.deadline-row.deadline-priority{border-left-color:#f59e0b}.deadline-row.deadline-critical{border-left-color:#ef4444}.deadline-row.deadline-overdue{border-left-color:#7f1d1d;background:#fff8f8}.deadline-main{min-width:0;display:grid;grid-template-columns:auto minmax(120px,1fr);column-gap:12px;row-gap:3px;align-items:center}.deadline-id{display:flex;align-items:baseline;gap:7px;white-space:nowrap}.deadline-id b{font-size:13px}.deadline-id span{font-size:9px;color:#94a3b8}.deadline-customer{display:flex;align-items:center;gap:8px;min-width:0;overflow:hidden}.deadline-customer b{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.deadline-customer span{font-size:10px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.deadline-meta{grid-column:1 / -1;display:flex;align-items:center;gap:8px;font-size:10px;color:#64748b;white-space:nowrap}.deadline-meta .pill{padding:3px 6px;font-size:9px}.deadline-progress{min-width:0}.deadline-progress .bar-wrap{height:6px}.deadline-action{display:flex;justify-content:flex-end;min-width:58px}.deadline-action .btn{padding:6px 9px!important;font-size:9px!important}.deadline-list .deadline-row + .deadline-row{border-top:1px solid #f1f5f9}@media(max-width:899px){.deadline-row{grid-template-columns:1fr auto;gap:8px;padding:10px 11px}.deadline-main{grid-column:1 / -1;grid-template-columns:1fr}.deadline-progress{grid-column:1 / 2}.deadline-action{grid-column:2 / 3;grid-row:2}.deadline-meta{gap:6px}.deadline-customer{margin-top:1px}}.btn:active{transform:scale(.97)}.nav-active{background:#0f5a47;color:#fff}.pill{font-size:10px;font-weight:800;padding:5px 8px;border-radius:999px}.s-DITERIMA{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}.s-DIPROSES{background:#fff7ed;color:#c2410c}.s-QC{background:#f5f3ff;color:#7c3aed}.s-SIAP{background:#ecfdf5;color:#047857}.s-SELESAI{background:#f1f5f9;color:#475569}.unpaid{background:#fff1f2;color:#b91c1c;border-color:#fecdd3}.modal{opacity:0;pointer-events:none;transition:.18s}.modal.show{opacity:1;pointer-events:auto}.modal-box{transform:translateY(14px);transition:.18s}.modal.show .modal-box{transform:none}.toast{transform:translateY(10px);opacity:0;pointer-events:none;transition:.2s}.toast.show{transform:none;opacity:1}.table-scroll{overflow:auto;max-height:calc(100vh - 315px);min-height:430px}.table-scroll td{padding-top:9px!important;padding-bottom:9px!important}.table-scroll .status-cell{margin-bottom:5px!important}.table-scroll .pill{padding:3px 6px;font-size:9px}.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.numpad button{height:58px;border-radius:14px;background:#f8fafc;border:1px solid #e2e8f0;font-size:20px;font-weight:800}.receipt{width:300px;background:#fff;color:#111;padding:10px 13px;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.24}.receipt img{display:block;width:116px;height:auto;max-height:100px;object-fit:contain;margin:0 auto 2px}.receipt .receipt-brand{font-weight:900;font-size:13px;margin-top:1px}.receipt .receipt-sub{font-size:10px}.receipt hr{border:0;border-top:1px dashed #555;margin:5px 0}.receipt .row{display:flex;justify-content:space-between;gap:10px}.receipt .row span:last-child,.receipt .row b:last-child{text-align:right}.receipt .total{font-weight:900;font-size:13px}.receipt .note-title{font-weight:800;text-align:center;margin-top:7px}.receipt .notes{text-align:center;font-size:10px;line-height:1.28}.receipt .footer{text-align:center;margin-top:8px}.receipt .item{margin:3px 0}.receipt .item-name{font-weight:800}.receipt .item-meta{display:flex;justify-content:space-between;gap:8px}.danger{color:#b91c1c}.deadline-priority{border-left:5px solid #f59e0b}.deadline-critical{border-left:5px solid #dc2626}.deadline-overdue{border-left:5px solid #7f1d1d;background:#fff7f7}
@@ -22,7 +22,7 @@ body{background:#f5f3ef;color:#202522;font-family:Inter,system-ui,-apple-system,
     <button onclick="showTab('deadline')" data-tab="deadline" class="navbtn w-full text-left rounded-xl px-4 py-3 font-bold text-sm flex items-center"><i class="fa-solid fa-clock w-5"></i><span class="sidebar-label">Deadline Dashboard</span></button>
     <button onclick="showTab('expense')" data-tab="expense" class="navbtn w-full text-left rounded-xl px-4 py-3 font-bold text-sm flex items-center"><i class="fa-solid fa-money-bill-wave w-5"></i><span class="sidebar-label">Expense</span></button>
   </nav>
-  <div class="mt-auto p-3 text-[10px] text-slate-400 font-semibold sidebar-foot">Fortuna Laundry V10.5</div>
+  <div class="mt-auto p-3 text-[10px] text-slate-400 font-semibold sidebar-foot">Fortuna Laundry V10.6</div>
 </aside>
 <div class="min-w-0">
 <header class="sticky top-0 z-30 bg-[#f5f3ef]/95 backdrop-blur border-b border-[#e5e1da]">
@@ -329,44 +329,22 @@ async function loadExpense(){const btn=$('expenseRefreshBtn'),icon=$('expenseRef
 async function createExpense(e){e.preventDefault();const btn=$('expenseSaveBtn'),icon=$('expenseSaveIcon'),txt=$('expenseSaveText');if(btn?.disabled)return;btn.disabled=true;if(icon)icon.className='fa-solid fa-spinner fa-spin mr-1';if(txt)txt.textContent='Menyimpan...';try{await api('expense_create',{TANGGAL:$('e-tanggal').value,KATEGORI:$('e-kategori').value,KETERANGAN:$('e-keterangan').value,NOMINAL:$('e-nominal').value,METODE_TRANSAKSI:$('e-metode').value});e.target.reset();$('e-tanggal').value=new Date().toISOString().slice(0,10);await loadExpense();toast('Expense berhasil disimpan');}catch(err){toast('Expense gagal disimpan: '+err.message,false)}finally{btn.disabled=false;if(icon)icon.className='fa-solid fa-floppy-disk mr-1';if(txt)txt.textContent='Simpan Expense';}}
 function refreshActiveTab(){const btn=$('globalRefreshBtn'),icon=$('globalRefreshIcon');if(btn)btn.disabled=true;if(icon)icon.className='fa-solid fa-spinner fa-spin mr-1';const active=document.querySelector('.tab:not(.hidden)')?.id;const done=active==='tab-deadline'?loadDeadline():active==='tab-expense'?loadExpense():loadDashboard();Promise.resolve(done).finally(()=>{if(btn)btn.disabled=false;if(icon)icon.className='fa-solid fa-rotate-right mr-1'});}
 function closeModal(id){$(id).classList.remove('show');if(id==='previewModal'||id==='numpadModal'||id==='payModal')document.body.classList.remove('overflow-hidden')}
-// Web Bluetooth / ESC-POS: reuse authorized device first, ask pairing only if needed.
-async function connectPrinter(){
-  if(!navigator.bluetooth){toast('Browser tidak mendukung Bluetooth',false);return false}
-  const btn=$('printerBtn'),icon=$('printerIcon'),txt=$('printerText');
-  if(btn)btn.disabled=true;if(icon)icon.className='fa-solid fa-spinner fa-spin mr-1';if(txt)txt.textContent='Menghubungkan...';
-  try{
-    if(!printer){
-      const saved=await navigator.bluetooth.getDevices();
-      printer=saved.find(d=>d.gatt);
-      if(!printer) printer=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:[]});
-    }
-    if(!printer.gatt.connected) await printer.gatt.connect();
-    printer.gatt.removeEventListener('disconnected',onPrinterDisconnected);
-    printer.gatt.addEventListener('disconnected',onPrinterDisconnected);
-    let chars=[];
-    for(const s of await printer.gatt.getPrimaryServices()){
-      for(const c of await s.getCharacteristics()) if(c.properties.write||c.properties.writeWithoutResponse) chars.push(c);
-    }
-    window.btChar=chars[0];
-    if(!window.btChar) throw new Error('Characteristic printer tidak ditemukan');
-    $('printerText').textContent='Terhubung';$('printerIcon').className='fa-solid fa-print mr-1 text-emerald-600';
-    toast('Printer terhubung');
-    return true;
-  }catch(e){
-    printer=null;window.btChar=null;
-    $('printerText').textContent='Hubungkan ke printer';$('printerIcon').className='fa-solid fa-print mr-1 text-red-600';
-    toast('Printer belum terhubung. Silakan hubungkan kembali ke thermal printer.',false);
-    return false;
-  }finally{if(btn)btn.disabled=false;}
-}
-function onPrinterDisconnected(){window.btChar=null;$('printerText').textContent='Hubungkan ke printer';$('printerIcon').className='fa-solid fa-print mr-1 text-red-600';toast('Thermal printer terputus. Hubungkan kembali sebelum mencetak.',false)}
+// Web Bluetooth / ESC-POS — V10.6 stabilized
+let printer = null, btChar = null, printerService = null, printerConnecting = false;
+function setPrinterUI(state,detail=''){const btn=$('printerBtn'),icon=$('printerIcon'),txt=$('printerText');if(!btn||!icon||!txt)return;btn.disabled=state==='connecting';if(state==='connecting'){icon.className='fa-solid fa-spinner fa-spin mr-1';txt.textContent='Menghubungkan...'}else if(state==='connected'){icon.className='fa-solid fa-print mr-1 text-emerald-600';txt.textContent='Terhubung'}else if(state==='error'){icon.className='fa-solid fa-print mr-1 text-red-600';txt.textContent='Hubungkan ke printer'}else{icon.className='fa-solid fa-print mr-1';txt.textContent='Hubungkan ke printer'}if(detail)toast(detail,state==='connected')}
+function resetPrinterConnection(showToast=true){btChar=null;printerService=null;if(printer?.gatt)printer.gatt.removeEventListener('disconnected',onPrinterDisconnected);printer=null;setPrinterUI('idle');if(showToast)toast('Koneksi printer direset. Hubungkan kembali.',false)}
+async function findWriteCharacteristic(device){if(!device?.gatt)throw new Error('Device Bluetooth tidak memiliki GATT.');if(!device.gatt.connected)await device.gatt.connect();const services=await device.gatt.getPrimaryServices(),candidates=[];for(const service of services){let chars=[];try{chars=await service.getCharacteristics()}catch(e){continue}for(const characteristic of chars){const p=characteristic.properties||{};if(p.writeWithoutResponse||p.write)candidates.push({service,characteristic})}}const chosen=candidates.find(x=>x.characteristic.properties.writeWithoutResponse)||candidates[0];if(!chosen)throw new Error('Characteristic tulis printer tidak ditemukan.');printerService=chosen.service;return chosen.characteristic}
+async function tryAuthorizedPrinter(){if(!navigator.bluetooth?.getDevices)return null;let saved=[];try{saved=await navigator.bluetooth.getDevices()}catch(e){return null}for(const device of saved){try{const characteristic=await findWriteCharacteristic(device);printer=device;btChar=characteristic;printer.gatt.addEventListener('disconnected',onPrinterDisconnected);return printer}catch(e){try{device.gatt?.disconnect()}catch(_e){}}}return null}
+async function choosePrinter(){const device=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:[]}),characteristic=await findWriteCharacteristic(device);printer=device;btChar=characteristic;printer.gatt.addEventListener('disconnected',onPrinterDisconnected);return printer}
+async function connectPrinter(){if(printerConnecting)return false;if(!navigator.bluetooth){toast('Browser tidak mendukung Web Bluetooth.',false);return false}if(!window.isSecureContext){toast('Bluetooth membutuhkan HTTPS atau localhost.',false);return false}printerConnecting=true;setPrinterUI('connecting');try{let device=await tryAuthorizedPrinter();if(!device)device=await choosePrinter();if(!device?.gatt?.connected||!btChar)throw new Error('Gagal membuka koneksi printer.');setPrinterUI('connected','Printer terhubung');return true}catch(e){btChar=null;printerService=null;setPrinterUI('error');toast(e?.name==='NotFoundError'?'Pemilihan printer dibatalkan.':`Printer belum terhubung: ${e?.message||'koneksi gagal'}`,false);return false}finally{printerConnecting=false;if($('printerBtn'))$('printerBtn').disabled=false}}
+function onPrinterDisconnected(){btChar=null;printerService=null;setPrinterUI('error');toast('Thermal printer terputus. Hubungkan kembali sebelum mencetak.',false)}
 async function logoToEscPos(){const img=new Image();img.src=FORTUNA_LOGO_PNG;await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject});const maxWidth=320;const ratio=Math.min(1,maxWidth/img.naturalWidth);const w=Math.max(8,Math.round(img.naturalWidth*ratio));const h=Math.max(8,Math.round(img.naturalHeight*ratio));const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);ctx.drawImage(img,0,0,w,h);const data=ctx.getImageData(0,0,w,h).data;const rowBytes=Math.ceil(w/8);const bitmap=new Uint8Array(8+rowBytes*h);bitmap[0]=0x1d;bitmap[1]=0x76;bitmap[2]=0x30;bitmap[3]=0x00;bitmap[4]=rowBytes&0xff;bitmap[5]=(rowBytes>>8)&0xff;bitmap[6]=h&0xff;bitmap[7]=(h>>8)&0xff;for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=(y*w+x)*4;const gray=data[i]*.299+data[i+1]*.587+data[i+2]*.114;if(gray<180)bitmap[8+y*rowBytes+(x>>3)]|=0x80>>(x&7)}const out=new Uint8Array(5+bitmap.length+3);out.set([0x1b,0x40,0x1b,0x61,0x01],0);out.set(bitmap,5);out.set([0x1b,0x61,0x00,0x1b,0x45,0x00],5+bitmap.length);return out}
 function receiptTextLine(left,right,width=32){left=String(left??'');right=String(right??'');const gap=Math.max(1,width-left.length-right.length);return left+' '.repeat(gap)+right+'\n'}
 function wrapReceipt(text,width=32){const words=String(text??'').split(/\s+/);const out=[];let line='';for(const word of words){if((line?line.length+1:0)+word.length<=width)line+=(line?' ':'')+word;else{if(line)out.push(line);line=word.slice(0,width)}}if(line)out.push(line);return out}
 async function printReceipt(o){
   // SETIAP aksi cetak wajib memastikan printer benar-benar tersambung.
   // Jika koneksi hilang/tidak ada, minta operator menghubungkan thermal printer lagi.
-  let ready=!!(window.btChar && printer?.gatt?.connected);
+  let ready=!!(btChar && printer?.gatt?.connected);
   if(!ready){
     ready=await connectPrinter();
     if(!ready) throw new Error('Thermal printer belum terhubung. Hubungkan printer lalu coba cetak lagi.');
@@ -424,15 +402,15 @@ async function printReceipt(o){
   const chunk=180;
   try{
     for(let i=0;i<payload.length;i+=chunk){
-      if(!printer?.gatt?.connected||!window.btChar) throw new Error('Koneksi thermal printer terputus.');
+      if(!printer?.gatt?.connected||!btChar) throw new Error('Koneksi thermal printer terputus.');
       const part=payload.slice(i,i+chunk);
-      if(window.btChar.writeValueWithoutResponse) await window.btChar.writeValueWithoutResponse(part);
-      else await window.btChar.writeValue(part);
+      if(btChar.writeValueWithoutResponse) await btChar.writeValueWithoutResponse(part);
+      else await btChar.writeValue(part);
       await new Promise(r=>setTimeout(r,20));
     }
     return true;
   }catch(err){
-    printer=null;window.btChar=null;onPrinterDisconnected();
+    printer=null;btChar=null;onPrinterDisconnected();
     throw new Error('Cetak gagal karena koneksi printer terputus. Hubungkan kembali thermal printer lalu cetak ulang.');
   }
 }
